@@ -1,111 +1,168 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../../core/colors.dart';
+import '../../core/app_state.dart';
+import '../../data/mock_data.dart';
 import '../../widgets/shared_widgets.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
-
   @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  bool _obscurePassword = true;
+  final _staffIdCtrl = TextEditingController();
+  final _passwordCtrl = TextEditingController();
+  final _facilityCtrl = TextEditingController(text: 'MFH-001');
+  bool _obscure = true;
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _staffIdCtrl.dispose(); _passwordCtrl.dispose(); _facilityCtrl.dispose();
+    super.dispose();
+  }
+
+  Future<void> _onLogin() async {
+    if (_staffIdCtrl.text.isEmpty || _passwordCtrl.text.isEmpty) return;
+    setState(() => _isLoading = true);
+    await Future.delayed(const Duration(milliseconds: 1400));
+    if (!mounted) return;
+    final appState = context.read<AppState>();
+    final user = MockCurrentUser.forRole(appState.selectedRole);
+    appState.login(user);
+    setState(() => _isLoading = false);
+    context.go('/home');
+  }
 
   @override
   Widget build(BuildContext context) {
+    final role = context.watch<AppState>().selectedRole;
     return Scaffold(
       backgroundColor: AppColors.background,
-      appBar: const MedFlowAppBar(title: ''),
-      body: SingleChildScrollView(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const SizedBox(height: 20),
-            Text(
-              'Welcome Back',
-              style: Theme.of(context).textTheme.displaySmall,
-            ),
-            const SizedBox(height: 12),
-            Text(
-              'Log in to access your health records and appointments.',
-              style: Theme.of(context).textTheme.bodyMedium,
-            ),
-            const SizedBox(height: 48),
-            const TextField(
-              decoration: InputDecoration(
-                labelText: 'Email or Phone Number',
-                prefixIcon: Icon(Icons.person_outline_rounded),
-              ),
-              keyboardType: TextInputType.emailAddress,
-            ),
-            const SizedBox(height: 20),
-            TextField(
-              obscureText: _obscurePassword,
-              decoration: InputDecoration(
-                labelText: 'Password',
-                prefixIcon: const Icon(Icons.lock_outline_rounded),
-                suffixIcon: IconButton(
-                  icon: Icon(
-                    _obscurePassword ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                    size: 20,
+      body: Container(
+        decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
+        child: SafeArea(
+          child: SingleChildScrollView(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 24),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                GestureDetector(
+                  onTap: () => context.go('/role-select'),
+                  child: Container(
+                    padding: const EdgeInsets.all(10),
+                    decoration: BoxDecoration(
+                      color: AppColors.surfaceLight,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: AppColors.textSecondary),
                   ),
-                  onPressed: () => setState(() => _obscurePassword = !_obscurePassword),
                 ),
-              ),
-            ),
-            const SizedBox(height: 12),
-            Align(
-              alignment: Alignment.centerRight,
-              child: TextButton(
-                onPressed: () => context.push('/forgot-password'),
-                child: const Text('Forgot Password?'),
-              ),
-            ),
-            const SizedBox(height: 32),
-            GradientButton(
-              label: 'Log In',
-              onPressed: () => context.go('/home'),
-            ),
-            const SizedBox(height: 24),
-            Row(
-              children: [
-                const Expanded(child: TealDivider()),
-                Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Text('OR', style: Theme.of(context).textTheme.labelSmall),
+                const SizedBox(height: 36),
+                // Role indicator
+                RoleBadge(label: role.displayName),
+                const SizedBox(height: 16),
+                Text('Welcome Back',
+                  style: Theme.of(context).textTheme.displaySmall),
+                const SizedBox(height: 8),
+                Text('Sign in to access the clinical dashboard.',
+                  style: Theme.of(context).textTheme.bodyMedium),
+                const SizedBox(height: 40),
+                // Staff ID
+                _buildLabel('Staff ID'),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _staffIdCtrl,
+                  keyboardType: TextInputType.text,
+                  textInputAction: TextInputAction.next,
+                  decoration: const InputDecoration(
+                    hintText: 'e.g. DOC-2024-001',
+                    prefixIcon: Icon(Icons.badge_outlined, color: AppColors.textMuted),
+                  ),
                 ),
-                const Expanded(child: TealDivider()),
+                const SizedBox(height: 20),
+                _buildLabel('Password'),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _passwordCtrl,
+                  obscureText: _obscure,
+                  textInputAction: TextInputAction.done,
+                  onSubmitted: (_) => _onLogin(),
+                  decoration: InputDecoration(
+                    hintText: '••••••••',
+                    prefixIcon: const Icon(Icons.lock_outline_rounded, color: AppColors.textMuted),
+                    suffixIcon: IconButton(
+                      icon: Icon(_obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
+                        color: AppColors.textMuted, size: 20),
+                      onPressed: () => setState(() => _obscure = !_obscure),
+                    ),
+                  ),
+                ),
+                const SizedBox(height: 12),
+                Align(
+                  alignment: Alignment.centerRight,
+                  child: TextButton(
+                    onPressed: () => context.push('/forgot-password'),
+                    child: const Text('Forgot Password?',
+                      style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600, fontSize: 13)),
+                  ),
+                ),
+                const SizedBox(height: 32),
+                GradientButton(
+                  label: 'Sign In',
+                  icon: Icons.login_rounded,
+                  isLoading: _isLoading,
+                  onPressed: _onLogin,
+                ),
+                const SizedBox(height: 40),
+                // Facility divider
+                const TealDivider(),
+                const SizedBox(height: 20),
+                _buildLabel('Facility Code'),
+                const SizedBox(height: 8),
+                TextField(
+                  controller: _facilityCtrl,
+                  decoration: const InputDecoration(
+                    hintText: 'MFH-001',
+                    prefixIcon: Icon(Icons.business_rounded, color: AppColors.textMuted),
+                    helperText: 'Contact your administrator for your facility code.',
+                    helperStyle: TextStyle(color: AppColors.textMuted, fontSize: 12),
+                  ),
+                ),
+                const SizedBox(height: 40),
+                // Demo hint
+                Container(
+                  padding: const EdgeInsets.all(14),
+                  decoration: BoxDecoration(
+                    color: AppColors.primary.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(12),
+                    border: Border.all(color: AppColors.primary.withOpacity(0.2)),
+                  ),
+                  child: Row(
+                    children: [
+                      const Icon(Icons.info_outline_rounded, color: AppColors.primary, size: 18),
+                      const SizedBox(width: 10),
+                      Expanded(
+                        child: Text('Demo: use any Staff ID and password to sign in.',
+                          style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontFamily: 'Inter')),
+                      ),
+                    ],
+                  ),
+                ),
               ],
             ),
-            const SizedBox(height: 24),
-            SizedBox(
-              width: double.infinity,
-              child: OutlinedButton.icon(
-                onPressed: () {},
-                icon: const Icon(Icons.fingerprint_rounded),
-                label: const Text('Login with Biometrics'),
-              ),
-            ),
-            const SizedBox(height: 40),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Text(
-                  'Don\'t have an account?',
-                  style: Theme.of(context).textTheme.bodyMedium,
-                ),
-                TextButton(
-                  onPressed: () => context.push('/signup/step1'),
-                  child: const Text('Sign Up'),
-                ),
-              ],
-            ),
-          ],
+          ),
         ),
       ),
     );
+  }
+
+  Widget _buildLabel(String text) {
+    return Text(text,
+      style: const TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600,
+        color: AppColors.textSecondary));
   }
 }

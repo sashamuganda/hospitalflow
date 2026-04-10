@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import '../../core/colors.dart';
+import '../../core/app_state.dart';
 import '../../data/mock_data.dart';
 import '../../widgets/shared_widgets.dart';
 
@@ -9,6 +11,10 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final appState = context.watch<AppState>();
+    final user = appState.currentUser;
+    final role = appState.selectedRole;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Container(
@@ -22,17 +28,23 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  _buildHeader(context),
+                  _buildHeader(context, user, role),
                   const SizedBox(height: 24),
-                  _buildQuickActions(context),
-                  const SizedBox(height: 32),
-                  _buildUpcomingAppointment(context),
-                  const SizedBox(height: 24),
-                  _buildHealthSnapshot(context),
-                  const SizedBox(height: 24),
-                  _buildActiveMedications(context),
-                  const SizedBox(height: 24),
-                  _buildHealthTipBanner(context),
+                  if (role == StaffRole.admin) ...[
+                    _buildAdminKPIs(context),
+                    const SizedBox(height: 24),
+                    _buildDepartmentStatus(context),
+                    const SizedBox(height: 24),
+                    _buildRecentActivity(context),
+                  ] else ...[
+                    _buildStaffKPIs(context, role),
+                    const SizedBox(height: 24),
+                    _buildUrgentAlerts(context),
+                    const SizedBox(height: 24),
+                    _buildTodaySchedule(context),
+                    const SizedBox(height: 24),
+                    _buildQuickActions(context, role),
+                  ],
                   const SizedBox(height: 24),
                 ],
               ),
@@ -43,202 +55,225 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHeader(BuildContext context) {
+  Widget _buildHeader(BuildContext context, StaffMember? user, StaffRole role) {
+    final greeting = _greeting();
+    final name = user?.displayName ?? role.displayName;
     return Row(
       children: [
         Expanded(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(
-                'Good Morning, ${MockUser.firstName}',
-                style: Theme.of(context).textTheme.headlineMedium,
-              ),
-              const SizedBox(height: 4),
-              Row(
-                children: [
-                  const Icon(Icons.info_outline_rounded, size: 14, color: AppColors.primary),
-                  const SizedBox(width: 6),
-                  Text(
-                    'You have an appointment tomorrow',
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.textSecondary),
-                  ),
-                ],
-              ),
+              Text('$greeting,', style: Theme.of(context).textTheme.bodyMedium),
+              const SizedBox(height: 2),
+              Text(name, style: Theme.of(context).textTheme.headlineMedium),
+              const SizedBox(height: 6),
+              RoleBadge(label: role.displayName),
             ],
           ),
         ),
-        IconButton(
-          onPressed: () => context.push('/notifications'),
-          icon: Badge(
-            label: const Text('2'),
-            child: const Icon(Icons.notifications_outlined, size: 28),
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildQuickActions(BuildContext context) {
-    final actions = [
-      {'icon': Icons.calendar_month_rounded, 'label': 'Book Visit', 'route': '/appointments/book/step1'},
-      {'icon': Icons.medical_services_rounded, 'label': 'Symptom AI', 'route': '/symptom-checker'},
-      {'icon': Icons.video_call_rounded, 'label': 'Talk to Doc', 'route': '/telemedicine'},
-      {'icon': Icons.location_on_rounded, 'label': 'Find Clinic', 'route': '/facilities'},
-    ];
-
-    return Row(
-      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-      children: actions.map((action) {
-        return GestureDetector(
-          onTap: () => context.push(action['route'] as String),
-          child: Column(
-            children: [
-              Container(
-                width: 60,
-                height: 60,
-                decoration: BoxDecoration(
-                  gradient: AppColors.tealGradient.withOpacity(0.15) as Gradient?,
-                  borderRadius: BorderRadius.circular(16),
-                  border: Border.all(color: AppColors.primary.withOpacity(0.2)),
-                ),
-                child: Icon(action['icon'] as IconData, color: AppColors.primary, size: 28),
-              ),
-              const SizedBox(height: 8),
-              Text(
-                action['label'] as String,
-                style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textSecondary),
-              ),
-            ],
-          ),
-        );
-      }).toList(),
-    );
-  }
-
-  Widget _buildUpcomingAppointment(BuildContext context) {
-    final appointment = mockAppointments.first;
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SectionHeader(title: 'Upcoming Appointment', actionLabel: 'View All'),
-        const SizedBox(height: 12),
-        GlassCard(
-          onTap: () => context.push('/appointments/detail/${appointment.id}'),
-          padding: const EdgeInsets.all(20),
-          child: Row(
-            children: [
-              AvatarCircle(initials: appointment.doctorAvatar, size: 56),
-              const SizedBox(width: 16),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(appointment.doctorName, style: Theme.of(context).textTheme.titleLarge),
-                    Text(appointment.doctorSpecialty, style: Theme.of(context).textTheme.bodySmall),
-                    const SizedBox(height: 8),
-                    Row(
-                      children: [
-                        const Icon(Icons.calendar_today_rounded, size: 14, color: AppColors.primary),
-                        const SizedBox(width: 6),
-                        Text('Tomorrow, 9:00 AM', style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.textPrimary)),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              const Icon(Icons.chevron_right_rounded, color: AppColors.textMuted),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  Widget _buildHealthSnapshot(BuildContext context) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const SectionHeader(title: 'Health Snapshot'),
-        const SizedBox(height: 12),
-        Row(
+        Stack(
           children: [
-            Expanded(
-              child: MetricCard(
-                label: 'Blood Pressure',
-                value: '${MockVitals.latestBP.toInt()}/${MockVitals.latestBPDiastolic.toInt()}',
-                unit: 'mmHg',
-                icon: Icons.monitor_heart_rounded,
-                color: AppColors.primary,
-                onTap: () => context.push('/health/vitals'),
+            IconButton(
+              onPressed: () => context.push('/notifications'),
+              icon: const Icon(Icons.notifications_outlined, size: 28, color: AppColors.textPrimary),
+            ),
+            Positioned(
+              right: 8, top: 8,
+              child: Container(
+                width: 18, height: 18,
+                decoration: const BoxDecoration(color: AppColors.error, shape: BoxShape.circle),
+                child: const Center(
+                  child: Text('3', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white, fontFamily: 'Inter')),
+                ),
               ),
             ),
-            const SizedBox(width: 16),
-            Expanded(
-              child: MetricCard(
-                label: 'Wellness Score',
-                value: MockUser.healthScore,
-                unit: '/100',
-                icon: Icons.bolt_rounded,
-                color: AppColors.success,
-                onTap: () => context.push('/health/insights'),
-              ),
-            ),
+          ],
+        ),
+        const SizedBox(width: 4),
+        AvatarCircle(initials: user?.avatarInitials ?? 'DR', size: 44),
+      ],
+    );
+  }
+
+  // Admin-specific KPIs
+  Widget _buildAdminKPIs(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SectionHeader(title: 'Hospital Today'),
+        const SizedBox(height: 12),
+        GridView.count(
+          shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),
+          crossAxisCount: 2, crossAxisSpacing: 12, mainAxisSpacing: 12,
+          childAspectRatio: 1.3,
+          children: [
+            KpiCard(label: 'OPD Patients', value: '${mockKPIs.todayOPDCount}',
+              subtitle: '+12 from yesterday', icon: Icons.people_alt_rounded, color: AppColors.primary),
+            KpiCard(label: 'IPD Occupancy', value: '${mockKPIs.currentIPDOccupancy}/${mockKPIs.totalBeds}',
+              subtitle: '${mockKPIs.ipdOccupancyPercent.toInt()}% utilisation',
+              icon: Icons.bed_rounded, color: AppColors.secondary),
+            KpiCard(label: 'Staff On Duty', value: '${mockKPIs.staffOnDuty}',
+              icon: Icons.groups_rounded, color: AppColors.success),
+            KpiCard(label: 'Avg Wait Time', value: '${mockKPIs.avgWaitTimeMinutes.toInt()} min',
+              icon: Icons.timer_outlined, color: AppColors.warning),
           ],
         ),
       ],
     );
   }
 
-  Widget _buildActiveMedications(BuildContext context) {
-    final meds = mockMedications.where((m) => m.isActive).toList();
+  // Staff-role KPIs
+  Widget _buildStaffKPIs(BuildContext context, StaffRole role) {
+    final queue = mockQueue.where((q) => q.status == QueueStatus.waiting).length;
+    final immediate = mockQueue.where((q) => q.triageLevel == TriageLevel.immediate).length;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SectionHeader(title: 'At a Glance'),
+        const SizedBox(height: 12),
+        Row(
+          children: [
+            Expanded(
+              child: KpiCard(
+                label: 'Waiting Patients',
+                value: '$queue',
+                subtitle: '$immediate immediate',
+                icon: Icons.people_alt_rounded,
+                color: immediate > 0 ? AppColors.error : AppColors.primary,
+                onTap: () => context.push('/queue'),
+              ),
+            ),
+            const SizedBox(width: 12),
+            if (role == StaffRole.doctor || role == StaffRole.receptionist)
+              Expanded(
+                child: KpiCard(
+                  label: "Today's Schedule",
+                  value: '${mockStaffAppointments.length}',
+                  subtitle: '${mockStaffAppointments.where((a) => a.status == AppointmentStatus.confirmed).length} confirmed',
+                  icon: Icons.calendar_today_rounded,
+                  color: AppColors.secondary,
+                  onTap: () => context.push('/appointments'),
+                ),
+              )
+            else
+              Expanded(
+                child: KpiCard(
+                  label: 'Pending Labs',
+                  value: '${mockKPIs.pendingLabResults}',
+                  icon: Icons.science_rounded,
+                  color: AppColors.secondary,
+                  onTap: () => context.push('/lab'),
+                ),
+              ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget _buildUrgentAlerts(BuildContext context) {
+    final criticals = mockQueue.where((q) =>
+      q.triageLevel == TriageLevel.immediate || q.triageLevel == TriageLevel.urgent).take(2).toList();
+    if (criticals.isEmpty) return const SizedBox.shrink();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         SectionHeader(
-          title: 'Active Medications',
-          actionLabel: 'See All',
-          onAction: () => context.push('/medications'),
+          title: '⚡ Urgent Alerts',
+          actionLabel: 'View Queue',
+          onAction: () => context.push('/queue'),
+        ),
+        const SizedBox(height: 12),
+        ...criticals.map((p) => Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: GlassCard(
+            borderColor: p.triageLevel.color.withOpacity(0.4),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            onTap: () => context.push('/queue/triage/${p.id}'),
+            child: Row(
+              children: [
+                Container(
+                  width: 40, height: 40,
+                  decoration: BoxDecoration(
+                    color: p.triageLevel.color.withOpacity(0.15),
+                    shape: BoxShape.circle,
+                  ),
+                  child: Center(
+                    child: Text('Q${p.queueNumber}',
+                      style: TextStyle(color: p.triageLevel.color,
+                        fontWeight: FontWeight.w800, fontSize: 13, fontFamily: 'Inter')),
+                  ),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(children: [
+                        Text(p.patientName, style: Theme.of(context).textTheme.titleSmall),
+                        const SizedBox(width: 8),
+                        TriageChip(level: p.triageLevel, compact: true),
+                      ]),
+                      const SizedBox(height: 4),
+                      Text(p.chiefComplaint, style: Theme.of(context).textTheme.bodySmall,
+                        maxLines: 1, overflow: TextOverflow.ellipsis),
+                    ],
+                  ),
+                ),
+                Text('${p.waitMinutes}m',
+                  style: TextStyle(color: p.triageLevel.color,
+                    fontWeight: FontWeight.w700, fontSize: 13, fontFamily: 'Inter')),
+              ],
+            ),
+          ),
+        )),
+      ],
+    );
+  }
+
+  Widget _buildTodaySchedule(BuildContext context) {
+    final apts = mockStaffAppointments.take(3).toList();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SectionHeader(
+          title: "Today's Schedule",
+          actionLabel: 'Full Schedule',
+          onAction: () => context.push('/appointments'),
         ),
         const SizedBox(height: 12),
         ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: meds.take(2).length,
-          separatorBuilder: (_, __) => const SizedBox(height: 12),
-          itemBuilder: (context, index) {
-            final med = meds[index];
+          itemCount: apts.length,
+          separatorBuilder: (_, __) => const SizedBox(height: 10),
+          itemBuilder: (context, i) {
+            final a = apts[i];
+            final hour = a.dateTime.hour.toString().padLeft(2, '0');
+            final min = a.dateTime.minute.toString().padLeft(2, '0');
             return GlassCard(
-              onTap: () => context.push('/medications/detail/${med.id}'),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 14),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               child: Row(
                 children: [
                   Container(
-                    width: 44,
-                    height: 44,
-                    decoration: BoxDecoration(
-                      color: AppColors.secondary.withOpacity(0.15),
-                      shape: BoxShape.circle,
-                    ),
-                    child: const Icon(Icons.medication_outlined, color: AppColors.secondary, size: 24),
+                    width: 48,
+                    child: Text('$hour:$min',
+                      style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700,
+                        fontSize: 14, fontFamily: 'Inter')),
                   ),
-                  const SizedBox(width: 16),
+                  const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(med.name, style: Theme.of(context).textTheme.titleMedium),
-                        Text('${med.dosage} • ${med.frequency}', style: Theme.of(context).textTheme.bodySmall),
+                        Text(a.patientName, style: Theme.of(context).textTheme.titleSmall),
+                        Text('${a.type}${a.room != null ? ' · ${a.room}' : ''}',
+                          style: Theme.of(context).textTheme.bodySmall),
                       ],
                     ),
                   ),
-                  Column(
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text('Next Dose', style: Theme.of(context).textTheme.labelSmall),
-                      const Text('9:00 PM', style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold, fontSize: 13)),
-                    ],
-                  ),
+                  StatusBadge(label: a.status.label, color: a.status.color, fontSize: 11),
                 ],
               ),
             );
@@ -248,34 +283,143 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildHealthTipBanner(BuildContext context) {
-    return GlassCard(
-      gradient: AppColors.violetGradient.withOpacity(0.2) as Gradient?,
-      borderColor: AppColors.secondary.withOpacity(0.3),
-      onTap: () => context.push('/health-tips'),
-      child: Row(
-        children: [
-          const Icon(Icons.lightbulb_outline_rounded, color: AppColors.secondary, size: 32),
-          const SizedBox(width: 16),
-          Expanded(
+  Widget _buildQuickActions(BuildContext context, StaffRole role) {
+    List<Map<String, dynamic>> actions = [];
+    if (role == StaffRole.doctor) {
+      actions = [
+        {'icon': Icons.people_alt_rounded, 'label': 'Queue', 'route': '/queue'},
+        {'icon': Icons.folder_shared_rounded, 'label': 'EMR', 'route': '/emr'},
+        {'icon': Icons.video_call_rounded, 'label': 'Telemedicine', 'route': '/telemedicine'},
+        {'icon': Icons.science_rounded, 'label': 'Lab Orders', 'route': '/emr/lab-order'},
+      ];
+    } else if (role == StaffRole.nurse) {
+      actions = [
+        {'icon': Icons.people_alt_rounded, 'label': 'Queue', 'route': '/queue'},
+        {'icon': Icons.monitor_heart_rounded, 'label': 'Vitals', 'route': '/emr/vitals'},
+        {'icon': Icons.bed_rounded, 'label': 'Ward', 'route': '/ward'},
+        {'icon': Icons.science_rounded, 'label': 'Lab', 'route': '/lab'},
+      ];
+    } else {
+      actions = [
+        {'icon': Icons.people_alt_rounded, 'label': 'Queue', 'route': '/queue'},
+        {'icon': Icons.calendar_month_rounded, 'label': 'Bookings', 'route': '/appointments'},
+        {'icon': Icons.person_search_rounded, 'label': 'Patients', 'route': '/emr'},
+        {'icon': Icons.bar_chart_rounded, 'label': 'Reports', 'route': '/analytics'},
+      ];
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SectionHeader(title: 'Quick Actions'),
+        const SizedBox(height: 12),
+        Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: actions.map((a) => GestureDetector(
+            onTap: () => context.push(a['route'] as String),
             child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const Text(
-                  'Health Tip of the Day',
-                  style: TextStyle(color: AppColors.secondary, fontWeight: FontWeight.bold, fontSize: 13),
+                Container(
+                  width: 64, height: 64,
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceLight,
+                    borderRadius: BorderRadius.circular(18),
+                    border: Border.all(color: AppColors.divider),
+                  ),
+                  child: Icon(a['icon'] as IconData, color: AppColors.primary, size: 28),
                 ),
-                const SizedBox(height: 4),
-                Text(
-                  'Small sleep improvements have outsized cardiovascular benefits.',
-                  style: Theme.of(context).textTheme.bodyMedium?.copyWith(height: 1.3),
+                const SizedBox(height: 8),
+                Text(a['label'] as String,
+                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600,
+                    color: AppColors.textSecondary, fontFamily: 'Inter')),
+              ],
+            ),
+          )).toList(),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDepartmentStatus(BuildContext context) {
+    const depts = [
+      {'dept': 'Emergency', 'patients': 4, 'color': AppColors.error},
+      {'dept': 'OPD - Internal Med', 'patients': 18, 'color': AppColors.primary},
+      {'dept': 'Pediatrics', 'patients': 9, 'color': AppColors.secondary},
+      {'dept': 'Maternity', 'patients': 6, 'color': AppColors.success},
+    ];
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const SectionHeader(title: 'Department Load'),
+        const SizedBox(height: 12),
+        ...depts.map((d) => Padding(
+          padding: const EdgeInsets.only(bottom: 8),
+          child: GlassCard(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Row(
+              children: [
+                Container(width: 8, height: 8,
+                  decoration: BoxDecoration(color: d['color'] as Color, shape: BoxShape.circle)),
+                const SizedBox(width: 12),
+                Expanded(child: Text(d['dept'] as String, style: Theme.of(context).textTheme.bodyMedium)),
+                Text('${d['patients']} patients',
+                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.primary, fontFamily: 'Inter')),
+              ],
+            ),
+          ),
+        )),
+      ],
+    );
+  }
+
+  Widget _buildRecentActivity(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        SectionHeader(
+          title: 'Recent Activity',
+          actionLabel: 'All Alerts',
+          onAction: () => context.push('/notifications'),
+        ),
+        const SizedBox(height: 12),
+        ...mockNotifications.take(3).map((n) => Padding(
+          padding: const EdgeInsets.only(bottom: 10),
+          child: GlassCard(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            borderColor: n.isRead ? null : n.typeColor.withOpacity(0.3),
+            child: Row(
+              children: [
+                Container(
+                  width: 36, height: 36,
+                  decoration: BoxDecoration(
+                    color: n.typeColor.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(n.typeIcon, color: n.typeColor, size: 18),
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(n.title, style: Theme.of(context).textTheme.titleSmall),
+                      const SizedBox(height: 2),
+                      Text(n.message, style: Theme.of(context).textTheme.bodySmall,
+                        maxLines: 1, overflow: TextOverflow.ellipsis),
+                    ],
+                  ),
                 ),
               ],
             ),
           ),
-          const Icon(Icons.chevron_right_rounded, color: AppColors.textMuted),
-        ],
-      ),
+        )),
+      ],
     );
+  }
+
+  String _greeting() {
+    final h = DateTime.now().hour;
+    if (h < 12) return 'Good Morning';
+    if (h < 17) return 'Good Afternoon';
+    return 'Good Evening';
   }
 }

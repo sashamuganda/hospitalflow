@@ -1,5 +1,5 @@
-name: medflow
-description: PatientFlow — Your complete health companion
+name: medflow_staff
+description: MedFlow Staff — Hospital & Clinical Companion
 publish_to: 'none'
 version: 1.0.0+1
 
