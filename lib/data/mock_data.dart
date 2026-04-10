@@ -5,6 +5,8 @@ enum StaffRole { doctor, nurse, admin, receptionist, pharmacist, labTech }
 enum TriageLevel { immediate, urgent, semiUrgent, nonUrgent }
 enum QueueStatus { waiting, inConsultation, completed, transferred, noShow }
 enum AppointmentStatus { confirmed, pending, completed, cancelled, noShow }
+enum BedStatus { empty, occupied, cleaning }
+enum PrescriptionStatus { pending, processing, dispensed }
 
 // ─── Enum Extensions ──────────────────────────────────────────────────────────
 extension StaffRoleX on StaffRole {
@@ -92,6 +94,40 @@ extension AppointmentStatusX on AppointmentStatus {
       case AppointmentStatus.completed: return const Color(0xFF00E5A0);
       case AppointmentStatus.cancelled: return const Color(0xFF4A5880);
       case AppointmentStatus.noShow: return const Color(0xFFFF4C6A);
+    }
+  }
+}
+
+extension BedStatusX on BedStatus {
+  String get label {
+    switch (this) {
+      case BedStatus.empty: return 'Empty';
+      case BedStatus.occupied: return 'Occupied';
+      case BedStatus.cleaning: return 'Cleaning';
+    }
+  }
+  Color get color {
+    switch (this) {
+      case BedStatus.empty: return const Color(0xFF00E5A0);
+      case BedStatus.occupied: return const Color(0xFF00D4FF);
+      case BedStatus.cleaning: return const Color(0xFFFFB830);
+    }
+  }
+}
+
+extension PrescriptionStatusX on PrescriptionStatus {
+  String get label {
+    switch (this) {
+      case PrescriptionStatus.pending: return 'Pending';
+      case PrescriptionStatus.processing: return 'Processing';
+      case PrescriptionStatus.dispensed: return 'Dispensed';
+    }
+  }
+  Color get color {
+    switch (this) {
+      case PrescriptionStatus.pending: return const Color(0xFFFFB830);
+      case PrescriptionStatus.processing: return const Color(0xFF00D4FF);
+      case PrescriptionStatus.dispensed: return const Color(0xFF00E5A0);
     }
   }
 }
@@ -620,4 +656,143 @@ final List<StaffMember> mockStaffList = [
   const StaffMember(id: 's003', firstName: 'Kwame', lastName: 'Mensah', role: StaffRole.admin,
     department: 'Administration', staffId: 'ADM-2024-001',
     email: 'k.mensah@medflow.hospital', phone: '+254 700 003 003'),
+];
+
+// ─── Ward Management Models ───────────────────────────────────────────────────
+class Ward {
+  final String id;
+  final String name;
+  final int totalBeds;
+  final int occupiedBeds;
+  final String supervisor;
+
+  const Ward({
+    required this.id,
+    required this.name,
+    required this.totalBeds,
+    required this.occupiedBeds,
+    required this.supervisor,
+  });
+  
+  double get occupancyPercent => (occupiedBeds / totalBeds) * 100;
+}
+
+class InpatientBed {
+  final String id;
+  final String wardId;
+  final String bedNumber;
+  final BedStatus status;
+  final String? patientId;
+  final String? patientName;
+
+  const InpatientBed({
+    required this.id,
+    required this.wardId,
+    required this.bedNumber,
+    required this.status,
+    this.patientId,
+    this.patientName,
+  });
+  
+  String get patientInitials {
+    if (patientName == null) return '';
+    final parts = patientName!.split(' ');
+    return parts.length >= 2 ? '${parts[0][0]}${parts[1][0]}' : patientName![0];
+  }
+}
+
+class AdmissionRecord {
+  final String id;
+  final String patientId;
+  final String patientName;
+  final DateTime admissionDate;
+  final String reason;
+  final String treatingDoctor;
+
+  const AdmissionRecord({
+    required this.id,
+    required this.patientId,
+    required this.patientName,
+    required this.admissionDate,
+    required this.reason,
+    required this.treatingDoctor,
+  });
+}
+
+// ─── Mock Wards & Beds ────────────────────────────────────────────────────────
+final List<Ward> mockWards = [
+  const Ward(id: 'w001', name: 'General Ward', totalBeds: 24, occupiedBeds: 18, supervisor: 'Grace Achieng'),
+  const Ward(id: 'w002', name: 'ICU', totalBeds: 8, occupiedBeds: 6, supervisor: 'Dennis Njoroge'),
+  const Ward(id: 'w003', name: 'Maternity', totalBeds: 12, occupiedBeds: 8, supervisor: 'Sarah Wanjiku'),
+];
+
+final List<InpatientBed> mockBeds = [
+  // General Ward (w001)
+  const InpatientBed(id: 'b001', wardId: 'w001', bedNumber: 'A1', status: BedStatus.occupied, patientId: 'p020', patientName: 'John Doe'),
+  const InpatientBed(id: 'b002', wardId: 'w001', bedNumber: 'A2', status: BedStatus.occupied, patientId: 'p021', patientName: 'Jane Smith'),
+  const InpatientBed(id: 'b003', wardId: 'w001', bedNumber: 'A3', status: BedStatus.cleaning),
+  const InpatientBed(id: 'b004', wardId: 'w001', bedNumber: 'A4', status: BedStatus.empty),
+  const InpatientBed(id: 'b005', wardId: 'w001', bedNumber: 'A5', status: BedStatus.occupied, patientId: 'p022', patientName: 'Mark Lee'),
+  const InpatientBed(id: 'b006', wardId: 'w001', bedNumber: 'A6', status: BedStatus.empty),
+  const InpatientBed(id: 'b007', wardId: 'w001', bedNumber: 'B1', status: BedStatus.occupied, patientId: 'p023', patientName: 'Sophie Turner'),
+  const InpatientBed(id: 'b008', wardId: 'w001', bedNumber: 'B2', status: BedStatus.cleaning),
+  
+  // ICU (w002)
+  const InpatientBed(id: 'b101', wardId: 'w002', bedNumber: 'ICU-1', status: BedStatus.occupied, patientId: 'p030', patientName: 'Mike Ross'),
+  const InpatientBed(id: 'b102', wardId: 'w002', bedNumber: 'ICU-2', status: BedStatus.occupied, patientId: 'p031', patientName: 'Harvey Specter'),
+  const InpatientBed(id: 'b103', wardId: 'w002', bedNumber: 'ICU-3', status: BedStatus.empty),
+  const InpatientBed(id: 'b104', wardId: 'w002', bedNumber: 'ICU-4', status: BedStatus.cleaning),
+];
+
+final List<AdmissionRecord> mockAdmissions = [
+  AdmissionRecord(id: 'ar001', patientId: 'p020', patientName: 'John Doe',
+    admissionDate: DateTime.now().subtract(const Duration(days: 3)),
+    reason: 'Post-appendectomy recovery', treatingDoctor: 'Dr. Amara Osei'),
+  AdmissionRecord(id: 'ar002', patientId: 'p030', patientName: 'Mike Ross',
+    admissionDate: DateTime.now().subtract(const Duration(days: 1)),
+    reason: 'Severe respiratory distress', treatingDoctor: 'Dr. John Kariuki'),
+];
+
+// ─── Pharmacy Models ─────────────────────────────────────────────────────────
+class PharmacyPrescription {
+  final String id;
+  final String patientId;
+  final String patientName;
+  final String doctorName;
+  final DateTime prescribedAt;
+  final List<String> medications;
+  final PrescriptionStatus status;
+  final String? notes;
+
+  const PharmacyPrescription({
+    required this.id,
+    required this.patientId,
+    required this.patientName,
+    required this.doctorName,
+    required this.prescribedAt,
+    required this.medications,
+    required this.status,
+    this.notes,
+  });
+}
+
+final List<PharmacyPrescription> mockPharmacyPrescriptions = [
+  PharmacyPrescription(
+    id: 'rx001', patientId: 'p005', patientName: 'Samuel Ouma', doctorName: 'Dr. Amara Osei',
+    prescribedAt: DateTime.now().subtract(const Duration(minutes: 45)),
+    medications: ['Enalapril 20mg OD (30 days)', 'Amlodipine 5mg OD (30 days)'],
+    status: PrescriptionStatus.pending, notes: 'Patient waiting in pharmacy lobby',
+  ),
+  PharmacyPrescription(
+    id: 'rx002', patientId: 'p002', patientName: 'Mary Njeri', doctorName: 'Dr. John Kariuki',
+    prescribedAt: DateTime.now().subtract(const Duration(hours: 2)),
+    medications: ['Amoxicillin 500mg TDS (7 days)', 'Paracetamol 1g PRN'],
+    status: PrescriptionStatus.processing,
+  ),
+  PharmacyPrescription(
+    id: 'rx003', patientId: 'p004', patientName: 'Alice Wambua', doctorName: 'Dr. Priya Patel',
+    prescribedAt: DateTime.now().subtract(const Duration(hours: 4)),
+    medications: ['Sumatriptan 50mg PRN (10 tabs)'],
+    status: PrescriptionStatus.dispensed,
+  ),
 ];
