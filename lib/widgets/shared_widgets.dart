@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../core/colors.dart';
 import '../data/mock_data.dart';
 
@@ -94,7 +95,10 @@ class GradientButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: isLoading ? null : onPressed,
+      onTap: isLoading ? null : () {
+        HapticFeedback.lightImpact();
+        onPressed();
+      },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         height: 54,
