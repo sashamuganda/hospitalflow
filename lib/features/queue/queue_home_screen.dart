@@ -14,23 +14,22 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
   TriageLevel? _filterLevel;
   String _filterStatus = 'All';
 
-  List<PatientInQueue> get _filtered {
-    var list = mockQueue;
-    if (_filterLevel != null) list = list.where((q) => q.triageLevel == _filterLevel).toList();
-    if (_filterStatus != 'All') {
-      list = list.where((q) {
-        switch (_filterStatus) {
-          case 'Waiting': return q.status == QueueStatus.waiting;
-          case 'In Consult': return q.status == QueueStatus.inConsultation;
-          default: return true;
-        }
-      }).toList();
-    }
-    return list;
-  }
-
   @override
   Widget build(BuildContext context) {
+    // ⚡ Bolt: Cache filtered results and counts in local variables to avoid O(N^2) complexity
+    // when accessed multiple times during a single build cycle (especially inside builders).
+    final filtered = mockQueue.where((q) {
+      final matchesLevel = _filterLevel == null || q.triageLevel == _filterLevel;
+      bool matchesStatus = true;
+      if (_filterStatus != 'All') {
+        switch (_filterStatus) {
+          case 'Waiting': matchesStatus = q.status == QueueStatus.waiting; break;
+          case 'In Consult': matchesStatus = q.status == QueueStatus.inConsultation; break;
+        }
+      }
+      return matchesLevel && matchesStatus;
+    }).toList();
+
     final waiting = mockQueue.where((q) => q.status == QueueStatus.waiting).length;
     final immediate = mockQueue.where((q) => q.triageLevel == TriageLevel.immediate).length;
 
@@ -75,18 +74,18 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
               const SizedBox(height: 8),
               // Queue list
               Expanded(
-                child: _filtered.isEmpty
+                child: filtered.isEmpty
                     ? const EmptyState(
                         icon: Icons.people_alt_outlined,
                         title: 'Queue is clear',
                         message: 'No patients match the current filter.')
                     : ListView.separated(
                         padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
-                        itemCount: _filtered.length,
+                        itemCount: filtered.length,
                         separatorBuilder: (_, __) => const SizedBox(height: 10),
                         itemBuilder: (context, i) => _QueueCard(
-                          patient: _filtered[i],
-                          onTap: () => context.push('/queue/triage/${_filtered[i].id}'),
+                          patient: filtered[i],
+                          onTap: () => context.push('/queue/triage/${filtered[i].id}'),
                         ),
                       ),
               ),
