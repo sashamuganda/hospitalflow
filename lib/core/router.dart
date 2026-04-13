@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'app_state.dart';
 import '../features/auth/splash_screen.dart';
 import '../features/auth/role_select_screen.dart';
 import '../features/auth/login_screen.dart';
@@ -29,9 +30,28 @@ import '../features/settings/settings_home_screen.dart';
 final _rootNavKey = GlobalKey<NavigatorState>();
 final _shellNavKey = GlobalKey<NavigatorState>();
 
-final GoRouter appRouter = GoRouter(
+GoRouter createRouter(AppState appState) => GoRouter(
   navigatorKey: _rootNavKey,
   initialLocation: '/splash',
+  refreshListenable: appState,
+  redirect: (context, state) {
+    final bool loggedIn = appState.isAuthenticated;
+    final bool isLoggingIn = state.matchedLocation == '/login' ||
+                             state.matchedLocation == '/role-select' ||
+                             state.matchedLocation == '/forgot-password' ||
+                             state.matchedLocation == '/splash';
+
+    // 1. If not logged in and NOT going to an auth page, redirect to /login
+    if (!loggedIn && !isLoggingIn) return '/login';
+
+    // 2. If logged in and going to an auth page (except splash), redirect to /home
+    if (loggedIn && (state.matchedLocation == '/login' || state.matchedLocation == '/role-select')) {
+      return '/home';
+    }
+
+    // 3. Otherwise, proceed as normal
+    return null;
+  },
   routes: [
     // ─── Auth ──────────────────────────────────────────────────────────────────
     GoRoute(path: '/splash',       builder: (_, __) => const SplashScreen()),

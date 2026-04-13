@@ -78,9 +78,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: _staffIdCtrl,
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.next,
+                  maxLength: 32,
                   decoration: const InputDecoration(
                     hintText: 'e.g. DOC-2024-001',
                     prefixIcon: Icon(Icons.badge_outlined, color: AppColors.textMuted),
+                    counterText: '',
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -91,8 +93,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   obscureText: _obscure,
                   textInputAction: TextInputAction.done,
                   onSubmitted: (_) => _onLogin(),
+                  maxLength: 64,
                   decoration: InputDecoration(
                     hintText: '••••••••',
+                    counterText: '',
                     prefixIcon: const Icon(Icons.lock_outline_rounded, color: AppColors.textMuted),
                     suffixIcon: IconButton(
                       icon: Icon(_obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
@@ -125,11 +129,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 8),
                 TextField(
                   controller: _facilityCtrl,
+                  maxLength: 16,
                   decoration: const InputDecoration(
                     hintText: 'MFH-001',
                     prefixIcon: Icon(Icons.business_rounded, color: AppColors.textMuted),
                     helperText: 'Contact your administrator for your facility code.',
                     helperStyle: TextStyle(color: AppColors.textMuted, fontSize: 12),
+                    counterText: '',
                   ),
                 ),
                 const SizedBox(height: 40),
