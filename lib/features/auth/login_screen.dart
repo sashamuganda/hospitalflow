@@ -78,9 +78,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: _staffIdCtrl,
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.next,
+                  maxLength: 20,
                   decoration: const InputDecoration(
                     hintText: 'e.g. DOC-2024-001',
                     prefixIcon: Icon(Icons.badge_outlined, color: AppColors.textMuted),
+                    counterText: '',
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -91,9 +93,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   obscureText: _obscure,
                   textInputAction: TextInputAction.done,
                   onSubmitted: (_) => _onLogin(),
+                  maxLength: 32,
+                  autocorrect: false,
+                  enableSuggestions: false,
                   decoration: InputDecoration(
                     hintText: '••••••••',
                     prefixIcon: const Icon(Icons.lock_outline_rounded, color: AppColors.textMuted),
+                    counterText: '',
                     suffixIcon: IconButton(
                       icon: Icon(_obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
                         color: AppColors.textMuted, size: 20),

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'app_state.dart';
 import '../features/auth/splash_screen.dart';
 import '../features/auth/role_select_screen.dart';
 import '../features/auth/login_screen.dart';
@@ -29,10 +30,34 @@ import '../features/settings/settings_home_screen.dart';
 final _rootNavKey = GlobalKey<NavigatorState>();
 final _shellNavKey = GlobalKey<NavigatorState>();
 
-final GoRouter appRouter = GoRouter(
-  navigatorKey: _rootNavKey,
-  initialLocation: '/splash',
-  routes: [
+GoRouter createRouter(AppState appState) {
+  return GoRouter(
+    navigatorKey: _rootNavKey,
+    initialLocation: '/splash',
+    refreshListenable: appState,
+    redirect: (context, state) {
+      final bool isAuthenticated = appState.isAuthenticated;
+      final String location = state.matchedLocation;
+
+      // Define public routes that don't require authentication
+      final bool isAuthRoute = location == '/splash' ||
+          location == '/role-select' ||
+          location == '/login' ||
+          location == '/forgot-password';
+
+      // Security Guard: Redirect unauthenticated users to role selection
+      if (!isAuthenticated && !isAuthRoute) {
+        return '/role-select';
+      }
+
+      // If authenticated and trying to access login/role-select, go home
+      if (isAuthenticated && (location == '/login' || location == '/role-select')) {
+        return '/home';
+      }
+
+      return null;
+    },
+    routes: [
     // ─── Auth ──────────────────────────────────────────────────────────────────
     GoRoute(path: '/splash',       builder: (_, __) => const SplashScreen()),
     GoRoute(path: '/role-select',  builder: (_, __) => const RoleSelectScreen()),
@@ -95,4 +120,5 @@ final GoRouter appRouter = GoRouter(
     GoRoute(path: '/emr/vitals',    builder: (_, __) => const VitalsEntryStaff(patientId: '')),
     GoRoute(path: '/emr/lab-order', builder: (_, __) => const LabOrderScreen(patientId: '')),
   ],
-);
+  );
+}
