@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../core/colors.dart';
 import '../data/mock_data.dart';
 
@@ -62,6 +63,7 @@ class MedFlowAppBar extends StatelessWidget implements PreferredSizeWidget {
           ? IconButton(
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
               onPressed: () => Navigator.of(context).pop(),
+              tooltip: 'Back',
             )
           : leading,
       title: Text(title),
@@ -93,9 +95,16 @@ class GradientButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: isLoading ? null : onPressed,
-      child: AnimatedContainer(
+    return Semantics(
+      button: true,
+      label: label,
+      enabled: !isLoading,
+      child: GestureDetector(
+        onTap: isLoading ? null : () {
+          HapticFeedback.lightImpact();
+          onPressed();
+        },
+        child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         height: 54,
         decoration: BoxDecoration(
@@ -125,6 +134,7 @@ class GradientButton extends StatelessWidget {
                         fontWeight: FontWeight.w600, color: AppColors.textOnPrimary)),
                   ],
                 ),
+          ),
         ),
       ),
     );
