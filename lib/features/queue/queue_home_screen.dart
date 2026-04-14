@@ -31,8 +31,17 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final waiting = mockQueue.where((q) => q.status == QueueStatus.waiting).length;
-    final immediate = mockQueue.where((q) => q.triageLevel == TriageLevel.immediate).length;
+    // ⚡ PERFORMANCE: Pre-calculate counts in a single pass over mockQueue
+    final triageCounts = <TriageLevel, int>{};
+    for (var level in TriageLevel.values) {
+      triageCounts[level] = 0;
+    }
+    int waiting = 0;
+    for (var q in mockQueue) {
+      triageCounts[q.triageLevel] = (triageCounts[q.triageLevel] ?? 0) + 1;
+      if (q.status == QueueStatus.waiting) waiting++;
+    }
+    final immediate = triageCounts[TriageLevel.immediate] ?? 0;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -65,7 +74,7 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
                     ),
                     const SizedBox(height: 16),
                     // Triage legend
-                    _buildTriageLegend(),
+                    _buildTriageLegend(triageCounts),
                     const SizedBox(height: 16),
                     // Status filters
                     _buildStatusFilters(),
@@ -97,7 +106,7 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
     );
   }
 
-  Widget _buildTriageLegend() {
+  Widget _buildTriageLegend(Map<TriageLevel, int> counts) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: TriageLevel.values.map((level) {
@@ -120,7 +129,7 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
                 Text(level.shortCode,
                   style: TextStyle(fontSize: 9, fontWeight: FontWeight.w800,
                     color: isActive ? level.color : AppColors.textMuted, fontFamily: 'Inter')),
-                Text('${mockQueue.where((q) => q.triageLevel == level).length}',
+                Text('${counts[level] ?? 0}',
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700,
                     color: isActive ? level.color : AppColors.textSecondary, fontFamily: 'Inter')),
               ],

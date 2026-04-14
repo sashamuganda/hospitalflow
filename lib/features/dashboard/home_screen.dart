@@ -11,9 +11,20 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<AppState>();
-    final user = appState.currentUser;
-    final role = appState.selectedRole;
+    // ⚡ PERFORMANCE: Use context.select to only rebuild when specific properties change
+    final user = context.select<AppState, StaffMember?>((s) => s.currentUser);
+    final role = context.select<AppState, StaffRole>((s) => s.selectedRole);
+
+    // ⚡ PERFORMANCE: Cache computed lists and counts to avoid O(N) filtering multiple times during build
+    final waitingCount = mockQueue.where((q) => q.status == QueueStatus.waiting).length;
+    final immediateCount = mockQueue.where((q) => q.triageLevel == TriageLevel.immediate).length;
+    final urgentAlerts = mockQueue
+        .where((q) => q.triageLevel == TriageLevel.immediate || q.triageLevel == TriageLevel.urgent)
+        .take(2)
+        .toList();
+    final todayAptsCount = mockStaffAppointments.length;
+    final confirmedAptsCount = mockStaffAppointments.where((a) => a.status == AppointmentStatus.confirmed).length;
+    final upcomingApts = mockStaffAppointments.take(3).toList();
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -37,11 +48,11 @@ class HomeScreen extends StatelessWidget {
                     const SizedBox(height: 24),
                     _buildRecentActivity(context),
                   ] else ...[
-                    _buildStaffKPIs(context, role),
+                    _buildStaffKPIs(context, role, waitingCount, immediateCount, todayAptsCount, confirmedAptsCount),
                     const SizedBox(height: 24),
-                    _buildUrgentAlerts(context),
+                    _buildUrgentAlerts(context, urgentAlerts),
                     const SizedBox(height: 24),
-                    _buildTodaySchedule(context),
+                    _buildTodaySchedule(context, upcomingApts),
                     const SizedBox(height: 24),
                     _buildQuickActions(context, role),
                   ],
@@ -124,9 +135,7 @@ class HomeScreen extends StatelessWidget {
   }
 
   // Staff-role KPIs
-  Widget _buildStaffKPIs(BuildContext context, StaffRole role) {
-    final queue = mockQueue.where((q) => q.status == QueueStatus.waiting).length;
-    final immediate = mockQueue.where((q) => q.triageLevel == TriageLevel.immediate).length;
+  Widget _buildStaffKPIs(BuildContext context, StaffRole role, int queue, int immediate, int totalApts, int confirmedApts) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -149,8 +158,8 @@ class HomeScreen extends StatelessWidget {
               Expanded(
                 child: KpiCard(
                   label: "Today's Schedule",
-                  value: '${mockStaffAppointments.length}',
-                  subtitle: '${mockStaffAppointments.where((a) => a.status == AppointmentStatus.confirmed).length} confirmed',
+                  value: '$totalApts',
+                  subtitle: '$confirmedApts confirmed',
                   icon: Icons.calendar_today_rounded,
                   color: AppColors.secondary,
                   onTap: () => context.push('/appointments'),
@@ -172,9 +181,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildUrgentAlerts(BuildContext context) {
-    final criticals = mockQueue.where((q) =>
-      q.triageLevel == TriageLevel.immediate || q.triageLevel == TriageLevel.urgent).take(2).toList();
+  Widget _buildUrgentAlerts(BuildContext context, List<PatientInQueue> criticals) {
     if (criticals.isEmpty) return const SizedBox.shrink();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -232,8 +239,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTodaySchedule(BuildContext context) {
-    final apts = mockStaffAppointments.take(3).toList();
+  Widget _buildTodaySchedule(BuildContext context, List<StaffAppointment> apts) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [

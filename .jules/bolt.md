@@ -1,0 +1,3 @@
+## 2024-05-23 - Targeted State Selection and Build-Time Caching
+**Learning:** In Flutter applications using Provider, using `context.watch<AppState>()` causes widgets to rebuild whenever *any* part of the global state changes. Additionally, performing list filtering (O(N)) multiple times inside a `build` method leads to unnecessary complexity during every frame update.
+**Action:** Always prefer `context.select<AppState, T>()` to target specific state properties. Cache results of list filtering or data processing in local variables at the beginning of the `build` method to ensure they are calculated once per build and easily accessible by sub-widgets. Ensure proper imports (e.g., `mock_data.dart`) are present for types used in `context.select`.

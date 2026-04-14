@@ -39,7 +39,8 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final role = context.watch<AppState>().selectedRole;
+    // ⚡ PERFORMANCE: Use context.select to only rebuild when selectedRole changes
+    final role = context.select<AppState, StaffRole>((s) => s.selectedRole);
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Container(
