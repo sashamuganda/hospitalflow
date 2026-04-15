@@ -11,9 +11,10 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final appState = context.watch<AppState>();
-    final user = appState.currentUser;
-    final role = appState.selectedRole;
+    // Using context.select to only rebuild when currentUser or selectedRole changes.
+    // This avoids unnecessary rebuilds when other parts of AppState (like navItems) change.
+    final user = context.select<AppState, StaffMember?>((s) => s.currentUser);
+    final role = context.select<AppState, StaffRole>((s) => s.selectedRole);
 
     return Scaffold(
       backgroundColor: AppColors.background,
