@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../core/colors.dart';
 import '../data/mock_data.dart';
 
@@ -93,38 +94,47 @@ class GradientButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: isLoading ? null : onPressed,
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        height: 54,
-        decoration: BoxDecoration(
-          gradient: gradient ?? AppColors.tealGradient,
-          borderRadius: BorderRadius.circular(12),
-          boxShadow: [
-            BoxShadow(
-              color: AppColors.primary.withOpacity(0.25),
-              blurRadius: 16,
-              offset: const Offset(0, 6),
-            ),
-          ],
-        ),
-        child: Center(
-          child: isLoading
-              ? const SizedBox(width: 22, height: 22,
-                  child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5))
-              : Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (icon != null) ...[
-                      Icon(icon, color: AppColors.textOnPrimary, size: 20),
-                      const SizedBox(width: 8),
+    return Semantics(
+      button: true,
+      label: label,
+      child: GestureDetector(
+        onTap: isLoading
+            ? null
+            : () {
+                HapticFeedback.lightImpact();
+                onPressed();
+              },
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          height: 54,
+          decoration: BoxDecoration(
+            gradient: gradient ?? AppColors.tealGradient,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: AppColors.primary.withOpacity(0.25),
+                blurRadius: 16,
+                offset: const Offset(0, 6),
+              ),
+            ],
+          ),
+          child: Center(
+            child: isLoading
+                ? const SizedBox(width: 22, height: 22,
+                    child: CircularProgressIndicator(color: Colors.white, strokeWidth: 2.5))
+                : Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (icon != null) ...[
+                        Icon(icon, color: AppColors.textOnPrimary, size: 20),
+                        const SizedBox(width: 8),
+                      ],
+                      Text(label,
+                        style: const TextStyle(fontFamily: 'Inter', fontSize: 16,
+                          fontWeight: FontWeight.w600, color: AppColors.textOnPrimary)),
                     ],
-                    Text(label,
-                      style: const TextStyle(fontFamily: 'Inter', fontSize: 16,
-                        fontWeight: FontWeight.w600, color: AppColors.textOnPrimary)),
-                  ],
-                ),
+                  ),
+          ),
         ),
       ),
     );

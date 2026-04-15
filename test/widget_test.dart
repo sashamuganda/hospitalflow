@@ -5,6 +5,7 @@ import 'package:medflow_staff/main.dart';
 void main() {
   testWidgets('MedFlow Staff smoke test', (WidgetTester tester) async {
     await tester.pumpWidget(const MedFlowStaffApp());
+    await tester.pumpAndSettle(const Duration(seconds: 3));
     expect(find.byType(MaterialApp), findsOneWidget);
   });
 }

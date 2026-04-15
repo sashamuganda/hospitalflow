@@ -1,0 +1,3 @@
+## 2025-05-14 - Custom Widget Accessibility & Haptics
+**Learning:** Custom interactive widgets built with `GestureDetector` or `Listener` in Flutter do not automatically provide the same accessibility semantics or haptic feedback as standard Material widgets (like `ElevatedButton`). This can lead to a "dead" feel for users and makes the app less accessible to screen reader users.
+**Action:** Always wrap custom interactive components in a `Semantics` widget (setting `button: true` and providing a `label`) and explicitly trigger `HapticFeedback.lightImpact()` (or appropriate pattern) in the `onTap` handler.
