@@ -19,7 +19,23 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   void dispose() { _staffIdCtrl.dispose(); _emailCtrl.dispose(); super.dispose(); }
 
   Future<void> _onSubmit() async {
-    if (_staffIdCtrl.text.isEmpty || _emailCtrl.text.isEmpty) return;
+    final email = _emailCtrl.text.trim();
+    if (_staffIdCtrl.text.isEmpty || email.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter both Staff ID and Email')),
+      );
+      return;
+    }
+
+    // Basic email validation
+    final emailRegex = RegExp(r'^[\w-\.\+]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!emailRegex.hasMatch(email)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid email address')),
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
     await Future.delayed(const Duration(milliseconds: 1200));
     if (!mounted) return;
@@ -93,9 +109,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   const SizedBox(height: 8),
                   TextField(
                     controller: _staffIdCtrl,
+                    maxLength: 32,
                     decoration: const InputDecoration(
                       hintText: 'e.g. DOC-2024-001',
                       prefixIcon: Icon(Icons.badge_outlined, color: AppColors.textMuted),
+                      counterText: "",
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -104,9 +122,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   TextField(
                     controller: _emailCtrl,
                     keyboardType: TextInputType.emailAddress,
+                    maxLength: 64,
                     decoration: const InputDecoration(
                       hintText: 'staff@medflow.hospital',
                       prefixIcon: Icon(Icons.email_outlined, color: AppColors.textMuted),
+                      counterText: "",
                     ),
                   ),
                   const SizedBox(height: 32),

@@ -26,7 +26,12 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _onLogin() async {
-    if (_staffIdCtrl.text.isEmpty || _passwordCtrl.text.isEmpty) return;
+    if (_staffIdCtrl.text.isEmpty || _passwordCtrl.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter both Staff ID and Password')),
+      );
+      return;
+    }
     setState(() => _isLoading = true);
     await Future.delayed(const Duration(milliseconds: 1400));
     if (!mounted) return;
@@ -78,9 +83,11 @@ class _LoginScreenState extends State<LoginScreen> {
                   controller: _staffIdCtrl,
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.next,
+                  maxLength: 32,
                   decoration: const InputDecoration(
                     hintText: 'e.g. DOC-2024-001',
                     prefixIcon: Icon(Icons.badge_outlined, color: AppColors.textMuted),
+                    counterText: "",
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -89,11 +96,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextField(
                   controller: _passwordCtrl,
                   obscureText: _obscure,
+                  autocorrect: false,
+                  enableSuggestions: false,
                   textInputAction: TextInputAction.done,
                   onSubmitted: (_) => _onLogin(),
+                  maxLength: 64,
                   decoration: InputDecoration(
                     hintText: '••••••••',
                     prefixIcon: const Icon(Icons.lock_outline_rounded, color: AppColors.textMuted),
+                    counterText: "",
                     suffixIcon: IconButton(
                       icon: Icon(_obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
                         color: AppColors.textMuted, size: 20),
@@ -125,9 +136,11 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 8),
                 TextField(
                   controller: _facilityCtrl,
+                  maxLength: 12,
                   decoration: const InputDecoration(
                     hintText: 'MFH-001',
                     prefixIcon: Icon(Icons.business_rounded, color: AppColors.textMuted),
+                    counterText: "",
                     helperText: 'Contact your administrator for your facility code.',
                     helperStyle: TextStyle(color: AppColors.textMuted, fontSize: 12),
                   ),
