@@ -1,12 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:medflow_staff/main.dart';
+import 'package:medflow_staff/widgets/shared_widgets.dart';
 
 void main() {
   testWidgets('MedFlow Staff smoke test', (WidgetTester tester) async {
     await tester.pumpWidget(const MedFlowStaffApp());
-    // Use pumpAndSettle to wait for any animations and pending timers (like in SplashScreen)
+    // Wait for SplashScreen timer to finish
     await tester.pumpAndSettle(const Duration(seconds: 3));
     expect(find.byType(MaterialApp), findsOneWidget);
+    // Use pumpAndSettle to clear pending timers from SplashScreen
+    await tester.pumpAndSettle(const Duration(seconds: 3));
   });
 }
