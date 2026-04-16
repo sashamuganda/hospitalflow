@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import 'core/theme.dart';
@@ -30,7 +31,7 @@ class _MedFlowStaffAppState extends State<MedFlowStaffApp> {
 
   @override
   Widget build(BuildContext context) {
-    return ChangeNotifierProvider<AppState>.value(
+    return ChangeNotifierProvider.value(
       value: _appState,
       child: MaterialApp.router(
         title: 'MedFlow Staff',

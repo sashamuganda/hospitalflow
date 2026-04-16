@@ -31,6 +31,8 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // ⚡ Bolt: Cache filtered list to avoid O(N^2) complexity in build()
+    final filtered = _filtered;
     final waiting = mockQueue.where((q) => q.status == QueueStatus.waiting).length;
     final immediate = mockQueue.where((q) => q.triageLevel == TriageLevel.immediate).length;
 
@@ -75,19 +77,22 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
               const SizedBox(height: 8),
               // Queue list
               Expanded(
-                child: _filtered.isEmpty
+                child: filtered.isEmpty
                     ? const EmptyState(
                         icon: Icons.people_alt_outlined,
                         title: 'Queue is clear',
                         message: 'No patients match the current filter.')
                     : ListView.separated(
                         padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
-                        itemCount: _filtered.length,
+                        itemCount: filtered.length,
                         separatorBuilder: (_, __) => const SizedBox(height: 10),
-                        itemBuilder: (context, i) => _QueueCard(
-                          patient: _filtered[i],
-                          onTap: () => context.push('/queue/triage/${_filtered[i].id}'),
-                        ),
+                        itemBuilder: (context, i) {
+                          final patient = filtered[i];
+                          return _QueueCard(
+                            patient: patient,
+                            onTap: () => context.push('/queue/triage/${patient.id}'),
+                          );
+                        },
                       ),
               ),
             ],

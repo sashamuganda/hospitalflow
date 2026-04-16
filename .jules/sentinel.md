@@ -1,4 +1,4 @@
-## 2026-04-13 - [Navigation Security Guards & Test Stabilization]
-**Vulnerability:** Unprotected internal routes allowed direct access to clinical data via URL manipulation (e.g., manually typing /home).
-**Learning:** Implementing GoRouter redirects for authentication requires the router to be a refreshListenable of the AppState. Additionally, the presence of long-running timers in the SplashScreen (used during the initial redirect flow) can cause pre-existing Flutter smoke tests to fail with "Timer is still pending" errors if they don't explicitly pumpAndSettle.
-**Prevention:** Always use refreshListenable in the router config for reactive auth. Ensure widget smoke tests include pumpAndSettle or pump(duration) to clear animations and splash timers when testing the full app entry point.
+## 2024-05-22 - Implementing Route Guards in Flutter with GoRouter
+**Vulnerability:** Unauthenticated access to sensitive clinical routes.
+**Learning:** In Flutter applications using `go_router`, navigation-based authorization (route guarding) should be implemented using the `redirect` callback. It's critical to ensure the `AppState` (or any authentication state provider) is available in the `BuildContext` when the `GoRouter` instance attempts to read it. If `GoRouter` is initialized outside the `Provider` scope, `context.read<AppState>()` will fail.
+**Prevention:** Wrap the `MaterialApp.router` with the necessary `Provider` in the `main.dart` file to ensure the authentication state is accessible globally during navigation transitions.

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
 import 'app_state.dart';
 import '../features/auth/splash_screen.dart';
 import '../features/auth/role_select_screen.dart';
@@ -30,29 +31,31 @@ import '../features/settings/settings_home_screen.dart';
 final _rootNavKey = GlobalKey<NavigatorState>();
 final _shellNavKey = GlobalKey<NavigatorState>();
 
-GoRouter createRouter(AppState appState) => GoRouter(
-  navigatorKey: _rootNavKey,
-  initialLocation: '/splash',
-  refreshListenable: appState,
-  redirect: (context, state) {
-    final bool loggedIn = appState.isAuthenticated;
-    final bool isLoggingIn = state.matchedLocation == '/login' ||
-                             state.matchedLocation == '/role-select' ||
-                             state.matchedLocation == '/forgot-password' ||
-                             state.matchedLocation == '/splash';
+GoRouter createRouter(AppState appState) {
+  return GoRouter(
+    navigatorKey: _rootNavKey,
+    initialLocation: '/splash',
+    refreshListenable: appState,
+    redirect: (context, state) {
+    final isAuthenticated = context.read<AppState>().isAuthenticated;
+    final isAuthRoute = state.matchedLocation == '/login' ||
+        state.matchedLocation == '/role-select' ||
+        state.matchedLocation == '/splash' ||
+        state.matchedLocation == '/forgot-password';
 
-    // 1. If not logged in and NOT going to an auth page, redirect to /login
-    if (!loggedIn && !isLoggingIn) return '/login';
+    if (!isAuthenticated) {
+      // Allow access to auth routes, redirect others to role selection
+      return isAuthRoute ? null : '/role-select';
+    }
 
-    // 2. If logged in and going to an auth page (except splash), redirect to /home
-    if (loggedIn && (state.matchedLocation == '/login' || state.matchedLocation == '/role-select')) {
+    // If authenticated, don't allow access to auth routes (except splash if needed)
+    if (isAuthRoute && state.matchedLocation != '/splash') {
       return '/home';
     }
 
-    // 3. Otherwise, proceed as normal
-    return null;
-  },
-  routes: [
+      return null;
+    },
+    routes: [
     // ─── Auth ──────────────────────────────────────────────────────────────────
     GoRoute(path: '/splash',       builder: (_, __) => const SplashScreen()),
     GoRoute(path: '/role-select',  builder: (_, __) => const RoleSelectScreen()),
@@ -113,6 +116,7 @@ GoRouter createRouter(AppState appState) => GoRouter(
     ),
     // Convenience route without patient ID (for Quick Actions)
     GoRoute(path: '/emr/vitals',    builder: (_, __) => const VitalsEntryStaff(patientId: '')),
-    GoRoute(path: '/emr/lab-order', builder: (_, __) => const LabOrderScreen(patientId: '')),
-  ],
-);
+      GoRoute(path: '/emr/lab-order', builder: (_, __) => const LabOrderScreen(patientId: '')),
+    ],
+  );
+}
