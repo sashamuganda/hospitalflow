@@ -17,6 +17,9 @@ class _WardOverviewScreenState extends State<WardOverviewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // Cache computed getters to avoid multiple O(N) filtering operations per frame
+    final currentBeds = _beds;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Container(
@@ -110,8 +113,8 @@ class _WardOverviewScreenState extends State<WardOverviewScreen> {
                     mainAxisSpacing: 12,
                     childAspectRatio: 0.9,
                   ),
-                  itemCount: _beds.length,
-                  itemBuilder: (context, i) => _BedCard(bed: _beds[i]),
+                  itemCount: currentBeds.length,
+                  itemBuilder: (context, i) => _BedCard(bed: currentBeds[i]),
                 ),
               ),
             ],

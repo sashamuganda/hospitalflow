@@ -15,7 +15,7 @@ class AppState extends ChangeNotifier {
   List<NavItem> get navItems {
     switch (_selectedRole) {
       case StaffRole.doctor:
-        return [
+        return const [
           NavItem(icon: Icons.home_rounded, label: 'Home', route: '/home'),
           NavItem(icon: Icons.people_alt_rounded, label: 'Queue', route: '/queue'),
           NavItem(icon: Icons.folder_shared_rounded, label: 'EMR', route: '/emr'),
@@ -23,7 +23,7 @@ class AppState extends ChangeNotifier {
           NavItem(icon: Icons.person_rounded, label: 'Profile', route: '/settings'),
         ];
       case StaffRole.nurse:
-        return [
+        return const [
           NavItem(icon: Icons.home_rounded, label: 'Home', route: '/home'),
           NavItem(icon: Icons.people_alt_rounded, label: 'Queue', route: '/queue'),
           NavItem(icon: Icons.bed_rounded, label: 'Ward', route: '/ward'),
@@ -31,7 +31,7 @@ class AppState extends ChangeNotifier {
           NavItem(icon: Icons.person_rounded, label: 'Profile', route: '/settings'),
         ];
       case StaffRole.admin:
-        return [
+        return const [
           NavItem(icon: Icons.home_rounded, label: 'Home', route: '/home'),
           NavItem(icon: Icons.bar_chart_rounded, label: 'Analytics', route: '/analytics'),
           NavItem(icon: Icons.calendar_month_rounded, label: 'Schedule', route: '/appointments'),
@@ -39,21 +39,21 @@ class AppState extends ChangeNotifier {
           NavItem(icon: Icons.person_rounded, label: 'Profile', route: '/settings'),
         ];
       case StaffRole.receptionist:
-        return [
+        return const [
           NavItem(icon: Icons.home_rounded, label: 'Home', route: '/home'),
           NavItem(icon: Icons.people_alt_rounded, label: 'Queue', route: '/queue'),
           NavItem(icon: Icons.calendar_month_rounded, label: 'Bookings', route: '/appointments'),
           NavItem(icon: Icons.person_rounded, label: 'Profile', route: '/settings'),
         ];
       case StaffRole.pharmacist:
-        return [
+        return const [
           NavItem(icon: Icons.home_rounded, label: 'Home', route: '/home'),
           NavItem(icon: Icons.receipt_long_rounded, label: 'Dispense', route: '/pharmacy'),
           NavItem(icon: Icons.inventory_2_rounded, label: 'Inventory', route: '/inventory'),
           NavItem(icon: Icons.person_rounded, label: 'Profile', route: '/settings'),
         ];
       case StaffRole.labTech:
-        return [
+        return const [
           NavItem(icon: Icons.home_rounded, label: 'Home', route: '/home'),
           NavItem(icon: Icons.science_rounded, label: 'Lab Orders', route: '/lab'),
           NavItem(icon: Icons.person_rounded, label: 'Profile', route: '/settings'),
