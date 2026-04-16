@@ -30,6 +30,10 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
       return matchesLevel && matchesStatus;
     }).toList();
 
+  @override
+  Widget build(BuildContext context) {
+    // ⚡ Bolt: Cache filtered list to avoid O(N^2) complexity in build()
+    final filtered = _filtered;
     final waiting = mockQueue.where((q) => q.status == QueueStatus.waiting).length;
     final immediate = mockQueue.where((q) => q.triageLevel == TriageLevel.immediate).length;
 
@@ -83,10 +87,13 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
                         padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
                         itemCount: filtered.length,
                         separatorBuilder: (_, __) => const SizedBox(height: 10),
-                        itemBuilder: (context, i) => _QueueCard(
-                          patient: filtered[i],
-                          onTap: () => context.push('/queue/triage/${filtered[i].id}'),
-                        ),
+                        itemBuilder: (context, i) {
+                          final patient = filtered[i];
+                          return _QueueCard(
+                            patient: patient,
+                            onTap: () => context.push('/queue/triage/${patient.id}'),
+                          );
+                        },
                       ),
               ),
             ],

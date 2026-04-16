@@ -87,6 +87,7 @@ class HomeScreen extends StatelessWidget {
             IconButton(
               onPressed: () => context.push('/notifications'),
               icon: const Icon(Icons.notifications_outlined, size: 28, color: AppColors.textPrimary),
+              tooltip: 'Notifications',
             ),
             Positioned(
               right: 8, top: 8,
