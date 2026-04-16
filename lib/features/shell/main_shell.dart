@@ -3,6 +3,7 @@ import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../core/colors.dart';
 import '../../core/app_state.dart';
+import '../../data/mock_data.dart';
 
 import '../../widgets/shared_widgets.dart';
 
@@ -12,16 +13,14 @@ class MainShell extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Consumer<AppState>(
-      builder: (context, appState, _) {
-        return LayoutBuilder(
-          builder: (context, constraints) {
-            if (constraints.maxWidth >= 720) {
-              return _DesktopLayout(child: child, appState: appState);
-            }
-            return _MobileLayout(child: child, appState: appState);
-          },
-        );
+    // Removed Consumer<AppState> to prevent rebuilding the entire shell on every AppState change.
+    // Instead, sub-widgets use context.select for targeted updates.
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        if (constraints.maxWidth >= 720) {
+          return _DesktopLayout(child: child);
+        }
+        return _MobileLayout(child: child);
       },
     );
   }
@@ -30,8 +29,7 @@ class MainShell extends StatelessWidget {
 // ─── Desktop Sidebar Layout ───────────────────────────────────────────────────
 class _DesktopLayout extends StatelessWidget {
   final Widget child;
-  final AppState appState;
-  const _DesktopLayout({required this.child, required this.appState});
+  const _DesktopLayout({required this.child});
 
   @override
   Widget build(BuildContext context) {
@@ -39,7 +37,7 @@ class _DesktopLayout extends StatelessWidget {
       backgroundColor: AppColors.background,
       body: Row(
         children: [
-          _Sidebar(appState: appState),
+          const _Sidebar(),
           Expanded(child: child),
         ],
       ),
@@ -48,12 +46,12 @@ class _DesktopLayout extends StatelessWidget {
 }
 
 class _Sidebar extends StatelessWidget {
-  final AppState appState;
-  const _Sidebar({required this.appState});
+  const _Sidebar();
 
   @override
   Widget build(BuildContext context) {
-    final user = appState.currentUser;
+    final user = context.select<AppState, StaffMember?>((s) => s.currentUser);
+    final navItems = context.select<AppState, List<NavItem>>((s) => s.navItems);
     final location = GoRouterState.of(context).matchedLocation;
 
     return Container(
@@ -119,7 +117,7 @@ class _Sidebar extends StatelessWidget {
           Expanded(
             child: ListView(
               padding: const EdgeInsets.symmetric(horizontal: 8),
-              children: appState.navItems.map((item) {
+              children: navItems.map((item) {
                 final isActive = location.startsWith(item.route);
                 return _SideNavItem(item: item, isActive: isActive);
               }).toList(),
@@ -198,12 +196,11 @@ class _SideNavItem extends StatelessWidget {
 // ─── Mobile Bottom Nav Layout ─────────────────────────────────────────────────
 class _MobileLayout extends StatelessWidget {
   final Widget child;
-  final AppState appState;
-  const _MobileLayout({required this.child, required this.appState});
+  const _MobileLayout({required this.child});
 
   @override
   Widget build(BuildContext context) {
-    final items = appState.navItems;
+    final items = context.select<AppState, List<NavItem>>((s) => s.navItems);
     final location = GoRouterState.of(context).matchedLocation;
     int selectedIndex = 0;
     for (int i = 0; i < items.length; i++) {
