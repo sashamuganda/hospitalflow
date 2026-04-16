@@ -11,20 +11,19 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ⚡ PERFORMANCE: Use context.select to only rebuild when specific properties change
+    // ⚡ Bolt: Use context.select to only rebuild when specific state changes
     final user = context.select<AppState, StaffMember?>((s) => s.currentUser);
     final role = context.select<AppState, StaffRole>((s) => s.selectedRole);
 
-    // ⚡ PERFORMANCE: Cache computed lists and counts to avoid O(N) filtering multiple times during build
+    // ⚡ Bolt: Pre-calculate counts and filtered lists to avoid multiple O(N) traversals in child methods
     final waitingCount = mockQueue.where((q) => q.status == QueueStatus.waiting).length;
     final immediateCount = mockQueue.where((q) => q.triageLevel == TriageLevel.immediate).length;
-    final urgentAlerts = mockQueue
-        .where((q) => q.triageLevel == TriageLevel.immediate || q.triageLevel == TriageLevel.urgent)
-        .take(2)
-        .toList();
-    final todayAptsCount = mockStaffAppointments.length;
-    final confirmedAptsCount = mockStaffAppointments.where((a) => a.status == AppointmentStatus.confirmed).length;
-    final upcomingApts = mockStaffAppointments.take(3).toList();
+
+    final urgentAlerts = mockQueue.where((q) =>
+      q.triageLevel == TriageLevel.immediate || q.triageLevel == TriageLevel.urgent).take(2).toList();
+
+    final confirmedApptsCount = mockStaffAppointments.where((a) => a.status == AppointmentStatus.confirmed).length;
+    final todayAppts = mockStaffAppointments.take(3).toList();
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -48,11 +47,11 @@ class HomeScreen extends StatelessWidget {
                     const SizedBox(height: 24),
                     _buildRecentActivity(context),
                   ] else ...[
-                    _buildStaffKPIs(context, role, waitingCount, immediateCount, todayAptsCount, confirmedAptsCount),
+                    _buildStaffKPIs(context, role, waitingCount, immediateCount, confirmedApptsCount),
                     const SizedBox(height: 24),
                     _buildUrgentAlerts(context, urgentAlerts),
                     const SizedBox(height: 24),
-                    _buildTodaySchedule(context, upcomingApts),
+                    _buildTodaySchedule(context, todayAppts),
                     const SizedBox(height: 24),
                     _buildQuickActions(context, role),
                   ],
@@ -88,6 +87,7 @@ class HomeScreen extends StatelessWidget {
             IconButton(
               onPressed: () => context.push('/notifications'),
               icon: const Icon(Icons.notifications_outlined, size: 28, color: AppColors.textPrimary),
+              tooltip: 'Notifications',
             ),
             Positioned(
               right: 8, top: 8,
@@ -135,7 +135,7 @@ class HomeScreen extends StatelessWidget {
   }
 
   // Staff-role KPIs
-  Widget _buildStaffKPIs(BuildContext context, StaffRole role, int queue, int immediate, int totalApts, int confirmedApts) {
+  Widget _buildStaffKPIs(BuildContext context, StaffRole role, int waitingCount, int immediateCount, int confirmedApptsCount) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -146,10 +146,10 @@ class HomeScreen extends StatelessWidget {
             Expanded(
               child: KpiCard(
                 label: 'Waiting Patients',
-                value: '$queue',
-                subtitle: '$immediate immediate',
+                value: '$waitingCount',
+                subtitle: '$immediateCount immediate',
                 icon: Icons.people_alt_rounded,
-                color: immediate > 0 ? AppColors.error : AppColors.primary,
+                color: immediateCount > 0 ? AppColors.error : AppColors.primary,
                 onTap: () => context.push('/queue'),
               ),
             ),
@@ -158,8 +158,8 @@ class HomeScreen extends StatelessWidget {
               Expanded(
                 child: KpiCard(
                   label: "Today's Schedule",
-                  value: '$totalApts',
-                  subtitle: '$confirmedApts confirmed',
+                  value: '${mockStaffAppointments.length}',
+                  subtitle: '$confirmedApptsCount confirmed',
                   icon: Icons.calendar_today_rounded,
                   color: AppColors.secondary,
                   onTap: () => context.push('/appointments'),
@@ -181,8 +181,8 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildUrgentAlerts(BuildContext context, List<PatientInQueue> criticals) {
-    if (criticals.isEmpty) return const SizedBox.shrink();
+  Widget _buildUrgentAlerts(BuildContext context, List<PatientInQueue> urgentAlerts) {
+    if (urgentAlerts.isEmpty) return const SizedBox.shrink();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -192,7 +192,7 @@ class HomeScreen extends StatelessWidget {
           onAction: () => context.push('/queue'),
         ),
         const SizedBox(height: 12),
-        ...criticals.map((p) => Padding(
+        ...urgentAlerts.map((p) => Padding(
           padding: const EdgeInsets.only(bottom: 10),
           child: GlassCard(
             borderColor: p.triageLevel.color.withOpacity(0.4),
@@ -239,7 +239,7 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildTodaySchedule(BuildContext context, List<StaffAppointment> apts) {
+  Widget _buildTodaySchedule(BuildContext context, List<StaffAppointment> todayAppts) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -252,10 +252,10 @@ class HomeScreen extends StatelessWidget {
         ListView.separated(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
-          itemCount: apts.length,
+          itemCount: todayAppts.length,
           separatorBuilder: (_, __) => const SizedBox(height: 10),
           itemBuilder: (context, i) {
-            final a = apts[i];
+            final a = todayAppts[i];
             final hour = a.dateTime.hour.toString().padLeft(2, '0');
             final min = a.dateTime.minute.toString().padLeft(2, '0');
             return GlassCard(

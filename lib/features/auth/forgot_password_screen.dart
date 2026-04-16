@@ -38,12 +38,15 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                GestureDetector(
-                  onTap: () => context.pop(),
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(color: AppColors.surfaceLight, borderRadius: BorderRadius.circular(12)),
-                    child: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: AppColors.textSecondary),
+                Tooltip(
+                  message: 'Back to login',
+                  child: GestureDetector(
+                    onTap: () => context.pop(),
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(color: AppColors.surfaceLight, borderRadius: BorderRadius.circular(12)),
+                      child: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: AppColors.textSecondary),
+                    ),
                   ),
                 ),
                 const SizedBox(height: 36),
@@ -93,9 +96,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   const SizedBox(height: 8),
                   TextField(
                     controller: _staffIdCtrl,
+                    maxLength: 32,
                     decoration: const InputDecoration(
                       hintText: 'e.g. DOC-2024-001',
                       prefixIcon: Icon(Icons.badge_outlined, color: AppColors.textMuted),
+                      counterText: '',
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -104,9 +109,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   TextField(
                     controller: _emailCtrl,
                     keyboardType: TextInputType.emailAddress,
+                    maxLength: 64,
                     decoration: const InputDecoration(
                       hintText: 'staff@medflow.hospital',
                       prefixIcon: Icon(Icons.email_outlined, color: AppColors.textMuted),
+                      counterText: '',
                     ),
                   ),
                   const SizedBox(height: 32),
