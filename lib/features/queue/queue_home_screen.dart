@@ -14,20 +14,21 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
   TriageLevel? _filterLevel;
   String _filterStatus = 'All';
 
-  List<PatientInQueue> get _filtered {
-    var list = mockQueue;
-    if (_filterLevel != null) list = list.where((q) => q.triageLevel == _filterLevel).toList();
-    if (_filterStatus != 'All') {
-      list = list.where((q) {
+  @override
+  Widget build(BuildContext context) {
+    // ⚡ Bolt: Cache filtered results and counts in local variables to avoid O(N^2) complexity
+    // when accessed multiple times during a single build cycle (especially inside builders).
+    final filtered = mockQueue.where((q) {
+      final matchesLevel = _filterLevel == null || q.triageLevel == _filterLevel;
+      bool matchesStatus = true;
+      if (_filterStatus != 'All') {
         switch (_filterStatus) {
-          case 'Waiting': return q.status == QueueStatus.waiting;
-          case 'In Consult': return q.status == QueueStatus.inConsultation;
-          default: return true;
+          case 'Waiting': matchesStatus = q.status == QueueStatus.waiting; break;
+          case 'In Consult': matchesStatus = q.status == QueueStatus.inConsultation; break;
         }
-      }).toList();
-    }
-    return list;
-  }
+      }
+      return matchesLevel && matchesStatus;
+    }).toList();
 
   @override
   Widget build(BuildContext context) {
