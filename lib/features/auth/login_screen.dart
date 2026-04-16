@@ -105,8 +105,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   obscureText: _obscure,
                   textInputAction: TextInputAction.done,
                   onSubmitted: (_) => _onLogin(),
+                  maxLength: 64,
                   decoration: InputDecoration(
                     hintText: '••••••••',
+                    counterText: '',
                     prefixIcon: const Icon(Icons.lock_outline_rounded, color: AppColors.textMuted),
                     suffixIcon: IconButton(
                       icon: Icon(_obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,

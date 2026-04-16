@@ -96,9 +96,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   const SizedBox(height: 8),
                   TextField(
                     controller: _staffIdCtrl,
+                    maxLength: 32,
                     decoration: const InputDecoration(
                       hintText: 'e.g. DOC-2024-001',
                       prefixIcon: Icon(Icons.badge_outlined, color: AppColors.textMuted),
+                      counterText: '',
                     ),
                   ),
                   const SizedBox(height: 20),
@@ -107,9 +109,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   TextField(
                     controller: _emailCtrl,
                     keyboardType: TextInputType.emailAddress,
+                    maxLength: 64,
                     decoration: const InputDecoration(
                       hintText: 'staff@medflow.hospital',
                       prefixIcon: Icon(Icons.email_outlined, color: AppColors.textMuted),
+                      counterText: '',
                     ),
                   ),
                   const SizedBox(height: 32),
