@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../core/colors.dart';
@@ -143,7 +144,10 @@ class _RoleCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        HapticFeedback.selectionClick();
+        onTap();
+      },
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(16),
@@ -158,35 +162,31 @@ class _RoleCard extends StatelessWidget {
             color: isSelected ? AppColors.primary : AppColors.divider,
             width: isSelected ? 1.5 : 1,
           ),
-          boxShadow: isSelected ? [
-            BoxShadow(color: AppColors.primary.withOpacity(0.15),
-              blurRadius: 12, offset: const Offset(0, 4))
-          ] : null,
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: 44, height: 44,
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? AppColors.primary.withOpacity(0.2)
-                    : AppColors.surfaceLight,
-                borderRadius: BorderRadius.circular(12),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: 44, height: 44,
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? AppColors.primary.withOpacity(0.2)
+                      : AppColors.surfaceLight,
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: Icon(role.icon,
+                  color: isSelected ? AppColors.primary : AppColors.textMuted, size: 24),
               ),
-              child: Icon(role.icon,
-                color: isSelected ? AppColors.primary : AppColors.textMuted, size: 24),
-            ),
-            const Spacer(),
-            Text(role.displayName,
-              style: TextStyle(fontFamily: 'Inter', fontSize: 15, fontWeight: FontWeight.w700,
-                color: isSelected ? AppColors.textPrimary : AppColors.textSecondary)),
-            const SizedBox(height: 4),
-            Text(role.description,
-              style: TextStyle(fontFamily: 'Inter', fontSize: 11,
-                color: isSelected ? AppColors.textSecondary : AppColors.textMuted),
-              maxLines: 2, overflow: TextOverflow.ellipsis),
-          ],
+              const Spacer(),
+              Text(role.displayName,
+                style: TextStyle(fontFamily: 'Inter', fontSize: 15, fontWeight: FontWeight.w700,
+                  color: isSelected ? AppColors.textPrimary : AppColors.textSecondary)),
+              const SizedBox(height: 4),
+              Text(role.description,
+                style: TextStyle(fontFamily: 'Inter', fontSize: 11,
+                  color: isSelected ? AppColors.textSecondary : AppColors.textMuted),
+                maxLines: 2, overflow: TextOverflow.ellipsis),
+            ],
+          ),
         ),
       ),
     );

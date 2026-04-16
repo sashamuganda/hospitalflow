@@ -11,7 +11,7 @@ class SettingsHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Using context.select to only rebuild when currentUser changes.
+    // ⚡ PERFORMANCE: Use context.select to only rebuild when currentUser changes
     final user = context.select<AppState, StaffMember?>((s) => s.currentUser);
 
     return Scaffold(
@@ -74,7 +74,7 @@ class SettingsHomeScreen extends StatelessWidget {
                       title: const Text('Log Out', style: TextStyle(color: AppColors.error, fontWeight: FontWeight.bold)),
                       onTap: () {
                         context.read<AppState>().logout();
-                        context.go('/select-role');
+                        context.go('/role-select');
                       },
                     )
                   ],
