@@ -68,7 +68,7 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
                     ),
                     const SizedBox(height: 16),
                     // Triage legend
-                    _buildTriageLegend(),
+                    _buildTriageLegend(triageCounts),
                     const SizedBox(height: 16),
                     // Status filters
                     _buildStatusFilters(),
@@ -103,7 +103,7 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
     );
   }
 
-  Widget _buildTriageLegend() {
+  Widget _buildTriageLegend(Map<TriageLevel, int> counts) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: TriageLevel.values.map((level) {
@@ -126,7 +126,7 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
                 Text(level.shortCode,
                   style: TextStyle(fontSize: 9, fontWeight: FontWeight.w800,
                     color: isActive ? level.color : AppColors.textMuted, fontFamily: 'Inter')),
-                Text('${mockQueue.where((q) => q.triageLevel == level).length}',
+                Text('${counts[level] ?? 0}',
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700,
                     color: isActive ? level.color : AppColors.textSecondary, fontFamily: 'Inter')),
               ],
