@@ -5,6 +5,11 @@ class AppState extends ChangeNotifier {
   StaffRole _selectedRole = StaffRole.doctor;
   StaffMember? _currentUser;
   bool _isAuthenticated = false;
+  late List<NavItem> _navItems;
+
+  AppState() {
+    _updateNavItems();
+  }
 
   StaffRole get selectedRole => _selectedRole;
   StaffMember? get currentUser => _currentUser;
@@ -12,57 +17,69 @@ class AppState extends ChangeNotifier {
 
   String get roleDisplayName => _selectedRole.displayName;
 
-  List<NavItem> get navItems {
+  /// Returns the memoized list of navigation items for the current role.
+  /// Memoization prevents unnecessary rebuilds of widgets that select this property.
+  List<NavItem> get navItems => _navItems;
+
+  void _updateNavItems() {
     switch (_selectedRole) {
       case StaffRole.doctor:
-        return [
+        _navItems = const [
           NavItem(icon: Icons.home_rounded, label: 'Home', route: '/home'),
           NavItem(icon: Icons.people_alt_rounded, label: 'Queue', route: '/queue'),
           NavItem(icon: Icons.folder_shared_rounded, label: 'EMR', route: '/emr'),
           NavItem(icon: Icons.video_call_rounded, label: 'Telemedicine', route: '/telemedicine'),
           NavItem(icon: Icons.person_rounded, label: 'Profile', route: '/settings'),
         ];
+        break;
       case StaffRole.nurse:
-        return [
+        _navItems = const [
           NavItem(icon: Icons.home_rounded, label: 'Home', route: '/home'),
           NavItem(icon: Icons.people_alt_rounded, label: 'Queue', route: '/queue'),
           NavItem(icon: Icons.bed_rounded, label: 'Ward', route: '/ward'),
           NavItem(icon: Icons.science_rounded, label: 'Lab', route: '/lab'),
           NavItem(icon: Icons.person_rounded, label: 'Profile', route: '/settings'),
         ];
+        break;
       case StaffRole.admin:
-        return [
+        _navItems = const [
           NavItem(icon: Icons.home_rounded, label: 'Home', route: '/home'),
           NavItem(icon: Icons.bar_chart_rounded, label: 'Analytics', route: '/analytics'),
           NavItem(icon: Icons.calendar_month_rounded, label: 'Schedule', route: '/appointments'),
           NavItem(icon: Icons.groups_rounded, label: 'Staff', route: '/staff'),
           NavItem(icon: Icons.person_rounded, label: 'Profile', route: '/settings'),
         ];
+        break;
       case StaffRole.receptionist:
-        return [
+        _navItems = const [
           NavItem(icon: Icons.home_rounded, label: 'Home', route: '/home'),
           NavItem(icon: Icons.people_alt_rounded, label: 'Queue', route: '/queue'),
           NavItem(icon: Icons.calendar_month_rounded, label: 'Bookings', route: '/appointments'),
           NavItem(icon: Icons.person_rounded, label: 'Profile', route: '/settings'),
         ];
+        break;
       case StaffRole.pharmacist:
-        return [
+        _navItems = const [
           NavItem(icon: Icons.home_rounded, label: 'Home', route: '/home'),
           NavItem(icon: Icons.receipt_long_rounded, label: 'Dispense', route: '/pharmacy'),
           NavItem(icon: Icons.inventory_2_rounded, label: 'Inventory', route: '/inventory'),
           NavItem(icon: Icons.person_rounded, label: 'Profile', route: '/settings'),
         ];
+        break;
       case StaffRole.labTech:
-        return [
+        _navItems = const [
           NavItem(icon: Icons.home_rounded, label: 'Home', route: '/home'),
           NavItem(icon: Icons.science_rounded, label: 'Lab Orders', route: '/lab'),
           NavItem(icon: Icons.person_rounded, label: 'Profile', route: '/settings'),
         ];
+        break;
     }
   }
 
   void selectRole(StaffRole role) {
+    if (_selectedRole == role) return;
     _selectedRole = role;
+    _updateNavItems();
     notifyListeners();
   }
 

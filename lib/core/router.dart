@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:provider/provider.dart';
+import 'app_state.dart';
 import '../features/auth/splash_screen.dart';
 import '../features/auth/role_select_screen.dart';
 import '../features/auth/login_screen.dart';
@@ -29,10 +31,31 @@ import '../features/settings/settings_home_screen.dart';
 final _rootNavKey = GlobalKey<NavigatorState>();
 final _shellNavKey = GlobalKey<NavigatorState>();
 
-final GoRouter appRouter = GoRouter(
-  navigatorKey: _rootNavKey,
-  initialLocation: '/splash',
-  routes: [
+GoRouter createRouter(AppState appState) {
+  return GoRouter(
+    navigatorKey: _rootNavKey,
+    initialLocation: '/splash',
+    refreshListenable: appState,
+    redirect: (context, state) {
+    final isAuthenticated = context.read<AppState>().isAuthenticated;
+    final isAuthRoute = state.matchedLocation == '/login' ||
+        state.matchedLocation == '/role-select' ||
+        state.matchedLocation == '/splash' ||
+        state.matchedLocation == '/forgot-password';
+
+    if (!isAuthenticated) {
+      // Allow access to auth routes, redirect others to role selection
+      return isAuthRoute ? null : '/role-select';
+    }
+
+    // If authenticated, don't allow access to auth routes (except splash if needed)
+    if (isAuthRoute && state.matchedLocation != '/splash') {
+      return '/home';
+    }
+
+      return null;
+    },
+    routes: [
     // ─── Auth ──────────────────────────────────────────────────────────────────
     GoRoute(path: '/splash',       builder: (_, __) => const SplashScreen()),
     GoRoute(path: '/role-select',  builder: (_, __) => const RoleSelectScreen()),
@@ -93,6 +116,7 @@ final GoRouter appRouter = GoRouter(
     ),
     // Convenience route without patient ID (for Quick Actions)
     GoRoute(path: '/emr/vitals',    builder: (_, __) => const VitalsEntryStaff(patientId: '')),
-    GoRoute(path: '/emr/lab-order', builder: (_, __) => const LabOrderScreen(patientId: '')),
-  ],
-);
+      GoRoute(path: '/emr/lab-order', builder: (_, __) => const LabOrderScreen(patientId: '')),
+    ],
+  );
+}
