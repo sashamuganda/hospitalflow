@@ -62,8 +62,8 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
                       children: [
                         Expanded(child: Text('Patient Queue', style: Theme.of(context).textTheme.headlineMedium)),
                         StatusBadge(
-                          label: immediate > 0 ? '$immediate IMMEDIATE' : '$waiting waiting',
-                          color: immediate > 0 ? AppColors.error : AppColors.primary),
+                          label: immediateCount > 0 ? '$immediateCount IMMEDIATE' : '$waitingCount waiting',
+                          color: immediateCount > 0 ? AppColors.error : AppColors.primary),
                       ],
                     ),
                     const SizedBox(height: 16),
