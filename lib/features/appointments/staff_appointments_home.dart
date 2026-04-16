@@ -37,9 +37,12 @@ class _StaffAppointmentsHomeState extends State<StaffAppointmentsHome> {
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                 child: Row(
                   children: [
-                    Expanded(child: Text('Appointments', style: Theme.of(context).textTheme.headlineMedium)),
+                    Expanded(
+                        child: Text('Appointments',
+                            style: Theme.of(context).textTheme.headlineMedium)),
                     IconButton(
-                      icon: const Icon(Icons.calendar_month_rounded, color: AppColors.primary),
+                      icon: const Icon(Icons.calendar_month_rounded,
+                          color: AppColors.primary),
                       onPressed: () {},
                     ),
                   ],
@@ -52,11 +55,13 @@ class _StaffAppointmentsHomeState extends State<StaffAppointmentsHome> {
                 child: ListView(
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  children: ['All', 'OPD', 'Follow-up', 'Telemedicine'].map((t) => _FilterChip(
-                    label: t,
-                    isActive: _activeFilter == t,
-                    onTap: () => setState(() => _activeFilter = t),
-                  )).toList(),
+                  children: ['All', 'OPD', 'Follow-up', 'Telemedicine']
+                      .map((t) => _FilterChip(
+                            label: t,
+                            isActive: _activeFilter == t,
+                            onTap: () => setState(() => _activeFilter = t),
+                          ))
+                      .toList(),
                 ),
               ),
               const SizedBox(height: 16),
@@ -65,7 +70,8 @@ class _StaffAppointmentsHomeState extends State<StaffAppointmentsHome> {
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
                   itemCount: _filtered.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
-                  itemBuilder: (context, i) => _AppointmentCard(appointment: _filtered[i]),
+                  itemBuilder: (context, i) =>
+                      _AppointmentCard(appointment: _filtered[i]),
                 ),
               ),
             ],
@@ -81,7 +87,8 @@ class _FilterChip extends StatelessWidget {
   final bool isActive;
   final VoidCallback onTap;
 
-  const _FilterChip({required this.label, required this.isActive, required this.onTap});
+  const _FilterChip(
+      {required this.label, required this.isActive, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -93,7 +100,8 @@ class _FilterChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: isActive ? AppColors.primary : AppColors.surfaceLight,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: isActive ? AppColors.primary : AppColors.divider),
+          border: Border.all(
+              color: isActive ? AppColors.primary : AppColors.divider),
         ),
         child: Text(
           label,
@@ -125,9 +133,16 @@ class _AppointmentCard extends StatelessWidget {
           Row(
             children: [
               Text(_formatTime(appointment.dateTime),
-                style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w800, color: AppColors.textPrimary, fontFamily: 'Inter')),
+                  style: const TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.w800,
+                      color: AppColors.textPrimary,
+                      fontFamily: 'Inter')),
               const SizedBox(width: 10),
-              StatusBadge(label: appointment.status.label, color: appointment.status.color, fontSize: 10),
+              StatusBadge(
+                  label: appointment.status.label,
+                  color: appointment.status.color,
+                  fontSize: 10),
               const Spacer(),
               Container(
                 padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
@@ -136,22 +151,28 @@ class _AppointmentCard extends StatelessWidget {
                   borderRadius: BorderRadius.circular(6),
                 ),
                 child: Text(appointment.type,
-                  style: const TextStyle(fontSize: 10, color: AppColors.textSecondary, fontFamily: 'Inter')),
+                    style: const TextStyle(
+                        fontSize: 10,
+                        color: AppColors.textSecondary,
+                        fontFamily: 'Inter')),
               ),
             ],
           ),
           const SizedBox(height: 12),
           Row(
             children: [
-              AvatarCircle(initials: _getInitials(appointment.patientName), size: 40),
+              AvatarCircle(
+                  initials: _getInitials(appointment.patientName), size: 40),
               const SizedBox(width: 12),
               Expanded(
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(appointment.patientName, style: Theme.of(context).textTheme.titleSmall),
+                    Text(appointment.patientName,
+                        style: Theme.of(context).textTheme.titleSmall),
                     const SizedBox(height: 2),
-                    Text('With: ${appointment.doctorName}', style: Theme.of(context).textTheme.bodySmall),
+                    Text('With: ${appointment.doctorName}',
+                        style: Theme.of(context).textTheme.bodySmall),
                   ],
                 ),
               ),
@@ -161,13 +182,23 @@ class _AppointmentCard extends StatelessWidget {
           Row(
             children: [
               if (appointment.room != null) ...[
-                const Icon(Icons.room_rounded, size: 14, color: AppColors.textMuted),
+                const Icon(Icons.room_rounded,
+                    size: 14, color: AppColors.textMuted),
                 const SizedBox(width: 4),
-                Text(appointment.room!, style: const TextStyle(fontSize: 11, color: AppColors.textMuted, fontFamily: 'Inter')),
+                Text(appointment.room!,
+                    style: const TextStyle(
+                        fontSize: 11,
+                        color: AppColors.textMuted,
+                        fontFamily: 'Inter')),
               ] else ...[
-                const Icon(Icons.video_camera_front_rounded, size: 14, color: AppColors.primary),
+                const Icon(Icons.video_camera_front_rounded,
+                    size: 14, color: AppColors.primary),
                 const SizedBox(width: 4),
-                const Text('Online', style: TextStyle(fontSize: 11, color: AppColors.primary, fontFamily: 'Inter')),
+                const Text('Online',
+                    style: TextStyle(
+                        fontSize: 11,
+                        color: AppColors.primary,
+                        fontFamily: 'Inter')),
               ],
               const Spacer(),
               if (appointment.status == AppointmentStatus.pending)
@@ -180,9 +211,12 @@ class _AppointmentCard extends StatelessWidget {
                       foregroundColor: AppColors.primary,
                       elevation: 0,
                       padding: const EdgeInsets.symmetric(horizontal: 12),
-                      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(6)),
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(6)),
                     ),
-                    child: const Text('Confirm', style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700)),
+                    child: const Text('Confirm',
+                        style: TextStyle(
+                            fontSize: 11, fontWeight: FontWeight.w700)),
                   ),
                 ),
             ],

@@ -7,7 +7,8 @@ class PrescriptionWriterScreen extends StatefulWidget {
   final String patientId;
   const PrescriptionWriterScreen({super.key, required this.patientId});
   @override
-  State<PrescriptionWriterScreen> createState() => _PrescriptionWriterScreenState();
+  State<PrescriptionWriterScreen> createState() =>
+      _PrescriptionWriterScreenState();
 }
 
 class _PrescriptionWriterScreenState extends State<PrescriptionWriterScreen> {
@@ -15,11 +16,24 @@ class _PrescriptionWriterScreenState extends State<PrescriptionWriterScreen> {
   bool _isSigning = false;
   final _notesCtrl = TextEditingController();
 
-  final _commonDrugs = ['Amoxicillin', 'Metformin', 'Enalapril', 'Amlodipine', 'Metoprolol',
-    'Atorvastatin', 'Omeprazole', 'Paracetamol', 'Ibuprofen', 'Amoxiclav'];
+  final _commonDrugs = [
+    'Amoxicillin',
+    'Metformin',
+    'Enalapril',
+    'Amlodipine',
+    'Metoprolol',
+    'Atorvastatin',
+    'Omeprazole',
+    'Paracetamol',
+    'Ibuprofen',
+    'Amoxiclav'
+  ];
 
   @override
-  void dispose() { _notesCtrl.dispose(); super.dispose(); }
+  void dispose() {
+    _notesCtrl.dispose();
+    super.dispose();
+  }
 
   Future<void> _onSign() async {
     setState(() => _isSigning = true);
@@ -27,8 +41,8 @@ class _PrescriptionWriterScreenState extends State<PrescriptionWriterScreen> {
     if (!mounted) return;
     setState(() => _isSigning = false);
     ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-      content: Text('Prescription signed & sent to Pharmacy'),
-      backgroundColor: AppColors.success));
+        content: Text('Prescription signed & sent to Pharmacy'),
+        backgroundColor: AppColors.success));
     context.pop();
   }
 
@@ -46,12 +60,18 @@ class _PrescriptionWriterScreenState extends State<PrescriptionWriterScreen> {
                 child: Row(children: [
                   GestureDetector(
                     onTap: () => context.pop(),
-                    child: Container(padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(color: AppColors.surfaceLight, borderRadius: BorderRadius.circular(10)),
-                      child: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: AppColors.textSecondary)),
+                    child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                            color: AppColors.surfaceLight,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: const Icon(Icons.arrow_back_ios_new_rounded,
+                            size: 18, color: AppColors.textSecondary)),
                   ),
                   const SizedBox(width: 16),
-                  Expanded(child: Text('Write Prescription', style: Theme.of(context).textTheme.headlineSmall)),
+                  Expanded(
+                      child: Text('Write Prescription',
+                          style: Theme.of(context).textTheme.headlineSmall)),
                 ]),
               ),
               const SizedBox(height: 16),
@@ -62,8 +82,12 @@ class _PrescriptionWriterScreenState extends State<PrescriptionWriterScreen> {
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       // Common drugs quick select
-                      const Text('Common Drugs', style: TextStyle(fontFamily: 'Inter', fontSize: 12,
-                        fontWeight: FontWeight.w600, color: AppColors.textSecondary)),
+                      const Text('Common Drugs',
+                          style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 12,
+                              fontWeight: FontWeight.w600,
+                              color: AppColors.textSecondary)),
                       const SizedBox(height: 8),
                       SizedBox(
                         height: 36,
@@ -77,17 +101,23 @@ class _PrescriptionWriterScreenState extends State<PrescriptionWriterScreen> {
                               if (last.nameCtrl.text.isEmpty) {
                                 last.nameCtrl.text = _commonDrugs[i];
                               } else {
-                                setState(() => _items.add(_RxItem()..nameCtrl.text = _commonDrugs[i]));
+                                setState(() => _items.add(_RxItem()
+                                  ..nameCtrl.text = _commonDrugs[i]));
                               }
                               setState(() {});
                             },
                             child: Container(
-                              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 12, vertical: 6),
                               decoration: BoxDecoration(
-                                color: AppColors.surfaceLight, borderRadius: BorderRadius.circular(20),
-                                border: Border.all(color: AppColors.divider)),
-                              child: Text(_commonDrugs[i], style: const TextStyle(fontSize: 12,
-                                color: AppColors.textSecondary, fontFamily: 'Inter')),
+                                  color: AppColors.surfaceLight,
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(color: AppColors.divider)),
+                              child: Text(_commonDrugs[i],
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.textSecondary,
+                                      fontFamily: 'Inter')),
                             ),
                           ),
                         ),
@@ -96,9 +126,12 @@ class _PrescriptionWriterScreenState extends State<PrescriptionWriterScreen> {
                       const SectionHeader(title: 'Medications'),
                       const SizedBox(height: 12),
                       ..._items.asMap().entries.map((e) => _RxItemCard(
-                        item: e.value, index: e.key,
-                        onRemove: _items.length > 1 ? () => setState(() => _items.removeAt(e.key)) : null,
-                      )),
+                            item: e.value,
+                            index: e.key,
+                            onRemove: _items.length > 1
+                                ? () => setState(() => _items.removeAt(e.key))
+                                : null,
+                          )),
                       const SizedBox(height: 12),
                       OutlinedButton.icon(
                         onPressed: () => setState(() => _items.add(_RxItem())),
@@ -106,28 +139,40 @@ class _PrescriptionWriterScreenState extends State<PrescriptionWriterScreen> {
                         label: const Text('Add Another Drug'),
                       ),
                       const SizedBox(height: 24),
-                      const Text('Additional Instructions', style: TextStyle(fontFamily: 'Inter', fontSize: 14,
-                        fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                      const Text('Additional Instructions',
+                          style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 14,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textPrimary)),
                       const SizedBox(height: 8),
                       TextField(
                         controller: _notesCtrl,
                         maxLines: 3,
                         decoration: const InputDecoration(
-                          hintText: 'e.g. Take with food. Avoid alcohol. Return if symptoms worsen...'),
+                            hintText:
+                                'e.g. Take with food. Avoid alcohol. Return if symptoms worsen...'),
                       ),
                       const SizedBox(height: 32),
                       // Interaction warning UI
                       Container(
                         padding: const EdgeInsets.all(14),
                         decoration: BoxDecoration(
-                          color: AppColors.warning.withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(12),
-                          border: Border.all(color: AppColors.warning.withOpacity(0.3))),
+                            color: AppColors.warning.withOpacity(0.1),
+                            borderRadius: BorderRadius.circular(12),
+                            border: Border.all(
+                                color: AppColors.warning.withOpacity(0.3))),
                         child: Row(children: [
-                          const Icon(Icons.warning_amber_rounded, color: AppColors.warning, size: 20),
+                          const Icon(Icons.warning_amber_rounded,
+                              color: AppColors.warning, size: 20),
                           const SizedBox(width: 10),
-                          Expanded(child: Text('Drug interaction checking is active. Always verify for allergies before signing.',
-                            style: const TextStyle(fontSize: 12, color: AppColors.textSecondary, fontFamily: 'Inter'))),
+                          Expanded(
+                              child: Text(
+                                  'Drug interaction checking is active. Always verify for allergies before signing.',
+                                  style: const TextStyle(
+                                      fontSize: 12,
+                                      color: AppColors.textSecondary,
+                                      fontFamily: 'Inter'))),
                         ]),
                       ),
                       const SizedBox(height: 28),
@@ -178,26 +223,37 @@ class _RxItemCard extends StatelessWidget {
       child: Column(
         children: [
           Row(children: [
-            Text('Rx ${index + 1}', style: const TextStyle(fontFamily: 'Inter', fontSize: 12,
-              fontWeight: FontWeight.w700, color: AppColors.secondary)),
+            Text('Rx ${index + 1}',
+                style: const TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 12,
+                    fontWeight: FontWeight.w700,
+                    color: AppColors.secondary)),
             const Spacer(),
             if (onRemove != null)
-              GestureDetector(onTap: onRemove,
-                child: const Icon(Icons.remove_circle_outline_rounded, color: AppColors.error, size: 20)),
+              GestureDetector(
+                  onTap: onRemove,
+                  child: const Icon(Icons.remove_circle_outline_rounded,
+                      color: AppColors.error, size: 20)),
           ]),
           const SizedBox(height: 10),
           TextField(
             controller: item.nameCtrl,
-            decoration: const InputDecoration(hintText: 'Drug name', prefixIcon: Icon(Icons.medication_outlined, color: AppColors.textMuted)),
+            decoration: const InputDecoration(
+                hintText: 'Drug name',
+                prefixIcon: Icon(Icons.medication_outlined,
+                    color: AppColors.textMuted)),
           ),
           const SizedBox(height: 10),
           Row(children: [
-            Expanded(child: TextField(
+            Expanded(
+                child: TextField(
               controller: item.doseCtrl,
               decoration: const InputDecoration(hintText: 'Dose (e.g. 500mg)'),
             )),
             const SizedBox(width: 10),
-            Expanded(child: _DropdownField(
+            Expanded(
+                child: _DropdownField(
               value: item.route,
               items: ['Oral', 'IV', 'IM', 'SC', 'Topical', 'Inhaled'],
               label: 'Route',
@@ -206,16 +262,33 @@ class _RxItemCard extends StatelessWidget {
           ]),
           const SizedBox(height: 10),
           Row(children: [
-            Expanded(child: _DropdownField(
+            Expanded(
+                child: _DropdownField(
               value: item.frequency,
-              items: ['Once daily', 'Twice daily', 'Three times daily', 'Four times daily', 'PRN', 'Weekly'],
+              items: [
+                'Once daily',
+                'Twice daily',
+                'Three times daily',
+                'Four times daily',
+                'PRN',
+                'Weekly'
+              ],
               label: 'Frequency',
               onChanged: (_) {},
             )),
             const SizedBox(width: 10),
-            Expanded(child: _DropdownField(
+            Expanded(
+                child: _DropdownField(
               value: item.duration,
-              items: ['3 days', '5 days', '7 days', '10 days', '14 days', '30 days', 'Ongoing'],
+              items: [
+                '3 days',
+                '5 days',
+                '7 days',
+                '10 days',
+                '14 days',
+                '30 days',
+                'Ongoing'
+              ],
               label: 'Duration',
               onChanged: (_) {},
             )),
@@ -231,23 +304,41 @@ class _DropdownField extends StatelessWidget {
   final List<String> items;
   final String label;
   final ValueChanged<String?> onChanged;
-  const _DropdownField({required this.value, required this.items, required this.label, required this.onChanged});
+  const _DropdownField(
+      {required this.value,
+      required this.items,
+      required this.label,
+      required this.onChanged});
 
   @override
   Widget build(BuildContext context) {
     return Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-      Text(label, style: const TextStyle(fontSize: 11, color: AppColors.textSecondary, fontFamily: 'Inter', fontWeight: FontWeight.w600)),
+      Text(label,
+          style: const TextStyle(
+              fontSize: 11,
+              color: AppColors.textSecondary,
+              fontFamily: 'Inter',
+              fontWeight: FontWeight.w600)),
       const SizedBox(height: 4),
       Container(
         padding: const EdgeInsets.symmetric(horizontal: 10),
-        decoration: BoxDecoration(color: AppColors.surfaceLight, borderRadius: BorderRadius.circular(10),
-          border: Border.all(color: AppColors.divider)),
+        decoration: BoxDecoration(
+            color: AppColors.surfaceLight,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(color: AppColors.divider)),
         child: DropdownButtonHideUnderline(
           child: DropdownButton<String>(
-            value: value, isExpanded: true,
+            value: value,
+            isExpanded: true,
             dropdownColor: AppColors.surface,
-            style: const TextStyle(fontSize: 13, fontFamily: 'Inter', color: AppColors.textPrimary),
-            items: items.map((i) => DropdownMenuItem(value: i, child: Text(i, overflow: TextOverflow.ellipsis))).toList(),
+            style: const TextStyle(
+                fontSize: 13,
+                fontFamily: 'Inter',
+                color: AppColors.textPrimary),
+            items: items
+                .map((i) => DropdownMenuItem(
+                    value: i, child: Text(i, overflow: TextOverflow.ellipsis)))
+                .toList(),
             onChanged: onChanged,
           ),
         ),

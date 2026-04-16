@@ -113,7 +113,6 @@ class _LoginScreenState extends State<LoginScreen> {
                     hintText: '••••••••',
                     counterText: '',
                     prefixIcon: const Icon(Icons.lock_outline_rounded, color: AppColors.textMuted),
-                    counterText: '',
                     suffixIcon: IconButton(
                       icon: Icon(_obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
                         color: AppColors.textMuted, size: 20),
@@ -150,10 +149,9 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: const InputDecoration(
                     hintText: 'MFH-001',
                     prefixIcon: Icon(Icons.business_rounded, color: AppColors.textMuted),
-                    counterText: "",
+                    counterText: '',
                     helperText: 'Contact your administrator for your facility code.',
                     helperStyle: TextStyle(color: AppColors.textMuted, fontSize: 12),
-                    counterText: '',
                   ),
                 ),
                 const SizedBox(height: 40),

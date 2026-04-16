@@ -11,7 +11,7 @@ class TeleHomeStaffScreen extends StatefulWidget {
 }
 
 class _TeleHomeStaffScreenState extends State<TeleHomeStaffScreen> {
-  List<StaffAppointment> get _teleAppointments => 
+  List<StaffAppointment> get _teleAppointments =>
       mockStaffAppointments.where((a) => a.type == 'Telemedicine').toList();
 
   @override
@@ -28,8 +28,13 @@ class _TeleHomeStaffScreenState extends State<TeleHomeStaffScreen> {
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                 child: Row(
                   children: [
-                    Expanded(child: Text('Telemedicine Console', style: Theme.of(context).textTheme.headlineMedium)),
-                    IconButton(icon: const Icon(Icons.settings_rounded, color: AppColors.primary), onPressed: () {}),
+                    Expanded(
+                        child: Text('Telemedicine Console',
+                            style: Theme.of(context).textTheme.headlineMedium)),
+                    IconButton(
+                        icon: const Icon(Icons.settings_rounded,
+                            color: AppColors.primary),
+                        onPressed: () {}),
                   ],
                 ),
               ),
@@ -47,16 +52,25 @@ class _TeleHomeStaffScreenState extends State<TeleHomeStaffScreen> {
                           color: AppColors.primary.withOpacity(0.15),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.video_camera_front_rounded, color: AppColors.primary, size: 32),
+                        child: const Icon(Icons.video_camera_front_rounded,
+                            color: AppColors.primary, size: 32),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Next Consultation', style: TextStyle(fontSize: 12, color: AppColors.textSecondary, fontFamily: 'Inter')),
+                            const Text('Next Consultation',
+                                style: TextStyle(
+                                    fontSize: 12,
+                                    color: AppColors.textSecondary,
+                                    fontFamily: 'Inter')),
                             const SizedBox(height: 4),
-                            Text('Sarah Ochieng', style: Theme.of(context).textTheme.titleMedium!.copyWith(color: AppColors.primary)),
+                            Text('Sarah Ochieng',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .titleMedium!
+                                    .copyWith(color: AppColors.primary)),
                           ],
                         ),
                       ),
@@ -65,7 +79,8 @@ class _TeleHomeStaffScreenState extends State<TeleHomeStaffScreen> {
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
                           foregroundColor: Colors.white,
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+                          shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12)),
                         ),
                         child: const Text('Join Call'),
                       ),
@@ -77,7 +92,8 @@ class _TeleHomeStaffScreenState extends State<TeleHomeStaffScreen> {
               // Waiting Room
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Text('Virtual Waiting Room', style: Theme.of(context).textTheme.titleMedium),
+                child: Text('Virtual Waiting Room',
+                    style: Theme.of(context).textTheme.titleMedium),
               ),
               const SizedBox(height: 12),
               Expanded(
@@ -91,24 +107,37 @@ class _TeleHomeStaffScreenState extends State<TeleHomeStaffScreen> {
                       padding: const EdgeInsets.all(16),
                       child: Row(
                         children: [
-                          AvatarCircle(initials: apt.patientName.isNotEmpty ? apt.patientName[0] : '?', size: 48),
+                          AvatarCircle(
+                              initials: apt.patientName.isNotEmpty
+                                  ? apt.patientName[0]
+                                  : '?',
+                              size: 48),
                           const SizedBox(width: 16),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(apt.patientName, style: Theme.of(context).textTheme.titleSmall),
+                                Text(apt.patientName,
+                                    style:
+                                        Theme.of(context).textTheme.titleSmall),
                                 const SizedBox(height: 4),
-                                StatusBadge(label: apt.status.label, color: apt.status.color, fontSize: 10),
+                                StatusBadge(
+                                    label: apt.status.label,
+                                    color: apt.status.color,
+                                    fontSize: 10),
                               ],
                             ),
                           ),
                           Column(
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
-                              Text('${apt.dateTime.hour}:${apt.dateTime.minute.toString().padLeft(2, '0')}', style: const TextStyle(fontWeight: FontWeight.bold)),
+                              Text(
+                                  '${apt.dateTime.hour}:${apt.dateTime.minute.toString().padLeft(2, '0')}',
+                                  style: const TextStyle(
+                                      fontWeight: FontWeight.bold)),
                               const SizedBox(height: 8),
-                              const Icon(Icons.videocam_rounded, color: AppColors.primary, size: 20),
+                              const Icon(Icons.videocam_rounded,
+                                  color: AppColors.primary, size: 20),
                             ],
                           ),
                         ],

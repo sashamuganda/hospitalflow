@@ -30,12 +30,13 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
       return matchesLevel && matchesStatus;
     }).toList();
 
-  @override
-  Widget build(BuildContext context) {
-    // ⚡ Bolt: Cache filtered list to avoid O(N^2) complexity in build()
-    final filtered = _filtered;
-    final waiting = mockQueue.where((q) => q.status == QueueStatus.waiting).length;
-    final immediate = mockQueue.where((q) => q.triageLevel == TriageLevel.immediate).length;
+    final waitingCount = mockQueue.where((q) => q.status == QueueStatus.waiting).length;
+    final immediateCount = mockQueue.where((q) => q.triageLevel == TriageLevel.immediate).length;
+    
+    final triageCounts = <TriageLevel, int>{};
+    for (final level in TriageLevel.values) {
+      triageCounts[level] = mockQueue.where((q) => q.triageLevel == level).length;
+    }
 
     return Scaffold(
       backgroundColor: AppColors.background,

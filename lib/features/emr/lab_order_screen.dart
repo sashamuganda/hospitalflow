@@ -19,23 +19,61 @@ class _LabOrderScreenState extends State<LabOrderScreen> {
   bool _isOrdering = false;
 
   final _testCategories = {
-    'Haematology': ['CBC / FBC', 'Blood Film', 'Coagulation Profile (PT/INR/aPTT)', 'ESR', 'Reticulocyte Count'],
-    'Biochemistry': ['Renal Function Tests (Urea/Creatinine)', 'Liver Function Tests', 'Lipid Profile', 'Blood Glucose (RBS/FBS)', 'HbA1c', 'Electrolytes (Na/K)', 'Thyroid Function (TSH/T4)', 'PSA'],
-    'Microbiology': ['Blood Culture', 'Urine Culture (MCS)', 'Wound Swab', 'Stool MCS', 'Sputum AAFB'],
-    'Serology': ['Malaria RDT', 'Widal Test', 'HIV Screen', 'Hepatitis B (HBsAg)', 'Hepatitis C', 'VDRL/RPR', 'CRP', 'ANA/Anti-dsDNA'],
-    'Urine': ['Urinalysis (UA)', 'Urine Pregnancy Test (UPT)', 'Urine Protein:Creatinine'],
+    'Haematology': [
+      'CBC / FBC',
+      'Blood Film',
+      'Coagulation Profile (PT/INR/aPTT)',
+      'ESR',
+      'Reticulocyte Count'
+    ],
+    'Biochemistry': [
+      'Renal Function Tests (Urea/Creatinine)',
+      'Liver Function Tests',
+      'Lipid Profile',
+      'Blood Glucose (RBS/FBS)',
+      'HbA1c',
+      'Electrolytes (Na/K)',
+      'Thyroid Function (TSH/T4)',
+      'PSA'
+    ],
+    'Microbiology': [
+      'Blood Culture',
+      'Urine Culture (MCS)',
+      'Wound Swab',
+      'Stool MCS',
+      'Sputum AAFB'
+    ],
+    'Serology': [
+      'Malaria RDT',
+      'Widal Test',
+      'HIV Screen',
+      'Hepatitis B (HBsAg)',
+      'Hepatitis C',
+      'VDRL/RPR',
+      'CRP',
+      'ANA/Anti-dsDNA'
+    ],
+    'Urine': [
+      'Urinalysis (UA)',
+      'Urine Pregnancy Test (UPT)',
+      'Urine Protein:Creatinine'
+    ],
   };
 
   PatientRecord? get _patient =>
       mockPatientRecords.where((p) => p.id == widget.patientId).firstOrNull;
 
   @override
-  void dispose() { _notesCtrl.dispose(); super.dispose(); }
+  void dispose() {
+    _notesCtrl.dispose();
+    super.dispose();
+  }
 
   Future<void> _onOrder() async {
     if (_selectedTests.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(const SnackBar(
-        content: Text('Please select at least one test'), backgroundColor: AppColors.error));
+          content: Text('Please select at least one test'),
+          backgroundColor: AppColors.error));
       return;
     }
     setState(() => _isOrdering = true);
@@ -43,8 +81,9 @@ class _LabOrderScreenState extends State<LabOrderScreen> {
     if (!mounted) return;
     setState(() => _isOrdering = false);
     ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-      content: Text('Lab order sent — ${_selectedTests.length} test(s) ordered'),
-      backgroundColor: AppColors.success));
+        content:
+            Text('Lab order sent — ${_selectedTests.length} test(s) ordered'),
+        backgroundColor: AppColors.success));
     context.pop();
   }
 
@@ -63,14 +102,22 @@ class _LabOrderScreenState extends State<LabOrderScreen> {
                 child: Row(children: [
                   GestureDetector(
                     onTap: () => context.pop(),
-                    child: Container(padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(color: AppColors.surfaceLight, borderRadius: BorderRadius.circular(10)),
-                      child: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: AppColors.textSecondary)),
+                    child: Container(
+                        padding: const EdgeInsets.all(8),
+                        decoration: BoxDecoration(
+                            color: AppColors.surfaceLight,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: const Icon(Icons.arrow_back_ios_new_rounded,
+                            size: 18, color: AppColors.textSecondary)),
                   ),
                   const SizedBox(width: 16),
-                  Expanded(child: Text('Order Lab Tests', style: Theme.of(context).textTheme.headlineSmall)),
+                  Expanded(
+                      child: Text('Order Lab Tests',
+                          style: Theme.of(context).textTheme.headlineSmall)),
                   if (_selectedTests.isNotEmpty)
-                    StatusBadge(label: '${_selectedTests.length} selected', color: AppColors.primary),
+                    StatusBadge(
+                        label: '${_selectedTests.length} selected',
+                        color: AppColors.primary),
                 ]),
               ),
               const SizedBox(height: 12),
@@ -86,18 +133,33 @@ class _LabOrderScreenState extends State<LabOrderScreen> {
                           borderColor: AppColors.primary.withOpacity(0.3),
                           padding: const EdgeInsets.all(12),
                           child: Row(children: [
-                            AvatarCircle(initials: patient.avatarInitials, size: 40),
+                            AvatarCircle(
+                                initials: patient.avatarInitials, size: 40),
                             const SizedBox(width: 12),
-                            Expanded(child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-                              Text(patient.fullName, style: Theme.of(context).textTheme.titleSmall),
-                              Text('${patient.age}y · ${patient.gender}', style: Theme.of(context).textTheme.bodySmall),
-                            ])),
+                            Expanded(
+                                child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                  Text(patient.fullName,
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .titleSmall),
+                                  Text('${patient.age}y · ${patient.gender}',
+                                      style: Theme.of(context)
+                                          .textTheme
+                                          .bodySmall),
+                                ])),
                           ]),
                         ),
                       const SizedBox(height: 20),
                       // Priority
-                      const Text('Priority', style: TextStyle(fontFamily: 'Inter', fontSize: 13,
-                        fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                      const Text('Priority',
+                          style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textPrimary)),
                       const SizedBox(height: 8),
                       Row(children: [
                         for (final pr in [
@@ -105,17 +167,30 @@ class _LabOrderScreenState extends State<LabOrderScreen> {
                           ('Urgent', 'urgent', AppColors.warning),
                           ('STAT', 'stat', AppColors.error),
                         ]) ...[
-                          Expanded(child: GestureDetector(
+                          Expanded(
+                              child: GestureDetector(
                             onTap: () => setState(() => _priority = pr.$2),
                             child: AnimatedContainer(
                               duration: const Duration(milliseconds: 150),
                               padding: const EdgeInsets.symmetric(vertical: 10),
                               decoration: BoxDecoration(
-                                color: _priority == pr.$2 ? pr.$3.withOpacity(0.15) : AppColors.surfaceLight,
-                                borderRadius: BorderRadius.circular(10),
-                                border: Border.all(color: _priority == pr.$2 ? pr.$3 : AppColors.divider)),
-                              child: Center(child: Text(pr.$1, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700,
-                                fontFamily: 'Inter', color: _priority == pr.$2 ? pr.$3 : AppColors.textMuted))),
+                                  color: _priority == pr.$2
+                                      ? pr.$3.withOpacity(0.15)
+                                      : AppColors.surfaceLight,
+                                  borderRadius: BorderRadius.circular(10),
+                                  border: Border.all(
+                                      color: _priority == pr.$2
+                                          ? pr.$3
+                                          : AppColors.divider)),
+                              child: Center(
+                                  child: Text(pr.$1,
+                                      style: TextStyle(
+                                          fontSize: 13,
+                                          fontWeight: FontWeight.w700,
+                                          fontFamily: 'Inter',
+                                          color: _priority == pr.$2
+                                              ? pr.$3
+                                              : AppColors.textMuted))),
                             ),
                           )),
                           const SizedBox(width: 8),
@@ -124,18 +199,28 @@ class _LabOrderScreenState extends State<LabOrderScreen> {
                       const SizedBox(height: 20),
                       // Test categories
                       ..._testCategories.entries.map((cat) => _TestCategory(
-                        category: cat.key,
-                        tests: cat.value,
-                        selected: _selectedTests,
-                        onToggle: (t) => setState(() =>
-                          _selectedTests.contains(t) ? _selectedTests.remove(t) : _selectedTests.add(t)),
-                      )),
+                            category: cat.key,
+                            tests: cat.value,
+                            selected: _selectedTests,
+                            onToggle: (t) => setState(() =>
+                                _selectedTests.contains(t)
+                                    ? _selectedTests.remove(t)
+                                    : _selectedTests.add(t)),
+                          )),
                       const SizedBox(height: 20),
-                      const Text('Clinical Notes (optional)', style: TextStyle(fontFamily: 'Inter', fontSize: 13,
-                        fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                      const Text('Clinical Notes (optional)',
+                          style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: AppColors.textPrimary)),
                       const SizedBox(height: 8),
-                      TextField(controller: _notesCtrl, maxLines: 2,
-                        decoration: const InputDecoration(hintText: 'Relevant clinical information for lab...')),
+                      TextField(
+                          controller: _notesCtrl,
+                          maxLines: 2,
+                          decoration: const InputDecoration(
+                              hintText:
+                                  'Relevant clinical information for lab...')),
                       const SizedBox(height: 32),
                       GradientButton(
                         label: 'Send Lab Order',
@@ -161,7 +246,11 @@ class _TestCategory extends StatefulWidget {
   final List<String> tests;
   final Set<String> selected;
   final ValueChanged<String> onToggle;
-  const _TestCategory({required this.category, required this.tests, required this.selected, required this.onToggle});
+  const _TestCategory(
+      {required this.category,
+      required this.tests,
+      required this.selected,
+      required this.onToggle});
   @override
   State<_TestCategory> createState() => _TestCategoryState();
 }
@@ -171,22 +260,41 @@ class _TestCategoryState extends State<_TestCategory> {
 
   @override
   Widget build(BuildContext context) {
-    final selectedCount = widget.tests.where((t) => widget.selected.contains(t)).length;
+    final selectedCount =
+        widget.tests.where((t) => widget.selected.contains(t)).length;
     return Container(
       margin: const EdgeInsets.only(bottom: 10),
       decoration: BoxDecoration(
-        gradient: AppColors.cardGradient, borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: selectedCount > 0 ? AppColors.primary.withOpacity(0.3) : AppColors.divider)),
+          gradient: AppColors.cardGradient,
+          borderRadius: BorderRadius.circular(12),
+          border: Border.all(
+              color: selectedCount > 0
+                  ? AppColors.primary.withOpacity(0.3)
+                  : AppColors.divider)),
       child: Column(children: [
         ListTile(
           leading: Icon(Icons.science_outlined,
-            color: selectedCount > 0 ? AppColors.primary : AppColors.textMuted, size: 20),
-          title: Text(widget.category, style: const TextStyle(fontFamily: 'Inter', fontSize: 14, fontWeight: FontWeight.w600, color: AppColors.textPrimary)),
+              color:
+                  selectedCount > 0 ? AppColors.primary : AppColors.textMuted,
+              size: 20),
+          title: Text(widget.category,
+              style: const TextStyle(
+                  fontFamily: 'Inter',
+                  fontSize: 14,
+                  fontWeight: FontWeight.w600,
+                  color: AppColors.textPrimary)),
           trailing: Row(mainAxisSize: MainAxisSize.min, children: [
             if (selectedCount > 0)
-              StatusBadge(label: '$selectedCount', color: AppColors.primary, fontSize: 10),
+              StatusBadge(
+                  label: '$selectedCount',
+                  color: AppColors.primary,
+                  fontSize: 10),
             const SizedBox(width: 4),
-            Icon(_expanded ? Icons.expand_less_rounded : Icons.expand_more_rounded, color: AppColors.textMuted),
+            Icon(
+                _expanded
+                    ? Icons.expand_less_rounded
+                    : Icons.expand_more_rounded,
+                color: AppColors.textMuted),
           ]),
           onTap: () => setState(() => _expanded = !_expanded),
           dense: true,
@@ -196,23 +304,38 @@ class _TestCategoryState extends State<_TestCategory> {
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
             child: Column(
-              children: widget.tests.map((t) => GestureDetector(
-                onTap: () => widget.onToggle(t),
-                child: Container(
-                  margin: const EdgeInsets.only(bottom: 6),
-                  padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 10),
-                  decoration: BoxDecoration(
-                    color: widget.selected.contains(t) ? AppColors.primary.withOpacity(0.1) : AppColors.surfaceLight,
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: widget.selected.contains(t) ? AppColors.primary.withOpacity(0.4) : AppColors.divider)),
-                  child: Row(children: [
-                    Expanded(child: Text(t, style: TextStyle(fontSize: 13, fontFamily: 'Inter',
-                      color: widget.selected.contains(t) ? AppColors.textPrimary : AppColors.textSecondary))),
-                    if (widget.selected.contains(t))
-                      const Icon(Icons.check_circle_rounded, color: AppColors.primary, size: 18),
-                  ]),
-                ),
-              )).toList(),
+              children: widget.tests
+                  .map((t) => GestureDetector(
+                        onTap: () => widget.onToggle(t),
+                        child: Container(
+                          margin: const EdgeInsets.only(bottom: 6),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 12, vertical: 10),
+                          decoration: BoxDecoration(
+                              color: widget.selected.contains(t)
+                                  ? AppColors.primary.withOpacity(0.1)
+                                  : AppColors.surfaceLight,
+                              borderRadius: BorderRadius.circular(8),
+                              border: Border.all(
+                                  color: widget.selected.contains(t)
+                                      ? AppColors.primary.withOpacity(0.4)
+                                      : AppColors.divider)),
+                          child: Row(children: [
+                            Expanded(
+                                child: Text(t,
+                                    style: TextStyle(
+                                        fontSize: 13,
+                                        fontFamily: 'Inter',
+                                        color: widget.selected.contains(t)
+                                            ? AppColors.textPrimary
+                                            : AppColors.textSecondary))),
+                            if (widget.selected.contains(t))
+                              const Icon(Icons.check_circle_rounded,
+                                  color: AppColors.primary, size: 18),
+                          ]),
+                        ),
+                      ))
+                  .toList(),
             ),
           ),
         ],

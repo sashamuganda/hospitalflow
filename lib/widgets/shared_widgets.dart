@@ -64,7 +64,6 @@ class MedFlowAppBar extends StatelessWidget implements PreferredSizeWidget {
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
               tooltip: 'Back',
               onPressed: () => Navigator.of(context).pop(),
-              tooltip: 'Back',
             )
           : leading,
       title: Text(title),

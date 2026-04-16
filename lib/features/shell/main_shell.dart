@@ -68,17 +68,22 @@ class _Sidebar extends StatelessWidget {
             child: Row(
               children: [
                 Container(
-                  width: 36, height: 36,
+                  width: 36,
+                  height: 36,
                   decoration: BoxDecoration(
                     gradient: AppColors.tealGradient,
                     borderRadius: BorderRadius.circular(10),
                   ),
-                  child: const Icon(Icons.local_hospital_rounded, color: Colors.white, size: 20),
+                  child: const Icon(Icons.local_hospital_rounded,
+                      color: Colors.white, size: 20),
                 ),
                 const SizedBox(width: 10),
                 const Text('MedFlow Staff',
-                  style: TextStyle(fontFamily: 'Inter', fontSize: 15,
-                    fontWeight: FontWeight.w700, color: AppColors.textPrimary)),
+                    style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 15,
+                        fontWeight: FontWeight.w700,
+                        color: AppColors.textPrimary)),
               ],
             ),
           ),
@@ -100,12 +105,17 @@ class _Sidebar extends StatelessWidget {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(user.displayName,
-                          style: const TextStyle(fontFamily: 'Inter', fontSize: 13,
-                            fontWeight: FontWeight.w600, color: AppColors.textPrimary),
-                          overflow: TextOverflow.ellipsis),
+                            style: const TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: AppColors.textPrimary),
+                            overflow: TextOverflow.ellipsis),
                         Text(user.department,
-                          style: const TextStyle(fontFamily: 'Inter', fontSize: 11,
-                            color: AppColors.textMuted)),
+                            style: const TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 11,
+                                color: AppColors.textMuted)),
                       ],
                     ),
                   ),
@@ -133,7 +143,8 @@ class _Sidebar extends StatelessWidget {
                 context.go('/role-select');
               },
               child: Container(
-                padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
                 decoration: BoxDecoration(
                   color: AppColors.error.withOpacity(0.08),
                   borderRadius: BorderRadius.circular(10),
@@ -141,11 +152,15 @@ class _Sidebar extends StatelessWidget {
                 ),
                 child: const Row(
                   children: [
-                    Icon(Icons.logout_rounded, color: AppColors.error, size: 20),
+                    Icon(Icons.logout_rounded,
+                        color: AppColors.error, size: 20),
                     SizedBox(width: 12),
                     Text('Sign Out',
-                      style: TextStyle(fontFamily: 'Inter', fontSize: 14,
-                        color: AppColors.error, fontWeight: FontWeight.w600)),
+                        style: TextStyle(
+                            fontFamily: 'Inter',
+                            fontSize: 14,
+                            color: AppColors.error,
+                            fontWeight: FontWeight.w600)),
                   ],
                 ),
               ),
@@ -171,21 +186,30 @@ class _SideNavItem extends StatelessWidget {
         margin: const EdgeInsets.only(bottom: 4),
         padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
         decoration: BoxDecoration(
-          color: isActive ? AppColors.primary.withOpacity(0.12) : Colors.transparent,
+          color: isActive
+              ? AppColors.primary.withOpacity(0.12)
+              : Colors.transparent,
           borderRadius: BorderRadius.circular(10),
           border: Border.all(
-            color: isActive ? AppColors.primary.withOpacity(0.25) : Colors.transparent,
+            color: isActive
+                ? AppColors.primary.withOpacity(0.25)
+                : Colors.transparent,
           ),
         ),
         child: Row(
           children: [
             Icon(item.icon,
-              color: isActive ? AppColors.primary : AppColors.textMuted, size: 20),
+                color: isActive ? AppColors.primary : AppColors.textMuted,
+                size: 20),
             const SizedBox(width: 12),
             Text(item.label,
-              style: TextStyle(fontFamily: 'Inter', fontSize: 14,
-                fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-                color: isActive ? AppColors.textPrimary : AppColors.textSecondary)),
+                style: TextStyle(
+                    fontFamily: 'Inter',
+                    fontSize: 14,
+                    fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                    color: isActive
+                        ? AppColors.textPrimary
+                        : AppColors.textSecondary)),
           ],
         ),
       ),
@@ -204,7 +228,10 @@ class _MobileLayout extends StatelessWidget {
     final location = GoRouterState.of(context).matchedLocation;
     int selectedIndex = 0;
     for (int i = 0; i < items.length; i++) {
-      if (location.startsWith(items[i].route)) { selectedIndex = i; break; }
+      if (location.startsWith(items[i].route)) {
+        selectedIndex = i;
+        break;
+      }
     }
 
     return Scaffold(
@@ -224,12 +251,15 @@ class _MobileLayout extends StatelessWidget {
           type: BottomNavigationBarType.fixed,
           showSelectedLabels: true,
           showUnselectedLabels: true,
-          selectedLabelStyle: const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
+          selectedLabelStyle:
+              const TextStyle(fontSize: 11, fontWeight: FontWeight.w600),
           unselectedLabelStyle: const TextStyle(fontSize: 11),
-          items: items.map((item) => BottomNavigationBarItem(
-            icon: Icon(item.icon),
-            label: item.label,
-          )).toList(),
+          items: items
+              .map((item) => BottomNavigationBarItem(
+                    icon: Icon(item.icon),
+                    label: item.label,
+                  ))
+              .toList(),
         ),
       ),
     );

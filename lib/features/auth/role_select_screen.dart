@@ -162,8 +162,9 @@ class _RoleCard extends StatelessWidget {
             color: isSelected ? AppColors.primary : AppColors.divider,
             width: isSelected ? 1.5 : 1,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+        ),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               Container(
                 width: 44, height: 44,
@@ -188,7 +189,6 @@ class _RoleCard extends StatelessWidget {
             ],
           ),
         ),
-      ),
     );
   }
 }

@@ -4,16 +4,16 @@ class AppColors {
   AppColors._();
 
   // Primary Brand
-  static const Color primary = Color(0xFF00D4FF);       // Electric Teal
+  static const Color primary = Color(0xFF00D4FF); // Electric Teal
   static const Color primaryDark = Color(0xFF0099CC);
-  static const Color secondary = Color(0xFF7C3AED);     // Violet
+  static const Color secondary = Color(0xFF7C3AED); // Violet
   static const Color secondaryLight = Color(0xFF9D67F5);
 
   // Backgrounds
-  static const Color background = Color(0xFF080D1A);    // Deep Navy
-  static const Color surface = Color(0xFF0F1629);       // Card Surface
-  static const Color surfaceLight = Color(0xFF1A2240);  // Lighter Card
-  static const Color surfaceGlass = Color(0x1AFFFFFF);  // Glass overlay
+  static const Color background = Color(0xFF080D1A); // Deep Navy
+  static const Color surface = Color(0xFF0F1629); // Card Surface
+  static const Color surfaceLight = Color(0xFF1A2240); // Lighter Card
+  static const Color surfaceGlass = Color(0x1AFFFFFF); // Glass overlay
 
   // Text
   static const Color textPrimary = Color(0xFFF0F4FF);
@@ -22,9 +22,9 @@ class AppColors {
   static const Color textOnPrimary = Color(0xFF080D1A);
 
   // Status Colors
-  static const Color success = Color(0xFF00E5A0);       // Mint Green
-  static const Color warning = Color(0xFFFFB830);       // Amber
-  static const Color error = Color(0xFFFF4C6A);         // Coral Red
+  static const Color success = Color(0xFF00E5A0); // Mint Green
+  static const Color warning = Color(0xFFFFB830); // Amber
+  static const Color error = Color(0xFFFF4C6A); // Coral Red
   static const Color info = Color(0xFF00D4FF);
 
   // Health Metric States

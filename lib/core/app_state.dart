@@ -26,51 +26,80 @@ class AppState extends ChangeNotifier {
       case StaffRole.doctor:
         _navItems = const [
           NavItem(icon: Icons.home_rounded, label: 'Home', route: '/home'),
-          NavItem(icon: Icons.people_alt_rounded, label: 'Queue', route: '/queue'),
-          NavItem(icon: Icons.folder_shared_rounded, label: 'EMR', route: '/emr'),
-          NavItem(icon: Icons.video_call_rounded, label: 'Telemedicine', route: '/telemedicine'),
-          NavItem(icon: Icons.person_rounded, label: 'Profile', route: '/settings'),
+          NavItem(
+              icon: Icons.people_alt_rounded, label: 'Queue', route: '/queue'),
+          NavItem(
+              icon: Icons.folder_shared_rounded, label: 'EMR', route: '/emr'),
+          NavItem(
+              icon: Icons.video_call_rounded,
+              label: 'Telemedicine',
+              route: '/telemedicine'),
+          NavItem(
+              icon: Icons.person_rounded, label: 'Profile', route: '/settings'),
         ];
         break;
       case StaffRole.nurse:
         _navItems = const [
           NavItem(icon: Icons.home_rounded, label: 'Home', route: '/home'),
-          NavItem(icon: Icons.people_alt_rounded, label: 'Queue', route: '/queue'),
+          NavItem(
+              icon: Icons.people_alt_rounded, label: 'Queue', route: '/queue'),
           NavItem(icon: Icons.bed_rounded, label: 'Ward', route: '/ward'),
           NavItem(icon: Icons.science_rounded, label: 'Lab', route: '/lab'),
-          NavItem(icon: Icons.person_rounded, label: 'Profile', route: '/settings'),
+          NavItem(
+              icon: Icons.person_rounded, label: 'Profile', route: '/settings'),
         ];
         break;
       case StaffRole.admin:
         _navItems = const [
           NavItem(icon: Icons.home_rounded, label: 'Home', route: '/home'),
-          NavItem(icon: Icons.bar_chart_rounded, label: 'Analytics', route: '/analytics'),
-          NavItem(icon: Icons.calendar_month_rounded, label: 'Schedule', route: '/appointments'),
+          NavItem(
+              icon: Icons.bar_chart_rounded,
+              label: 'Analytics',
+              route: '/analytics'),
+          NavItem(
+              icon: Icons.calendar_month_rounded,
+              label: 'Schedule',
+              route: '/appointments'),
           NavItem(icon: Icons.groups_rounded, label: 'Staff', route: '/staff'),
-          NavItem(icon: Icons.person_rounded, label: 'Profile', route: '/settings'),
+          NavItem(
+              icon: Icons.person_rounded, label: 'Profile', route: '/settings'),
         ];
         break;
       case StaffRole.receptionist:
         _navItems = const [
           NavItem(icon: Icons.home_rounded, label: 'Home', route: '/home'),
-          NavItem(icon: Icons.people_alt_rounded, label: 'Queue', route: '/queue'),
-          NavItem(icon: Icons.calendar_month_rounded, label: 'Bookings', route: '/appointments'),
-          NavItem(icon: Icons.person_rounded, label: 'Profile', route: '/settings'),
+          NavItem(
+              icon: Icons.people_alt_rounded, label: 'Queue', route: '/queue'),
+          NavItem(
+              icon: Icons.calendar_month_rounded,
+              label: 'Bookings',
+              route: '/appointments'),
+          NavItem(
+              icon: Icons.person_rounded, label: 'Profile', route: '/settings'),
         ];
         break;
       case StaffRole.pharmacist:
         _navItems = const [
           NavItem(icon: Icons.home_rounded, label: 'Home', route: '/home'),
-          NavItem(icon: Icons.receipt_long_rounded, label: 'Dispense', route: '/pharmacy'),
-          NavItem(icon: Icons.inventory_2_rounded, label: 'Inventory', route: '/inventory'),
-          NavItem(icon: Icons.person_rounded, label: 'Profile', route: '/settings'),
+          NavItem(
+              icon: Icons.receipt_long_rounded,
+              label: 'Dispense',
+              route: '/pharmacy'),
+          NavItem(
+              icon: Icons.inventory_2_rounded,
+              label: 'Inventory',
+              route: '/inventory'),
+          NavItem(
+              icon: Icons.person_rounded, label: 'Profile', route: '/settings'),
         ];
         break;
       case StaffRole.labTech:
         _navItems = const [
           NavItem(icon: Icons.home_rounded, label: 'Home', route: '/home'),
-          NavItem(icon: Icons.science_rounded, label: 'Lab Orders', route: '/lab'),
-          NavItem(icon: Icons.person_rounded, label: 'Profile', route: '/settings'),
+          NavItem(
+              icon: Icons.science_rounded, label: 'Lab Orders', route: '/lab'),
+          NavItem(
+              icon: Icons.person_rounded, label: 'Profile', route: '/settings'),
         ];
         break;
     }

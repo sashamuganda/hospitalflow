@@ -22,7 +22,8 @@ class SettingsHomeScreen extends StatelessWidget {
           child: ListView(
             padding: const EdgeInsets.fromLTRB(20, 20, 20, 100),
             children: [
-              Text('Settings', style: Theme.of(context).textTheme.headlineMedium),
+              Text('Settings',
+                  style: Theme.of(context).textTheme.headlineMedium),
               const SizedBox(height: 24),
               // Profile Card
               if (user != null)
@@ -36,9 +37,12 @@ class SettingsHomeScreen extends StatelessWidget {
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(user.displayName, style: Theme.of(context).textTheme.titleLarge),
+                            Text(user.displayName,
+                                style: Theme.of(context).textTheme.titleLarge),
                             const SizedBox(height: 4),
-                            Text(user.email, style: const TextStyle(color: AppColors.textSecondary)),
+                            Text(user.email,
+                                style: const TextStyle(
+                                    color: AppColors.textSecondary)),
                           ],
                         ),
                       ),
@@ -46,32 +50,54 @@ class SettingsHomeScreen extends StatelessWidget {
                   ),
                 ),
               const SizedBox(height: 32),
-              const Text('Preferences', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
+              const Text('Preferences',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textSecondary)),
               const SizedBox(height: 12),
               GlassCard(
                 padding: EdgeInsets.zero,
                 child: Column(
                   children: [
-                    const _SettingsTile(icon: Icons.notifications_rounded, title: 'Notifications', isSwitch: true, switchValue: true),
+                    const _SettingsTile(
+                        icon: Icons.notifications_rounded,
+                        title: 'Notifications',
+                        isSwitch: true,
+                        switchValue: true),
                     const Divider(color: AppColors.divider, height: 1),
-                    const _SettingsTile(icon: Icons.dark_mode_rounded, title: 'Dark Mode', isSwitch: true, switchValue: true),
+                    const _SettingsTile(
+                        icon: Icons.dark_mode_rounded,
+                        title: 'Dark Mode',
+                        isSwitch: true,
+                        switchValue: true),
                     const Divider(color: AppColors.divider, height: 1),
-                    const _SettingsTile(icon: Icons.language_rounded, title: 'Language', subtitle: 'English'),
+                    const _SettingsTile(
+                        icon: Icons.language_rounded,
+                        title: 'Language',
+                        subtitle: 'English'),
                   ],
                 ),
               ),
               const SizedBox(height: 32),
-              const Text('Account', style: TextStyle(fontWeight: FontWeight.bold, color: AppColors.textSecondary)),
+              const Text('Account',
+                  style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                      color: AppColors.textSecondary)),
               const SizedBox(height: 12),
               GlassCard(
                 padding: EdgeInsets.zero,
                 child: Column(
                   children: [
-                    const _SettingsTile(icon: Icons.lock_rounded, title: 'Change Password'),
+                    const _SettingsTile(
+                        icon: Icons.lock_rounded, title: 'Change Password'),
                     const Divider(color: AppColors.divider, height: 1),
                     ListTile(
-                      leading: const Icon(Icons.logout_rounded, color: AppColors.error),
-                      title: const Text('Log Out', style: TextStyle(color: AppColors.error, fontWeight: FontWeight.bold)),
+                      leading: const Icon(Icons.logout_rounded,
+                          color: AppColors.error),
+                      title: const Text('Log Out',
+                          style: TextStyle(
+                              color: AppColors.error,
+                              fontWeight: FontWeight.bold)),
                       onTap: () {
                         context.read<AppState>().logout();
                         context.go('/role-select');
@@ -95,14 +121,21 @@ class _SettingsTile extends StatelessWidget {
   final bool isSwitch;
   final bool switchValue;
 
-  const _SettingsTile({required this.icon, required this.title, this.subtitle, this.isSwitch = false, this.switchValue = false});
+  const _SettingsTile(
+      {required this.icon,
+      required this.title,
+      this.subtitle,
+      this.isSwitch = false,
+      this.switchValue = false});
 
   @override
   Widget build(BuildContext context) {
     return ListTile(
       leading: Icon(icon, color: AppColors.primary),
       title: Text(title, style: const TextStyle(color: AppColors.textPrimary)),
-      subtitle: subtitle != null ? Text(subtitle!, style: const TextStyle(color: AppColors.textMuted)) : null,
+      subtitle: subtitle != null
+          ? Text(subtitle!, style: const TextStyle(color: AppColors.textMuted))
+          : null,
       trailing: isSwitch
           ? Switch(
               value: switchValue,

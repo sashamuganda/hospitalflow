@@ -15,7 +15,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   List<StaffNotification> get _filtered {
     if (_filter == 'All') return mockNotifications;
-    return mockNotifications.where((n) => n.type.toLowerCase() == _filter.toLowerCase()).toList();
+    return mockNotifications
+        .where((n) => n.type.toLowerCase() == _filter.toLowerCase())
+        .toList();
   }
 
   @override
@@ -36,15 +38,21 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       onTap: () => Navigator.pop(context),
                       child: Container(
                         padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(color: AppColors.surfaceLight, borderRadius: BorderRadius.circular(10)),
-                        child: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: AppColors.textSecondary),
+                        decoration: BoxDecoration(
+                            color: AppColors.surfaceLight,
+                            borderRadius: BorderRadius.circular(10)),
+                        child: const Icon(Icons.arrow_back_ios_new_rounded,
+                            size: 18, color: AppColors.textSecondary),
                       ),
                     ),
                     const SizedBox(width: 16),
-                    Expanded(child: Text('Notifications', style: Theme.of(context).textTheme.headlineSmall)),
+                    Expanded(
+                        child: Text('Notifications',
+                            style: Theme.of(context).textTheme.headlineSmall)),
                     StatusBadge(
-                      label: '${mockNotifications.where((n) => !n.isRead).length} new',
-                      color: AppColors.error),
+                        label:
+                            '${mockNotifications.where((n) => !n.isRead).length} new',
+                        color: AppColors.error),
                   ],
                 ),
               ),
@@ -53,7 +61,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 height: 52,
                 child: ListView.separated(
                   scrollDirection: Axis.horizontal,
-                  padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
                   separatorBuilder: (_, __) => const SizedBox(width: 8),
                   itemCount: _filters.length,
                   itemBuilder: (context, i) {
@@ -63,16 +72,26 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                       onTap: () => setState(() => _filter = f),
                       child: AnimatedContainer(
                         duration: const Duration(milliseconds: 150),
-                        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 14, vertical: 6),
                         decoration: BoxDecoration(
-                          color: isActive ? AppColors.primary : AppColors.surfaceLight,
+                          color: isActive
+                              ? AppColors.primary
+                              : AppColors.surfaceLight,
                           borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: isActive ? AppColors.primary : AppColors.divider),
+                          border: Border.all(
+                              color: isActive
+                                  ? AppColors.primary
+                                  : AppColors.divider),
                         ),
                         child: Text(f,
-                          style: TextStyle(fontFamily: 'Inter', fontSize: 13,
-                            fontWeight: FontWeight.w600,
-                            color: isActive ? AppColors.textOnPrimary : AppColors.textSecondary)),
+                            style: TextStyle(
+                                fontFamily: 'Inter',
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: isActive
+                                    ? AppColors.textOnPrimary
+                                    : AppColors.textSecondary)),
                       ),
                     );
                   },
@@ -89,7 +108,8 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
                         itemCount: _filtered.length,
                         separatorBuilder: (_, __) => const SizedBox(height: 10),
-                        itemBuilder: (context, i) => _NotificationCard(notif: _filtered[i]),
+                        itemBuilder: (context, i) =>
+                            _NotificationCard(notif: _filtered[i]),
                       ),
               ),
             ],
@@ -113,7 +133,8 @@ class _NotificationCard extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Container(
-            width: 44, height: 44,
+            width: 44,
+            height: 44,
             decoration: BoxDecoration(
               color: notif.typeColor.withOpacity(0.15),
               borderRadius: BorderRadius.circular(12),
@@ -130,20 +151,35 @@ class _NotificationCard extends StatelessWidget {
                   children: [
                     Expanded(
                       child: Text(notif.title,
-                        style: Theme.of(context).textTheme.titleSmall?.copyWith(
-                          color: notif.isRead ? AppColors.textSecondary : AppColors.textPrimary)),
+                          style: Theme.of(context)
+                              .textTheme
+                              .titleSmall
+                              ?.copyWith(
+                                  color: notif.isRead
+                                      ? AppColors.textSecondary
+                                      : AppColors.textPrimary)),
                     ),
                     if (!notif.isRead)
-                      Container(width: 8, height: 8,
-                        decoration: const BoxDecoration(color: AppColors.primary, shape: BoxShape.circle)),
+                      Container(
+                          width: 8,
+                          height: 8,
+                          decoration: const BoxDecoration(
+                              color: AppColors.primary,
+                              shape: BoxShape.circle)),
                   ],
                 ),
                 const SizedBox(height: 6),
                 Text(notif.message,
-                  style: Theme.of(context).textTheme.bodySmall?.copyWith(height: 1.4)),
+                    style: Theme.of(context)
+                        .textTheme
+                        .bodySmall
+                        ?.copyWith(height: 1.4)),
                 const SizedBox(height: 8),
                 Text(_formatTime(notif.time),
-                  style: const TextStyle(fontSize: 11, color: AppColors.textMuted, fontFamily: 'Inter')),
+                    style: const TextStyle(
+                        fontSize: 11,
+                        color: AppColors.textMuted,
+                        fontFamily: 'Inter')),
               ],
             ),
           ),

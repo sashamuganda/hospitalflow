@@ -17,14 +17,19 @@ class _EmrHomeScreenState extends State<EmrHomeScreen> {
   List<PatientRecord> get _results {
     if (_query.isEmpty) return mockPatientRecords;
     final q = _query.toLowerCase();
-    return mockPatientRecords.where((p) =>
-      p.fullName.toLowerCase().contains(q) ||
-      p.nationalId.contains(q) ||
-      p.phone.contains(q)).toList();
+    return mockPatientRecords
+        .where((p) =>
+            p.fullName.toLowerCase().contains(q) ||
+            p.nationalId.contains(q) ||
+            p.phone.contains(q))
+        .toList();
   }
 
   @override
-  void dispose() { _searchCtrl.dispose(); super.dispose(); }
+  void dispose() {
+    _searchCtrl.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +40,8 @@ class _EmrHomeScreenState extends State<EmrHomeScreen> {
         backgroundColor: AppColors.secondary,
         foregroundColor: Colors.white,
         icon: const Icon(Icons.note_add_rounded),
-        label: const Text('New Note', style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600)),
+        label: const Text('New Note',
+            style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600)),
       ),
       body: Container(
         decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
@@ -48,10 +54,15 @@ class _EmrHomeScreenState extends State<EmrHomeScreen> {
                   children: [
                     Row(
                       children: [
-                        Expanded(child: Text('EMR', style: Theme.of(context).textTheme.headlineMedium)),
+                        Expanded(
+                            child: Text('EMR',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineMedium)),
                         IconButton(
                           onPressed: () {},
-                          icon: const Icon(Icons.filter_list_rounded, color: AppColors.textSecondary),
+                          icon: const Icon(Icons.filter_list_rounded,
+                              color: AppColors.textSecondary),
                         ),
                       ],
                     ),
@@ -62,11 +73,16 @@ class _EmrHomeScreenState extends State<EmrHomeScreen> {
                       onChanged: (v) => setState(() => _query = v),
                       decoration: InputDecoration(
                         hintText: 'Search by name, ID, or phone...',
-                        prefixIcon: const Icon(Icons.search_rounded, color: AppColors.textMuted),
+                        prefixIcon: const Icon(Icons.search_rounded,
+                            color: AppColors.textMuted),
                         suffixIcon: _query.isNotEmpty
                             ? IconButton(
-                                icon: const Icon(Icons.clear_rounded, size: 18, color: AppColors.textMuted),
-                                onPressed: () => setState(() { _query = ''; _searchCtrl.clear(); }))
+                                icon: const Icon(Icons.clear_rounded,
+                                    size: 18, color: AppColors.textMuted),
+                                onPressed: () => setState(() {
+                                      _query = '';
+                                      _searchCtrl.clear();
+                                    }))
                             : null,
                       ),
                     ),
@@ -89,7 +105,7 @@ class _EmrHomeScreenState extends State<EmrHomeScreen> {
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   child: Text('${_results.length} results for "$_query"',
-                    style: Theme.of(context).textTheme.bodySmall),
+                      style: Theme.of(context).textTheme.bodySmall),
                 ),
                 const SizedBox(height: 8),
               ],
@@ -98,14 +114,16 @@ class _EmrHomeScreenState extends State<EmrHomeScreen> {
                     ? const EmptyState(
                         icon: Icons.person_search_rounded,
                         title: 'No patients found',
-                        message: 'Try searching by full name, national ID, or phone number.')
+                        message:
+                            'Try searching by full name, national ID, or phone number.')
                     : ListView.separated(
                         padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
                         itemCount: _results.length,
                         separatorBuilder: (_, __) => const SizedBox(height: 10),
                         itemBuilder: (context, i) => _PatientRecordCard(
                           patient: _results[i],
-                          onTap: () => context.push('/emr/patient/${_results[i].id}'),
+                          onTap: () =>
+                              context.push('/emr/patient/${_results[i].id}'),
                         ),
                       ),
               ),
@@ -136,39 +154,61 @@ class _PatientRecordCard extends StatelessWidget {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Row(children: [
-                  Expanded(child: Text(patient.fullName, style: Theme.of(context).textTheme.titleMedium)),
+                  Expanded(
+                      child: Text(patient.fullName,
+                          style: Theme.of(context).textTheme.titleMedium)),
                   Container(
-                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                    padding:
+                        const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
                     decoration: BoxDecoration(
-                      color: AppColors.surfaceLight, borderRadius: BorderRadius.circular(8)),
+                        color: AppColors.surfaceLight,
+                        borderRadius: BorderRadius.circular(8)),
                     child: Text(patient.bloodGroup,
-                      style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w800,
-                        color: AppColors.error, fontFamily: 'Inter')),
+                        style: const TextStyle(
+                            fontSize: 11,
+                            fontWeight: FontWeight.w800,
+                            color: AppColors.error,
+                            fontFamily: 'Inter')),
                   ),
                 ]),
                 const SizedBox(height: 4),
-                Text('${patient.age}y · ${patient.gender} · ID: ${patient.nationalId}',
-                  style: Theme.of(context).textTheme.bodySmall),
+                Text(
+                    '${patient.age}y · ${patient.gender} · ID: ${patient.nationalId}',
+                    style: Theme.of(context).textTheme.bodySmall),
                 if (patient.activeConditions.isNotEmpty) ...[
                   const SizedBox(height: 8),
                   Wrap(
-                    spacing: 6, runSpacing: 4,
-                    children: patient.activeConditions.take(3).map((c) =>
-                      Container(
-                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                        decoration: BoxDecoration(
-                          color: AppColors.secondary.withOpacity(0.12),
-                          borderRadius: BorderRadius.circular(6),
-                          border: Border.all(color: AppColors.secondary.withOpacity(0.2)),
-                        ),
-                        child: Text(c, style: const TextStyle(fontSize: 10, color: AppColors.secondary, fontFamily: 'Inter', fontWeight: FontWeight.w600)),
-                      )).toList(),
+                    spacing: 6,
+                    runSpacing: 4,
+                    children: patient.activeConditions
+                        .take(3)
+                        .map((c) => Container(
+                              padding: const EdgeInsets.symmetric(
+                                  horizontal: 8, vertical: 3),
+                              decoration: BoxDecoration(
+                                color: AppColors.secondary.withOpacity(0.12),
+                                borderRadius: BorderRadius.circular(6),
+                                border: Border.all(
+                                    color:
+                                        AppColors.secondary.withOpacity(0.2)),
+                              ),
+                              child: Text(c,
+                                  style: const TextStyle(
+                                      fontSize: 10,
+                                      color: AppColors.secondary,
+                                      fontFamily: 'Inter',
+                                      fontWeight: FontWeight.w600)),
+                            ))
+                        .toList(),
                   ),
                 ],
                 if (patient.lastVisit != null) ...[
                   const SizedBox(height: 6),
                   Text('Last visit: ${_formatDate(patient.lastVisit!)}',
-                    style: const TextStyle(fontSize: 11, color: AppColors.textMuted, fontFamily: 'Inter')),
+                      style: const TextStyle(
+                          fontSize: 11,
+                          color: AppColors.textMuted,
+                          fontFamily: 'Inter')),
                 ],
               ],
             ),
