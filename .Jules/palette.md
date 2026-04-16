@@ -1,3 +1,3 @@
-## 2025-05-15 - Enhancing Interactive Tactility and A11y
-**Learning:** In a clinical/staff-facing app, tactile feedback (haptics) and clear accessibility labels (tooltips/semantics) are crucial for high-efficiency usage and reducing cognitive load during repetitive tasks like login and role selection.
-**Action:** Always wrap custom interactive cards in `Semantics` and provide `Tooltip` for icon-only buttons. Use `HapticFeedback.lightImpact()` for primary actions and `selectionClick()` for toggle/selection states.
+## 2024-11-20 - Tactile Feedback and Accessibility Semantics in Flutter
+**Learning:** In highly custom Flutter UI (e.g., glassmorphism, custom gradients), standard accessibility and tactile features are often omitted. Wrapping custom buttons in `Semantics` with appropriate labels and using `HapticFeedback` for selection/click actions significantly bridges the gap between a "prototype" feel and a "premium" product.
+**Action:** Always inspect custom `GestureDetector` based buttons for missing `Semantics` and `HapticFeedback`. Add tooltips to any `IconButton` that lacks a label, especially in global navigation bars.

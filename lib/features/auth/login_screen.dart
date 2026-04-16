@@ -26,7 +26,15 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _onLogin() async {
-    if (_staffIdCtrl.text.isEmpty || _passwordCtrl.text.isEmpty) return;
+    if (_staffIdCtrl.text.isEmpty || _passwordCtrl.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter both Staff ID and Password'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+      return;
+    }
     setState(() => _isLoading = true);
     await Future.delayed(const Duration(milliseconds: 1400));
     if (!mounted) return;
@@ -79,11 +87,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 8),
                 TextField(
                   controller: _staffIdCtrl,
+                  autofocus: true,
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.next,
+                  maxLength: 20,
                   decoration: const InputDecoration(
                     hintText: 'e.g. DOC-2024-001',
                     prefixIcon: Icon(Icons.badge_outlined, color: AppColors.textMuted),
+                    counterText: '',
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -100,6 +111,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     suffixIcon: IconButton(
                       icon: Icon(_obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
                         color: AppColors.textMuted, size: 20),
+                      tooltip: _obscure ? 'Show password' : 'Hide password',
                       onPressed: () => setState(() => _obscure = !_obscure),
                     ),
                   ),
@@ -128,11 +140,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 8),
                 TextField(
                   controller: _facilityCtrl,
+                  maxLength: 10,
                   decoration: const InputDecoration(
                     hintText: 'MFH-001',
                     prefixIcon: Icon(Icons.business_rounded, color: AppColors.textMuted),
                     helperText: 'Contact your administrator for your facility code.',
                     helperStyle: TextStyle(color: AppColors.textMuted, fontSize: 12),
+                    counterText: '',
                   ),
                 ),
                 const SizedBox(height: 40),

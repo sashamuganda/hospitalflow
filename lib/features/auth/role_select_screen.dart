@@ -148,28 +148,19 @@ class _RoleCard extends StatelessWidget {
         HapticFeedback.selectionClick();
         onTap();
       },
-      child: Semantics(
-        label: 'Select ${role.displayName} role',
-        selected: isSelected,
-        button: true,
-        child: AnimatedContainer(
-          duration: const Duration(milliseconds: 200),
-          padding: const EdgeInsets.all(16),
-          decoration: BoxDecoration(
-            gradient: isSelected
-                ? LinearGradient(
-                    colors: [AppColors.primary.withOpacity(0.2), AppColors.secondary.withOpacity(0.1)],
-                    begin: Alignment.topLeft, end: Alignment.bottomRight)
-                : AppColors.cardGradient,
-            borderRadius: BorderRadius.circular(16),
-            border: Border.all(
-              color: isSelected ? AppColors.primary : AppColors.divider,
-              width: isSelected ? 1.5 : 1,
-            ),
-            boxShadow: isSelected ? [
-              BoxShadow(color: AppColors.primary.withOpacity(0.15),
-                blurRadius: 12, offset: const Offset(0, 4))
-            ] : null,
+      child: AnimatedContainer(
+        duration: const Duration(milliseconds: 200),
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          gradient: isSelected
+              ? LinearGradient(
+                  colors: [AppColors.primary.withOpacity(0.2), AppColors.secondary.withOpacity(0.1)],
+                  begin: Alignment.topLeft, end: Alignment.bottomRight)
+              : AppColors.cardGradient,
+          borderRadius: BorderRadius.circular(16),
+          border: Border.all(
+            color: isSelected ? AppColors.primary : AppColors.divider,
+            width: isSelected ? 1.5 : 1,
           ),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
