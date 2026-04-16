@@ -26,7 +26,15 @@ class _LoginScreenState extends State<LoginScreen> {
   }
 
   Future<void> _onLogin() async {
-    if (_staffIdCtrl.text.isEmpty || _passwordCtrl.text.isEmpty) return;
+    if (_staffIdCtrl.text.isEmpty || _passwordCtrl.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          content: Text('Please enter both Staff ID and Password'),
+          backgroundColor: AppColors.error,
+        ),
+      );
+      return;
+    }
     setState(() => _isLoading = true);
     await Future.delayed(const Duration(milliseconds: 1400));
     if (!mounted) return;
@@ -50,15 +58,18 @@ class _LoginScreenState extends State<LoginScreen> {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                GestureDetector(
-                  onTap: () => context.go('/role-select'),
-                  child: Container(
-                    padding: const EdgeInsets.all(10),
-                    decoration: BoxDecoration(
-                      color: AppColors.surfaceLight,
-                      borderRadius: BorderRadius.circular(12),
+                Tooltip(
+                  message: 'Back to role selection',
+                  child: GestureDetector(
+                    onTap: () => context.go('/role-select'),
+                    child: Container(
+                      padding: const EdgeInsets.all(10),
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceLight,
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      child: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: AppColors.textSecondary),
                     ),
-                    child: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: AppColors.textSecondary),
                   ),
                 ),
                 const SizedBox(height: 36),
@@ -76,11 +87,14 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 8),
                 TextField(
                   controller: _staffIdCtrl,
+                  autofocus: true,
                   keyboardType: TextInputType.text,
                   textInputAction: TextInputAction.next,
+                  maxLength: 20,
                   decoration: const InputDecoration(
                     hintText: 'e.g. DOC-2024-001',
                     prefixIcon: Icon(Icons.badge_outlined, color: AppColors.textMuted),
+                    counterText: '',
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -91,12 +105,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   obscureText: _obscure,
                   textInputAction: TextInputAction.done,
                   onSubmitted: (_) => _onLogin(),
+                  maxLength: 64,
                   decoration: InputDecoration(
                     hintText: '••••••••',
+                    counterText: '',
                     prefixIcon: const Icon(Icons.lock_outline_rounded, color: AppColors.textMuted),
                     suffixIcon: IconButton(
                       icon: Icon(_obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
                         color: AppColors.textMuted, size: 20),
+                      tooltip: _obscure ? 'Show password' : 'Hide password',
                       onPressed: () => setState(() => _obscure = !_obscure),
                     ),
                   ),
@@ -125,11 +142,13 @@ class _LoginScreenState extends State<LoginScreen> {
                 const SizedBox(height: 8),
                 TextField(
                   controller: _facilityCtrl,
+                  maxLength: 10,
                   decoration: const InputDecoration(
                     hintText: 'MFH-001',
                     prefixIcon: Icon(Icons.business_rounded, color: AppColors.textMuted),
                     helperText: 'Contact your administrator for your facility code.',
                     helperStyle: TextStyle(color: AppColors.textMuted, fontSize: 12),
+                    counterText: '',
                   ),
                 ),
                 const SizedBox(height: 40),

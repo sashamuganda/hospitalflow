@@ -62,6 +62,7 @@ class MedFlowAppBar extends StatelessWidget implements PreferredSizeWidget {
       leading: showBack
           ? IconButton(
               icon: const Icon(Icons.arrow_back_ios_new_rounded, size: 20),
+              tooltip: 'Back',
               onPressed: () => Navigator.of(context).pop(),
               tooltip: 'Back',
             )
@@ -95,18 +96,20 @@ class GradientButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Semantics(
-      button: true,
-      label: label,
-      enabled: !isLoading,
-      child: GestureDetector(
-        onTap: isLoading ? null : () {
-          HapticFeedback.lightImpact();
-          onPressed();
-        },
+    return GestureDetector(
+      onTap: isLoading
+          ? null
+          : () {
+              HapticFeedback.lightImpact();
+              onPressed();
+            },
+      child: Semantics(
+        button: true,
+        label: label,
+        enabled: !isLoading,
         child: AnimatedContainer(
-        duration: const Duration(milliseconds: 200),
-        height: 54,
+          duration: const Duration(milliseconds: 200),
+          height: 54,
         decoration: BoxDecoration(
           gradient: gradient ?? AppColors.tealGradient,
           borderRadius: BorderRadius.circular(12),
