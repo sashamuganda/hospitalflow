@@ -110,6 +110,7 @@ class _LoginScreenState extends State<LoginScreen> {
                     hintText: '••••••••',
                     counterText: '',
                     prefixIcon: const Icon(Icons.lock_outline_rounded, color: AppColors.textMuted),
+                    counterText: '',
                     suffixIcon: IconButton(
                       icon: Icon(_obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
                         color: AppColors.textMuted, size: 20),
