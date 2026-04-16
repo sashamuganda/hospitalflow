@@ -14,16 +14,15 @@ class _StaffDirectoryScreenState extends State<StaffDirectoryScreen> {
   String _searchQuery = '';
   StaffRole? _selectedRole;
 
-  List<StaffMember> get _filtered {
-    return mockStaffList.where((s) {
+  @override
+  Widget build(BuildContext context) {
+    // ⚡ Bolt: Cache filtered staff list in local variable to avoid O(N^2) complexity in ListView.separated
+    final filtered = mockStaffList.where((s) {
       final matchesSearch = s.fullName.toLowerCase().contains(_searchQuery.toLowerCase());
       final matchesRole = _selectedRole == null || s.role == _selectedRole;
       return matchesSearch && matchesRole;
     }).toList();
-  }
 
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Container(
@@ -70,10 +69,10 @@ class _StaffDirectoryScreenState extends State<StaffDirectoryScreen> {
               Expanded(
                 child: ListView.separated(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-                  itemCount: _filtered.length,
+                  itemCount: filtered.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, i) {
-                    final s = _filtered[i];
+                    final s = filtered[i];
                     return GlassCard(
                       padding: const EdgeInsets.all(16),
                       child: Row(

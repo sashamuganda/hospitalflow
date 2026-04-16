@@ -14,27 +14,28 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
   TriageLevel? _filterLevel;
   String _filterStatus = 'All';
 
-  List<PatientInQueue> get _filtered {
-    var list = mockQueue;
-    if (_filterLevel != null) list = list.where((q) => q.triageLevel == _filterLevel).toList();
-    if (_filterStatus != 'All') {
-      list = list.where((q) {
+  @override
+  Widget build(BuildContext context) {
+    // ⚡ Bolt: Cache filtered results and counts in local variables to avoid O(N^2) complexity
+    // when accessed multiple times during a single build cycle (especially inside builders).
+    final filtered = mockQueue.where((q) {
+      final matchesLevel = _filterLevel == null || q.triageLevel == _filterLevel;
+      bool matchesStatus = true;
+      if (_filterStatus != 'All') {
         switch (_filterStatus) {
-          case 'Waiting': return q.status == QueueStatus.waiting;
-          case 'In Consult': return q.status == QueueStatus.inConsultation;
-          default: return true;
+          case 'Waiting': matchesStatus = q.status == QueueStatus.waiting; break;
+          case 'In Consult': matchesStatus = q.status == QueueStatus.inConsultation; break;
         }
-      }).toList();
-    }
-    return list;
-  }
+      }
+      return matchesLevel && matchesStatus;
+    }).toList();
 
   @override
   Widget build(BuildContext context) {
-    // Cache computed getters to avoid multiple O(N) filtering operations per frame
-    final filteredPatients = _filtered;
-    final waitingCount = mockQueue.where((q) => q.status == QueueStatus.waiting).length;
-    final immediateCount = mockQueue.where((q) => q.triageLevel == TriageLevel.immediate).length;
+    // ⚡ Bolt: Cache filtered list to avoid O(N^2) complexity in build()
+    final filtered = _filtered;
+    final waiting = mockQueue.where((q) => q.status == QueueStatus.waiting).length;
+    final immediate = mockQueue.where((q) => q.triageLevel == TriageLevel.immediate).length;
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -67,7 +68,7 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
                     ),
                     const SizedBox(height: 16),
                     // Triage legend
-                    _buildTriageLegend(),
+                    _buildTriageLegend(triageCounts),
                     const SizedBox(height: 16),
                     // Status filters
                     _buildStatusFilters(),
@@ -77,19 +78,22 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
               const SizedBox(height: 8),
               // Queue list
               Expanded(
-                child: filteredPatients.isEmpty
+                child: filtered.isEmpty
                     ? const EmptyState(
                         icon: Icons.people_alt_outlined,
                         title: 'Queue is clear',
                         message: 'No patients match the current filter.')
                     : ListView.separated(
                         padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
-                        itemCount: filteredPatients.length,
+                        itemCount: filtered.length,
                         separatorBuilder: (_, __) => const SizedBox(height: 10),
-                        itemBuilder: (context, i) => _QueueCard(
-                          patient: filteredPatients[i],
-                          onTap: () => context.push('/queue/triage/${filteredPatients[i].id}'),
-                        ),
+                        itemBuilder: (context, i) {
+                          final patient = filtered[i];
+                          return _QueueCard(
+                            patient: patient,
+                            onTap: () => context.push('/queue/triage/${patient.id}'),
+                          );
+                        },
                       ),
               ),
             ],
@@ -99,7 +103,7 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
     );
   }
 
-  Widget _buildTriageLegend() {
+  Widget _buildTriageLegend(Map<TriageLevel, int> counts) {
     return Row(
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: TriageLevel.values.map((level) {
@@ -122,7 +126,7 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
                 Text(level.shortCode,
                   style: TextStyle(fontSize: 9, fontWeight: FontWeight.w800,
                     color: isActive ? level.color : AppColors.textMuted, fontFamily: 'Inter')),
-                Text('${mockQueue.where((q) => q.triageLevel == level).length}',
+                Text('${counts[level] ?? 0}',
                   style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700,
                     color: isActive ? level.color : AppColors.textSecondary, fontFamily: 'Inter')),
               ],

@@ -13,12 +13,10 @@ class WardOverviewScreen extends StatefulWidget {
 class _WardOverviewScreenState extends State<WardOverviewScreen> {
   Ward _selectedWard = mockWards.first;
 
-  List<InpatientBed> get _beds => mockBeds.where((b) => b.wardId == _selectedWard.id).toList();
-
   @override
   Widget build(BuildContext context) {
-    // Cache computed getters to avoid multiple O(N) filtering operations per frame
-    final currentBeds = _beds;
+    // ⚡ Bolt: Cache filtered beds in local variable to avoid O(N^2) complexity in GridView.builder
+    final beds = mockBeds.where((b) => b.wardId == _selectedWard.id).toList();
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -113,8 +111,8 @@ class _WardOverviewScreenState extends State<WardOverviewScreen> {
                     mainAxisSpacing: 12,
                     childAspectRatio: 0.9,
                   ),
-                  itemCount: currentBeds.length,
-                  itemBuilder: (context, i) => _BedCard(bed: currentBeds[i]),
+                  itemCount: beds.length,
+                  itemBuilder: (context, i) => _BedCard(bed: beds[i]),
                 ),
               ),
             ],

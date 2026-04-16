@@ -3,6 +3,7 @@ import 'package:provider/provider.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/colors.dart';
 import '../../core/app_state.dart';
+import '../../data/mock_data.dart';
 import '../../widgets/shared_widgets.dart';
 
 class SettingsHomeScreen extends StatelessWidget {
@@ -10,7 +11,8 @@ class SettingsHomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final user = context.watch<AppState>().currentUser;
+    // ⚡ PERFORMANCE: Use context.select to only rebuild when currentUser changes
+    final user = context.select<AppState, StaffMember?>((s) => s.currentUser);
 
     return Scaffold(
       backgroundColor: AppColors.background,
@@ -72,7 +74,7 @@ class SettingsHomeScreen extends StatelessWidget {
                       title: const Text('Log Out', style: TextStyle(color: AppColors.error, fontWeight: FontWeight.bold)),
                       onTap: () {
                         context.read<AppState>().logout();
-                        context.go('/select-role');
+                        context.go('/role-select');
                       },
                     )
                   ],

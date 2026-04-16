@@ -1,7 +1,3 @@
-## 2025-05-14 - List Referential Identity in State Management
-**Learning:** Returning a new list instance from a getter in a `ChangeNotifier` (like `AppState.navItems`) every time it is accessed causes `context.select` to trigger rebuilds even if the content hasn't changed, because the referential identity of the list is different.
-**Action:** Use `const` lists for static data or memoize dynamic lists in the state object to preserve referential identity.
-
-## 2025-05-14 - Caching Computed Getters in Build Methods
-**Learning:** Accessing computed getters that perform filtering or searching (O(N)) multiple times within a `build` method (e.g., once for `itemCount` and again for each `itemBuilder` call) leads to O(N * M) complexity, which can significantly degrade performance during animations or scrolling.
-**Action:** Always cache the result of expensive computed getters in a local variable at the start of the `build` method.
+## 2024-05-23 - Redundant List Filtering in Build Method
+**Learning:** Accessing computed properties (getters) that perform list filtering multiple times within a `build` method, especially inside a `ListView.itemBuilder`, leads to $O(N \cdot M)$ complexity where $N$ is total items and $M$ is visible items. This causes unnecessary list allocations and iterations on every frame.
+**Action:** Cache the result of filtering getters in a local variable at the beginning of the `build` method to ensure filtering logic runs only once per frame.
