@@ -74,7 +74,7 @@ class SettingsHomeScreen extends StatelessWidget {
                       title: const Text('Log Out', style: TextStyle(color: AppColors.error, fontWeight: FontWeight.bold)),
                       onTap: () {
                         context.read<AppState>().logout();
-                        context.go('/select-role');
+                        context.go('/role-select');
                       },
                     )
                   ],

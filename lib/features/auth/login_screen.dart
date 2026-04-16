@@ -104,6 +104,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 TextField(
                   controller: _passwordCtrl,
                   obscureText: _obscure,
+                  autocorrect: false,
+                  enableSuggestions: false,
                   textInputAction: TextInputAction.done,
                   onSubmitted: (_) => _onLogin(),
                   maxLength: 64,
@@ -148,6 +150,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: const InputDecoration(
                     hintText: 'MFH-001',
                     prefixIcon: Icon(Icons.business_rounded, color: AppColors.textMuted),
+                    counterText: "",
                     helperText: 'Contact your administrator for your facility code.',
                     helperStyle: TextStyle(color: AppColors.textMuted, fontSize: 12),
                     counterText: '',

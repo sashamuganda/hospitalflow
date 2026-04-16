@@ -19,7 +19,23 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   void dispose() { _staffIdCtrl.dispose(); _emailCtrl.dispose(); super.dispose(); }
 
   Future<void> _onSubmit() async {
-    if (_staffIdCtrl.text.isEmpty || _emailCtrl.text.isEmpty) return;
+    final email = _emailCtrl.text.trim();
+    if (_staffIdCtrl.text.isEmpty || email.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter both Staff ID and Email')),
+      );
+      return;
+    }
+
+    // Basic email validation
+    final emailRegex = RegExp(r'^[\w-\.\+]+@([\w-]+\.)+[\w-]{2,4}$');
+    if (!emailRegex.hasMatch(email)) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Please enter a valid email address')),
+      );
+      return;
+    }
+
     setState(() => _isLoading = true);
     await Future.delayed(const Duration(milliseconds: 1200));
     if (!mounted) return;
