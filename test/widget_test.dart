@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:medflow_staff/main.dart';
+import 'package:medflow_staff/widgets/shared_widgets.dart';
 
 void main() {
   testWidgets('MedFlow Staff smoke test', (WidgetTester tester) async {
