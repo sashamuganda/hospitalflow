@@ -144,8 +144,10 @@ class _ClinicalNoteEditorState extends State<ClinicalNoteEditor> {
                       const SizedBox(height: 8),
                       TextField(
                         controller: _diagCtrl,
+                        maxLength: 200,
                         decoration: const InputDecoration(
                             hintText: 'e.g. I10 - Essential Hypertension',
+                            counterText: '',
                             prefixIcon: Icon(Icons.local_hospital_outlined,
                                 color: AppColors.textMuted)),
                       ),
@@ -256,8 +258,10 @@ class _ClinicalNoteEditorState extends State<ClinicalNoteEditor> {
         TextField(
           controller: ctrl,
           maxLines: 4,
+          maxLength: 5000,
           decoration: InputDecoration(
             hintText: hint,
+            counterText: '',
             focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: color, width: 1.5)),
