@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../core/colors.dart';
@@ -321,8 +322,14 @@ class HomeScreen extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: actions.map((a) => GestureDetector(
-            onTap: () => context.push(a['route'] as String),
-            child: Column(
+            onTap: () {
+              HapticFeedback.lightImpact();
+              context.push(a['route'] as String);
+            },
+            child: Semantics(
+              button: true,
+              label: a['label'] as String,
+              child: Column(
               children: [
                 Container(
                   width: 64, height: 64,
@@ -339,6 +346,7 @@ class HomeScreen extends StatelessWidget {
                     color: AppColors.textSecondary, fontFamily: 'Inter')),
               ],
             ),
+          ),
           )).toList(),
         ),
       ],
