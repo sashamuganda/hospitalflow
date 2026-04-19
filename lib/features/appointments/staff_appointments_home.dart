@@ -20,6 +20,10 @@ class _StaffAppointmentsHomeState extends State<StaffAppointmentsHome> {
 
   @override
   Widget build(BuildContext context) {
+    // Performance optimization: Cache filtered results in a local variable to avoid
+    // redundant filtering and O(N*M) complexity during build and list rendering.
+    final appointments = _filtered;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       floatingActionButton: FloatingActionButton(
@@ -68,10 +72,10 @@ class _StaffAppointmentsHomeState extends State<StaffAppointmentsHome> {
               Expanded(
                 child: ListView.separated(
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
-                  itemCount: _filtered.length,
+                  itemCount: appointments.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, i) =>
-                      _AppointmentCard(appointment: _filtered[i]),
+                      _AppointmentCard(appointment: appointments[i]),
                 ),
               ),
             ],
