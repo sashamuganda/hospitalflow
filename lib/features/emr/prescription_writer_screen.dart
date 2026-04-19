@@ -149,9 +149,11 @@ class _PrescriptionWriterScreenState extends State<PrescriptionWriterScreen> {
                       TextField(
                         controller: _notesCtrl,
                         maxLines: 3,
+                        maxLength: 1000,
                         decoration: const InputDecoration(
-                            hintText:
-                                'e.g. Take with food. Avoid alcohol. Return if symptoms worsen...'),
+                          hintText: 'e.g. Take with food. Avoid alcohol. Return if symptoms worsen...',
+                          counterText: '',
+                        ),
                       ),
                       const SizedBox(height: 32),
                       // Interaction warning UI
@@ -239,8 +241,10 @@ class _RxItemCard extends StatelessWidget {
           const SizedBox(height: 10),
           TextField(
             controller: item.nameCtrl,
+            maxLength: 100,
             decoration: const InputDecoration(
                 hintText: 'Drug name',
+                counterText: '',
                 prefixIcon: Icon(Icons.medication_outlined,
                     color: AppColors.textMuted)),
           ),
@@ -249,7 +253,11 @@ class _RxItemCard extends StatelessWidget {
             Expanded(
                 child: TextField(
               controller: item.doseCtrl,
-              decoration: const InputDecoration(hintText: 'Dose (e.g. 500mg)'),
+              maxLength: 50,
+              decoration: const InputDecoration(
+                hintText: 'Dose (e.g. 500mg)',
+                counterText: '',
+              ),
             )),
             const SizedBox(width: 10),
             Expanded(
