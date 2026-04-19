@@ -114,9 +114,11 @@ class _TriageScreenState extends State<TriageScreen> {
                       TextField(
                         controller: _complaintCtrl,
                         maxLines: 2,
+                        maxLength: 500,
                         decoration: const InputDecoration(
-                            hintText:
-                                'Describe the patient\'s main complaint...'),
+                          hintText: 'Describe the patient\'s main complaint...',
+                          counterText: '',
+                        ),
                       ),
                       const SizedBox(height: 12),
                       Wrap(
@@ -355,8 +357,10 @@ class _VitalField extends StatelessWidget {
         TextField(
           controller: controller,
           keyboardType: TextInputType.number,
+          maxLength: 8,
           decoration: InputDecoration(
               hintText: hint,
+              counterText: '',
               suffix: Text(unit,
                   style: const TextStyle(
                       fontSize: 11, color: AppColors.textMuted))),
