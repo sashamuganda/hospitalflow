@@ -95,29 +95,41 @@ class _RoleSelectScreenState extends State<RoleSelectScreen> {
                     AnimatedOpacity(
                       opacity: _selected != null ? 1.0 : 0.4,
                       duration: const Duration(milliseconds: 250),
-                      child: GestureDetector(
-                        onTap: _selected != null ? _onContinue : null,
-                        child: Container(
-                          height: 54,
-                          decoration: BoxDecoration(
-                            gradient: _selected != null ? AppColors.tealGradient : null,
-                            color: _selected != null ? null : AppColors.surfaceLight,
-                            borderRadius: BorderRadius.circular(12),
-                            boxShadow: _selected != null ? [
-                              BoxShadow(color: AppColors.primary.withOpacity(0.3),
-                                blurRadius: 16, offset: const Offset(0, 6)),
-                            ] : null,
-                          ),
-                          child: Center(
-                            child: Row(
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text('Continue as ${_selected?.displayName ?? 'Staff'}',
-                                  style: const TextStyle(fontFamily: 'Inter', fontSize: 16,
-                                    fontWeight: FontWeight.w600, color: AppColors.textOnPrimary)),
-                                const SizedBox(width: 8),
-                                const Icon(Icons.arrow_forward_rounded, color: AppColors.textOnPrimary, size: 20),
-                              ],
+                      child: Material(
+                        color: Colors.transparent,
+                        child: InkWell(
+                          onTap: _selected != null ? () {
+                            HapticFeedback.lightImpact();
+                            _onContinue();
+                          } : null,
+                          borderRadius: BorderRadius.circular(12),
+                          child: Semantics(
+                            button: true,
+                            enabled: _selected != null,
+                            label: 'Continue as ${_selected?.displayName ?? 'Staff'}',
+                            child: Ink(
+                              height: 54,
+                              decoration: BoxDecoration(
+                                gradient: _selected != null ? AppColors.tealGradient : null,
+                                color: _selected != null ? null : AppColors.surfaceLight,
+                                borderRadius: BorderRadius.circular(12),
+                                boxShadow: _selected != null ? [
+                                  BoxShadow(color: AppColors.primary.withOpacity(0.3),
+                                    blurRadius: 16, offset: const Offset(0, 6)),
+                                ] : null,
+                              ),
+                              child: Center(
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.min,
+                                  children: [
+                                    Text('Continue as ${_selected?.displayName ?? 'Staff'}',
+                                      style: const TextStyle(fontFamily: 'Inter', fontSize: 16,
+                                        fontWeight: FontWeight.w600, color: AppColors.textOnPrimary)),
+                                    const SizedBox(width: 8),
+                                    const Icon(Icons.arrow_forward_rounded, color: AppColors.textOnPrimary, size: 20),
+                                  ],
+                                ),
+                              ),
                             ),
                           ),
                         ),
