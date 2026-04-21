@@ -25,9 +25,18 @@ class GlassCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: padding ?? const EdgeInsets.all(16),
+      onTap: onTap != null
+          ? () {
+              HapticFeedback.lightImpact();
+              onTap!();
+            }
+          : null,
+      child: Semantics(
+        button: onTap != null,
+        enabled: onTap != null,
+        excludeSemantics: onTap != null,
+        child: Container(
+          padding: padding ?? const EdgeInsets.all(16),
         decoration: BoxDecoration(
           gradient: gradient ?? AppColors.cardGradient,
           borderRadius: BorderRadius.circular(borderRadius),
@@ -35,6 +44,7 @@ class GlassCard extends StatelessWidget {
         ),
         child: child,
       ),
+    ),
     );
   }
 }
@@ -271,9 +281,19 @@ class KpiCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
+      onTap: onTap != null
+          ? () {
+              HapticFeedback.lightImpact();
+              onTap!();
+            }
+          : null,
+      child: Semantics(
+        button: onTap != null,
+        enabled: onTap != null,
+        excludeSemantics: true,
+        label: '$label: $value${subtitle != null ? ', $subtitle' : ''}',
+        child: Container(
+          padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           gradient: AppColors.cardGradient,
           borderRadius: BorderRadius.circular(16),
@@ -306,6 +326,7 @@ class KpiCard extends StatelessWidget {
           ],
         ),
       ),
+    ),
     );
   }
 }
@@ -325,9 +346,19 @@ class MetricCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(14),
+      onTap: onTap != null
+          ? () {
+              HapticFeedback.lightImpact();
+              onTap!();
+            }
+          : null,
+      child: Semantics(
+        button: onTap != null,
+        enabled: onTap != null,
+        excludeSemantics: true,
+        label: '$label: $value $unit',
+        child: Container(
+          padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           gradient: AppColors.cardGradient,
           borderRadius: BorderRadius.circular(16),
@@ -351,6 +382,7 @@ class MetricCard extends StatelessWidget {
           ],
         ),
       ),
+    ),
     );
   }
 }
