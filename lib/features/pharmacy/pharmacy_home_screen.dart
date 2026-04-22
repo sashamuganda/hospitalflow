@@ -27,6 +27,10 @@ class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // ⚡ Bolt: Cache filtered prescriptions in local variable to avoid redundant O(N) filtering
+    // when accessed multiple times (itemCount and itemBuilder) during a single build cycle.
+    final filtered = _filtered;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Container(
@@ -83,10 +87,10 @@ class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
               Expanded(
                 child: ListView.separated(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-                  itemCount: _filtered.length,
+                  itemCount: filtered.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, i) =>
-                      _PrescriptionCard(rx: _filtered[i]),
+                      _PrescriptionCard(rx: filtered[i]),
                 ),
               ),
             ],
