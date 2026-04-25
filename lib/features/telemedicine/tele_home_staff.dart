@@ -16,6 +16,7 @@ class _TeleHomeStaffScreenState extends State<TeleHomeStaffScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final teleAppointments = _teleAppointments;
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Container(
@@ -99,10 +100,10 @@ class _TeleHomeStaffScreenState extends State<TeleHomeStaffScreen> {
               Expanded(
                 child: ListView.separated(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-                  itemCount: _teleAppointments.length,
+                  itemCount: teleAppointments.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, i) {
-                    final apt = _teleAppointments[i];
+                    final apt = teleAppointments[i];
                     return GlassCard(
                       padding: const EdgeInsets.all(16),
                       child: Row(
