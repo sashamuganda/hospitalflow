@@ -33,6 +33,7 @@ class _EmrHomeScreenState extends State<EmrHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final results = _results;
     return Scaffold(
       backgroundColor: AppColors.background,
       floatingActionButton: FloatingActionButton.extended(
@@ -104,13 +105,13 @@ class _EmrHomeScreenState extends State<EmrHomeScreen> {
               ] else ...[
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Text('${_results.length} results for "$_query"',
+                  child: Text('${results.length} results for "$_query"',
                       style: Theme.of(context).textTheme.bodySmall),
                 ),
                 const SizedBox(height: 8),
               ],
               Expanded(
-                child: _results.isEmpty
+                child: results.isEmpty
                     ? const EmptyState(
                         icon: Icons.person_search_rounded,
                         title: 'No patients found',
@@ -118,12 +119,12 @@ class _EmrHomeScreenState extends State<EmrHomeScreen> {
                             'Try searching by full name, national ID, or phone number.')
                     : ListView.separated(
                         padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-                        itemCount: _results.length,
+                        itemCount: results.length,
                         separatorBuilder: (_, __) => const SizedBox(height: 10),
                         itemBuilder: (context, i) => _PatientRecordCard(
-                          patient: _results[i],
+                          patient: results[i],
                           onTap: () =>
-                              context.push('/emr/patient/${_results[i].id}'),
+                              context.push('/emr/patient/${results[i].id}'),
                         ),
                       ),
               ),
