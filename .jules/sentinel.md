@@ -2,3 +2,8 @@
 **Vulnerability:** Unauthenticated access to sensitive clinical routes.
 **Learning:** In Flutter applications using `go_router`, navigation-based authorization (route guarding) should be implemented using the `redirect` callback. It's critical to ensure the `AppState` (or any authentication state provider) is available in the `BuildContext` when the `GoRouter` instance attempts to read it. If `GoRouter` is initialized outside the `Provider` scope, `context.read<AppState>()` will fail.
 **Prevention:** Wrap the `MaterialApp.router` with the necessary `Provider` in the `main.dart` file to ensure the authentication state is accessible globally during navigation transitions.
+
+## 2024-05-23 - Input Hardening for DoS Mitigation
+**Vulnerability:** Resource exhaustion (DoS) via excessively large text inputs in clinical forms.
+**Learning:** In medical applications with multiple text-heavy surfaces (SOAP notes, prescriptions, triage), missing length constraints can lead to client-side crashes or backend storage abuse. Flutter's `TextField` should always have `maxLength` set.
+**Prevention:** Consistently apply `maxLength` (e.g., 5000 for notes, 500 for complaints, 8 for vitals) and use `counterText: ''` to maintain UI aesthetics while enforcing limits. Verify these constraints with widget tests that inspect the `TextField` properties.
