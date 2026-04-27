@@ -28,6 +28,11 @@ class _LabHomeScreenState extends State<LabHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // ⚡ Bolt: Cache sorted results in a local variable to avoid O(M * N log N) complexity
+    // where N is the total number of orders and M is the number of visible items in the list.
+    // This ensures the sort operation runs exactly once per build cycle.
+    final sortedOrders = _sortedOrders;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Container(
@@ -45,10 +50,10 @@ class _LabHomeScreenState extends State<LabHomeScreen> {
               Expanded(
                 child: ListView.separated(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-                  itemCount: _sortedOrders.length,
+                  itemCount: sortedOrders.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, i) =>
-                      _LabOrderCard(order: _sortedOrders[i]),
+                      _LabOrderCard(order: sortedOrders[i]),
                 ),
               ),
             ],
