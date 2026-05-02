@@ -24,16 +24,29 @@ class GlassCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: padding ?? const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          gradient: gradient ?? AppColors.cardGradient,
-          borderRadius: BorderRadius.circular(borderRadius),
-          border: Border.all(color: borderColor ?? AppColors.divider, width: 1),
+    final bool isActionable = onTap != null;
+    final VoidCallback? handleTap = isActionable
+        ? () {
+            HapticFeedback.lightImpact();
+            onTap!();
+          }
+        : null;
+
+    return Semantics(
+      button: isActionable,
+      enabled: isActionable,
+      onTap: handleTap,
+      child: GestureDetector(
+        onTap: handleTap,
+        child: Container(
+          padding: padding ?? const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: gradient ?? AppColors.cardGradient,
+            borderRadius: BorderRadius.circular(borderRadius),
+            border: Border.all(color: borderColor ?? AppColors.divider, width: 1),
+          ),
+          child: child,
         ),
-        child: child,
       ),
     );
   }
