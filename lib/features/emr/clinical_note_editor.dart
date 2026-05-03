@@ -144,8 +144,10 @@ class _ClinicalNoteEditorState extends State<ClinicalNoteEditor> {
                       const SizedBox(height: 8),
                       TextField(
                         controller: _diagCtrl,
+                        maxLength: 200,
                         decoration: const InputDecoration(
                             hintText: 'e.g. I10 - Essential Hypertension',
+                            counterText: '',
                             prefixIcon: Icon(Icons.local_hospital_outlined,
                                 color: AppColors.textMuted)),
                       ),
@@ -224,7 +226,8 @@ class _ClinicalNoteEditorState extends State<ClinicalNoteEditor> {
   }
 
   Widget _buildSoapSection(String letter, String title, String hint,
-      TextEditingController ctrl, Color color) {
+      TextEditingController ctrl, Color color,
+      {int maxLength = 5000}) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -256,8 +259,10 @@ class _ClinicalNoteEditorState extends State<ClinicalNoteEditor> {
         TextField(
           controller: ctrl,
           maxLines: 4,
+          maxLength: maxLength,
           decoration: InputDecoration(
             hintText: hint,
+            counterText: '',
             focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: color, width: 1.5)),
