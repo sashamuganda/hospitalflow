@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../core/colors.dart';
@@ -16,13 +17,21 @@ class HomeScreen extends StatelessWidget {
     final role = context.select<AppState, StaffRole>((s) => s.selectedRole);
 
     // ⚡ Bolt: Pre-calculate counts and filtered lists to avoid multiple O(N) traversals in child methods
-    final waitingCount = mockQueue.where((q) => q.status == QueueStatus.waiting).length;
-    final immediateCount = mockQueue.where((q) => q.triageLevel == TriageLevel.immediate).length;
+    final waitingCount =
+        mockQueue.where((q) => q.status == QueueStatus.waiting).length;
+    final immediateCount =
+        mockQueue.where((q) => q.triageLevel == TriageLevel.immediate).length;
 
-    final urgentAlerts = mockQueue.where((q) =>
-      q.triageLevel == TriageLevel.immediate || q.triageLevel == TriageLevel.urgent).take(2).toList();
+    final urgentAlerts = mockQueue
+        .where((q) =>
+            q.triageLevel == TriageLevel.immediate ||
+            q.triageLevel == TriageLevel.urgent)
+        .take(2)
+        .toList();
 
-    final confirmedApptsCount = mockStaffAppointments.where((a) => a.status == AppointmentStatus.confirmed).length;
+    final confirmedApptsCount = mockStaffAppointments
+        .where((a) => a.status == AppointmentStatus.confirmed)
+        .length;
     final todayAppts = mockStaffAppointments.take(3).toList();
 
     return Scaffold(
@@ -47,7 +56,8 @@ class HomeScreen extends StatelessWidget {
                     const SizedBox(height: 24),
                     _buildRecentActivity(context),
                   ] else ...[
-                    _buildStaffKPIs(context, role, waitingCount, immediateCount, confirmedApptsCount),
+                    _buildStaffKPIs(context, role, waitingCount, immediateCount,
+                        confirmedApptsCount),
                     const SizedBox(height: 24),
                     _buildUrgentAlerts(context, urgentAlerts),
                     const SizedBox(height: 24),
@@ -86,16 +96,25 @@ class HomeScreen extends StatelessWidget {
           children: [
             IconButton(
               onPressed: () => context.push('/notifications'),
-              icon: const Icon(Icons.notifications_outlined, size: 28, color: AppColors.textPrimary),
+              icon: const Icon(Icons.notifications_outlined,
+                  size: 28, color: AppColors.textPrimary),
               tooltip: 'Notifications',
             ),
             Positioned(
-              right: 8, top: 8,
+              right: 8,
+              top: 8,
               child: Container(
-                width: 18, height: 18,
-                decoration: const BoxDecoration(color: AppColors.error, shape: BoxShape.circle),
+                width: 18,
+                height: 18,
+                decoration: const BoxDecoration(
+                    color: AppColors.error, shape: BoxShape.circle),
                 child: const Center(
-                  child: Text('3', style: TextStyle(fontSize: 10, fontWeight: FontWeight.w700, color: Colors.white, fontFamily: 'Inter')),
+                  child: Text('3',
+                      style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.white,
+                          fontFamily: 'Inter')),
                 ),
               ),
             ),
@@ -115,19 +134,36 @@ class HomeScreen extends StatelessWidget {
         const SectionHeader(title: 'Hospital Today'),
         const SizedBox(height: 12),
         GridView.count(
-          shrinkWrap: true, physics: const NeverScrollableScrollPhysics(),
-          crossAxisCount: 2, crossAxisSpacing: 12, mainAxisSpacing: 12,
+          shrinkWrap: true,
+          physics: const NeverScrollableScrollPhysics(),
+          crossAxisCount: 2,
+          crossAxisSpacing: 12,
+          mainAxisSpacing: 12,
           childAspectRatio: 1.3,
           children: [
-            KpiCard(label: 'OPD Patients', value: '${mockKPIs.todayOPDCount}',
-              subtitle: '+12 from yesterday', icon: Icons.people_alt_rounded, color: AppColors.primary),
-            KpiCard(label: 'IPD Occupancy', value: '${mockKPIs.currentIPDOccupancy}/${mockKPIs.totalBeds}',
-              subtitle: '${mockKPIs.ipdOccupancyPercent.toInt()}% utilisation',
-              icon: Icons.bed_rounded, color: AppColors.secondary),
-            KpiCard(label: 'Staff On Duty', value: '${mockKPIs.staffOnDuty}',
-              icon: Icons.groups_rounded, color: AppColors.success),
-            KpiCard(label: 'Avg Wait Time', value: '${mockKPIs.avgWaitTimeMinutes.toInt()} min',
-              icon: Icons.timer_outlined, color: AppColors.warning),
+            KpiCard(
+                label: 'OPD Patients',
+                value: '${mockKPIs.todayOPDCount}',
+                subtitle: '+12 from yesterday',
+                icon: Icons.people_alt_rounded,
+                color: AppColors.primary),
+            KpiCard(
+                label: 'IPD Occupancy',
+                value: '${mockKPIs.currentIPDOccupancy}/${mockKPIs.totalBeds}',
+                subtitle:
+                    '${mockKPIs.ipdOccupancyPercent.toInt()}% utilisation',
+                icon: Icons.bed_rounded,
+                color: AppColors.secondary),
+            KpiCard(
+                label: 'Staff On Duty',
+                value: '${mockKPIs.staffOnDuty}',
+                icon: Icons.groups_rounded,
+                color: AppColors.success),
+            KpiCard(
+                label: 'Avg Wait Time',
+                value: '${mockKPIs.avgWaitTimeMinutes.toInt()} min',
+                icon: Icons.timer_outlined,
+                color: AppColors.warning),
           ],
         ),
       ],
@@ -135,7 +171,8 @@ class HomeScreen extends StatelessWidget {
   }
 
   // Staff-role KPIs
-  Widget _buildStaffKPIs(BuildContext context, StaffRole role, int waitingCount, int immediateCount, int confirmedApptsCount) {
+  Widget _buildStaffKPIs(BuildContext context, StaffRole role, int waitingCount,
+      int immediateCount, int confirmedApptsCount) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -181,7 +218,8 @@ class HomeScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildUrgentAlerts(BuildContext context, List<PatientInQueue> urgentAlerts) {
+  Widget _buildUrgentAlerts(
+      BuildContext context, List<PatientInQueue> urgentAlerts) {
     if (urgentAlerts.isEmpty) return const SizedBox.shrink();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -193,53 +231,65 @@ class HomeScreen extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         ...urgentAlerts.map((p) => Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: GlassCard(
-            borderColor: p.triageLevel.color.withOpacity(0.4),
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            onTap: () => context.push('/queue/triage/${p.id}'),
-            child: Row(
-              children: [
-                Container(
-                  width: 40, height: 40,
-                  decoration: BoxDecoration(
-                    color: p.triageLevel.color.withOpacity(0.15),
-                    shape: BoxShape.circle,
-                  ),
-                  child: Center(
-                    child: Text('Q${p.queueNumber}',
-                      style: TextStyle(color: p.triageLevel.color,
-                        fontWeight: FontWeight.w800, fontSize: 13, fontFamily: 'Inter')),
-                  ),
+              padding: const EdgeInsets.only(bottom: 10),
+              child: GlassCard(
+                borderColor: p.triageLevel.color.withOpacity(0.4),
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                onTap: () => context.push('/queue/triage/${p.id}'),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                        color: p.triageLevel.color.withOpacity(0.15),
+                        shape: BoxShape.circle,
+                      ),
+                      child: Center(
+                        child: Text('Q${p.queueNumber}',
+                            style: TextStyle(
+                                color: p.triageLevel.color,
+                                fontWeight: FontWeight.w800,
+                                fontSize: 13,
+                                fontFamily: 'Inter')),
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(children: [
+                            Text(p.patientName,
+                                style: Theme.of(context).textTheme.titleSmall),
+                            const SizedBox(width: 8),
+                            TriageChip(level: p.triageLevel, compact: true),
+                          ]),
+                          const SizedBox(height: 4),
+                          Text(p.chiefComplaint,
+                              style: Theme.of(context).textTheme.bodySmall,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis),
+                        ],
+                      ),
+                    ),
+                    Text('${p.waitMinutes}m',
+                        style: TextStyle(
+                            color: p.triageLevel.color,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 13,
+                            fontFamily: 'Inter')),
+                  ],
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Row(children: [
-                        Text(p.patientName, style: Theme.of(context).textTheme.titleSmall),
-                        const SizedBox(width: 8),
-                        TriageChip(level: p.triageLevel, compact: true),
-                      ]),
-                      const SizedBox(height: 4),
-                      Text(p.chiefComplaint, style: Theme.of(context).textTheme.bodySmall,
-                        maxLines: 1, overflow: TextOverflow.ellipsis),
-                    ],
-                  ),
-                ),
-                Text('${p.waitMinutes}m',
-                  style: TextStyle(color: p.triageLevel.color,
-                    fontWeight: FontWeight.w700, fontSize: 13, fontFamily: 'Inter')),
-              ],
-            ),
-          ),
-        )),
+              ),
+            )),
       ],
     );
   }
 
-  Widget _buildTodaySchedule(BuildContext context, List<StaffAppointment> todayAppts) {
+  Widget _buildTodaySchedule(
+      BuildContext context, List<StaffAppointment> todayAppts) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -265,21 +315,28 @@ class HomeScreen extends StatelessWidget {
                   Container(
                     width: 48,
                     child: Text('$hour:$min',
-                      style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.w700,
-                        fontSize: 14, fontFamily: 'Inter')),
+                        style: const TextStyle(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w700,
+                            fontSize: 14,
+                            fontFamily: 'Inter')),
                   ),
                   const SizedBox(width: 12),
                   Expanded(
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        Text(a.patientName, style: Theme.of(context).textTheme.titleSmall),
+                        Text(a.patientName,
+                            style: Theme.of(context).textTheme.titleSmall),
                         Text('${a.type}${a.room != null ? ' · ${a.room}' : ''}',
-                          style: Theme.of(context).textTheme.bodySmall),
+                            style: Theme.of(context).textTheme.bodySmall),
                       ],
                     ),
                   ),
-                  StatusBadge(label: a.status.label, color: a.status.color, fontSize: 11),
+                  StatusBadge(
+                      label: a.status.label,
+                      color: a.status.color,
+                      fontSize: 11),
                 ],
               ),
             );
@@ -295,22 +352,46 @@ class HomeScreen extends StatelessWidget {
       actions = [
         {'icon': Icons.people_alt_rounded, 'label': 'Queue', 'route': '/queue'},
         {'icon': Icons.folder_shared_rounded, 'label': 'EMR', 'route': '/emr'},
-        {'icon': Icons.video_call_rounded, 'label': 'Telemedicine', 'route': '/telemedicine'},
-        {'icon': Icons.science_rounded, 'label': 'Lab Orders', 'route': '/emr/lab-order'},
+        {
+          'icon': Icons.video_call_rounded,
+          'label': 'Telemedicine',
+          'route': '/telemedicine'
+        },
+        {
+          'icon': Icons.science_rounded,
+          'label': 'Lab Orders',
+          'route': '/emr/lab-order'
+        },
       ];
     } else if (role == StaffRole.nurse) {
       actions = [
         {'icon': Icons.people_alt_rounded, 'label': 'Queue', 'route': '/queue'},
-        {'icon': Icons.monitor_heart_rounded, 'label': 'Vitals', 'route': '/emr/vitals'},
+        {
+          'icon': Icons.monitor_heart_rounded,
+          'label': 'Vitals',
+          'route': '/emr/vitals'
+        },
         {'icon': Icons.bed_rounded, 'label': 'Ward', 'route': '/ward'},
         {'icon': Icons.science_rounded, 'label': 'Lab', 'route': '/lab'},
       ];
     } else {
       actions = [
         {'icon': Icons.people_alt_rounded, 'label': 'Queue', 'route': '/queue'},
-        {'icon': Icons.calendar_month_rounded, 'label': 'Bookings', 'route': '/appointments'},
-        {'icon': Icons.person_search_rounded, 'label': 'Patients', 'route': '/emr'},
-        {'icon': Icons.bar_chart_rounded, 'label': 'Reports', 'route': '/analytics'},
+        {
+          'icon': Icons.calendar_month_rounded,
+          'label': 'Bookings',
+          'route': '/appointments'
+        },
+        {
+          'icon': Icons.person_search_rounded,
+          'label': 'Patients',
+          'route': '/emr'
+        },
+        {
+          'icon': Icons.bar_chart_rounded,
+          'label': 'Reports',
+          'route': '/analytics'
+        },
       ];
     }
     return Column(
@@ -320,26 +401,46 @@ class HomeScreen extends StatelessWidget {
         const SizedBox(height: 12),
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: actions.map((a) => GestureDetector(
-            onTap: () => context.push(a['route'] as String),
-            child: Column(
-              children: [
-                Container(
-                  width: 64, height: 64,
-                  decoration: BoxDecoration(
-                    color: AppColors.surfaceLight,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: AppColors.divider),
-                  ),
-                  child: Icon(a['icon'] as IconData, color: AppColors.primary, size: 28),
+          children: actions.map((a) {
+            final label = a['label'] as String;
+            final route = a['route'] as String;
+            void handleTap() {
+              HapticFeedback.lightImpact();
+              context.push(route);
+            }
+
+            return Semantics(
+              button: true,
+              label: label,
+              onTap: handleTap,
+              excludeSemantics: true,
+              child: GestureDetector(
+                onTap: handleTap,
+                child: Column(
+                  children: [
+                    Container(
+                      width: 64,
+                      height: 64,
+                      decoration: BoxDecoration(
+                        color: AppColors.surfaceLight,
+                        borderRadius: BorderRadius.circular(18),
+                        border: Border.all(color: AppColors.divider),
+                      ),
+                      child: Icon(a['icon'] as IconData,
+                          color: AppColors.primary, size: 28),
+                    ),
+                    const SizedBox(height: 8),
+                    Text(label,
+                        style: const TextStyle(
+                            fontSize: 12,
+                            fontWeight: FontWeight.w600,
+                            color: AppColors.textSecondary,
+                            fontFamily: 'Inter')),
+                  ],
                 ),
-                const SizedBox(height: 8),
-                Text(a['label'] as String,
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600,
-                    color: AppColors.textSecondary, fontFamily: 'Inter')),
-              ],
-            ),
-          )).toList(),
+              ),
+            );
+          }).toList(),
         ),
       ],
     );
@@ -348,7 +449,11 @@ class HomeScreen extends StatelessWidget {
   Widget _buildDepartmentStatus(BuildContext context) {
     const depts = [
       {'dept': 'Emergency', 'patients': 4, 'color': AppColors.error},
-      {'dept': 'OPD - Internal Med', 'patients': 18, 'color': AppColors.primary},
+      {
+        'dept': 'OPD - Internal Med',
+        'patients': 18,
+        'color': AppColors.primary
+      },
       {'dept': 'Pediatrics', 'patients': 9, 'color': AppColors.secondary},
       {'dept': 'Maternity', 'patients': 6, 'color': AppColors.success},
     ];
@@ -358,21 +463,32 @@ class HomeScreen extends StatelessWidget {
         const SectionHeader(title: 'Department Load'),
         const SizedBox(height: 12),
         ...depts.map((d) => Padding(
-          padding: const EdgeInsets.only(bottom: 8),
-          child: GlassCard(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            child: Row(
-              children: [
-                Container(width: 8, height: 8,
-                  decoration: BoxDecoration(color: d['color'] as Color, shape: BoxShape.circle)),
-                const SizedBox(width: 12),
-                Expanded(child: Text(d['dept'] as String, style: Theme.of(context).textTheme.bodyMedium)),
-                Text('${d['patients']} patients',
-                  style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 13, color: AppColors.primary, fontFamily: 'Inter')),
-              ],
-            ),
-          ),
-        )),
+              padding: const EdgeInsets.only(bottom: 8),
+              child: GlassCard(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                child: Row(
+                  children: [
+                    Container(
+                        width: 8,
+                        height: 8,
+                        decoration: BoxDecoration(
+                            color: d['color'] as Color,
+                            shape: BoxShape.circle)),
+                    const SizedBox(width: 12),
+                    Expanded(
+                        child: Text(d['dept'] as String,
+                            style: Theme.of(context).textTheme.bodyMedium)),
+                    Text('${d['patients']} patients',
+                        style: const TextStyle(
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13,
+                            color: AppColors.primary,
+                            fontFamily: 'Inter')),
+                  ],
+                ),
+              ),
+            )),
       ],
     );
   }
@@ -388,36 +504,41 @@ class HomeScreen extends StatelessWidget {
         ),
         const SizedBox(height: 12),
         ...mockNotifications.take(3).map((n) => Padding(
-          padding: const EdgeInsets.only(bottom: 10),
-          child: GlassCard(
-            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-            borderColor: n.isRead ? null : n.typeColor.withOpacity(0.3),
-            child: Row(
-              children: [
-                Container(
-                  width: 36, height: 36,
-                  decoration: BoxDecoration(
-                    color: n.typeColor.withOpacity(0.15),
-                    borderRadius: BorderRadius.circular(10),
-                  ),
-                  child: Icon(n.typeIcon, color: n.typeColor, size: 18),
+              padding: const EdgeInsets.only(bottom: 10),
+              child: GlassCard(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+                borderColor: n.isRead ? null : n.typeColor.withOpacity(0.3),
+                child: Row(
+                  children: [
+                    Container(
+                      width: 36,
+                      height: 36,
+                      decoration: BoxDecoration(
+                        color: n.typeColor.withOpacity(0.15),
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                      child: Icon(n.typeIcon, color: n.typeColor, size: 18),
+                    ),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(n.title,
+                              style: Theme.of(context).textTheme.titleSmall),
+                          const SizedBox(height: 2),
+                          Text(n.message,
+                              style: Theme.of(context).textTheme.bodySmall,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(n.title, style: Theme.of(context).textTheme.titleSmall),
-                      const SizedBox(height: 2),
-                      Text(n.message, style: Theme.of(context).textTheme.bodySmall,
-                        maxLines: 1, overflow: TextOverflow.ellipsis),
-                    ],
-                  ),
-                ),
-              ],
-            ),
-          ),
-        )),
+              ),
+            )),
       ],
     );
   }
