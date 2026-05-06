@@ -16,6 +16,9 @@ class _TeleHomeStaffScreenState extends State<TeleHomeStaffScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // ⚡ Bolt: Cache tele-appointments in local variable to avoid O(N^2) complexity in ListView.separated
+    final teleAppts = _teleAppointments;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Container(
@@ -99,10 +102,10 @@ class _TeleHomeStaffScreenState extends State<TeleHomeStaffScreen> {
               Expanded(
                 child: ListView.separated(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-                  itemCount: _teleAppointments.length,
+                  itemCount: teleAppts.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, i) {
-                    final apt = _teleAppointments[i];
+                    final apt = teleAppts[i];
                     return GlassCard(
                       padding: const EdgeInsets.all(16),
                       child: Row(
