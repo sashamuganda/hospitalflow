@@ -218,9 +218,11 @@ class _LabOrderScreenState extends State<LabOrderScreen> {
                       TextField(
                           controller: _notesCtrl,
                           maxLines: 2,
+                          maxLength: 500,
                           decoration: const InputDecoration(
                               hintText:
-                                  'Relevant clinical information for lab...')),
+                                  'Relevant clinical information for lab...',
+                              counterText: '')),
                       const SizedBox(height: 32),
                       GradientButton(
                         label: 'Send Lab Order',
