@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../core/colors.dart';
@@ -62,14 +63,22 @@ class _LoginScreenState extends State<LoginScreen> {
                 Tooltip(
                   message: 'Back to role selection',
                   child: GestureDetector(
-                    onTap: () => context.go('/role-select'),
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(
-                        color: AppColors.surfaceLight,
-                        borderRadius: BorderRadius.circular(12),
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      context.go('/role-select');
+                    },
+                    child: Semantics(
+                      button: true,
+                      label: 'Back to role selection',
+                      excludeSemantics: true,
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceLight,
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        child: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: AppColors.textSecondary),
                       ),
-                      child: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: AppColors.textSecondary),
                     ),
                   ),
                 ),
