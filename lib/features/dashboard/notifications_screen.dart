@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../core/colors.dart';
 import '../../data/mock_data.dart';
 import '../../widgets/shared_widgets.dart';
@@ -34,15 +35,27 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                 child: Row(
                   children: [
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                            color: AppColors.surfaceLight,
-                            borderRadius: BorderRadius.circular(10)),
-                        child: const Icon(Icons.arrow_back_ios_new_rounded,
-                            size: 18, color: AppColors.textSecondary),
+                    Semantics(
+                      label: 'Back',
+                      button: true,
+                      excludeSemantics: true,
+                      onTap: () {
+                        HapticFeedback.lightImpact();
+                        Navigator.pop(context);
+                      },
+                      child: GestureDetector(
+                        onTap: () {
+                          HapticFeedback.lightImpact();
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                              color: AppColors.surfaceLight,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: const Icon(Icons.arrow_back_ios_new_rounded,
+                              size: 18, color: AppColors.textSecondary),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -68,30 +81,40 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   itemBuilder: (context, i) {
                     final f = _filters[i];
                     final isActive = _filter == f;
-                    return GestureDetector(
-                      onTap: () => setState(() => _filter = f),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 150),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: isActive
-                              ? AppColors.primary
-                              : AppColors.surfaceLight,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                              color: isActive
-                                  ? AppColors.primary
-                                  : AppColors.divider),
-                        ),
-                        child: Text(f,
-                            style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
+                    final handleTap = () {
+                      HapticFeedback.selectionClick();
+                      setState(() => _filter = f);
+                    };
+                    return Semantics(
+                      label: 'Filter by $f',
+                      button: true,
+                      selected: isActive,
+                      onTap: handleTap,
+                      child: GestureDetector(
+                        onTap: handleTap,
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 150),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: isActive
+                                ? AppColors.primary
+                                : AppColors.surfaceLight,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
                                 color: isActive
-                                    ? AppColors.textOnPrimary
-                                    : AppColors.textSecondary)),
+                                    ? AppColors.primary
+                                    : AppColors.divider),
+                          ),
+                          child: Text(f,
+                              style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: isActive
+                                      ? AppColors.textOnPrimary
+                                      : AppColors.textSecondary)),
+                        ),
                       ),
                     );
                   },
