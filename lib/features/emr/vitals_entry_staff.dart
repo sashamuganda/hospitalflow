@@ -235,10 +235,12 @@ class _VitalsEntryStaffState extends State<VitalsEntryStaff> {
           const SizedBox(height: 8),
           TextField(
             controller: ctrl,
+            maxLength: 8,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             textAlign: TextAlign.center,
             decoration: const InputDecoration(
               hintText: '—',
+              counterText: '',
               border: InputBorder.none,
               enabledBorder: InputBorder.none,
               focusedBorder: InputBorder.none,
