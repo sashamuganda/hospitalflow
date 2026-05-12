@@ -13,13 +13,15 @@ class StaffAppointmentsHome extends StatefulWidget {
 class _StaffAppointmentsHomeState extends State<StaffAppointmentsHome> {
   String _activeFilter = 'All';
 
-  List<StaffAppointment> get _filtered {
-    if (_activeFilter == 'All') return mockStaffAppointments;
-    return mockStaffAppointments.where((a) => a.type == _activeFilter).toList();
-  }
-
   @override
   Widget build(BuildContext context) {
+    // Performance: Filter once at the start of build to avoid O(N^2) in list rendering
+    final filtered = _activeFilter == 'All'
+        ? mockStaffAppointments
+        : mockStaffAppointments
+            .where((a) => a.type == _activeFilter)
+            .toList();
+
     return Scaffold(
       backgroundColor: AppColors.background,
       floatingActionButton: FloatingActionButton(
@@ -68,10 +70,10 @@ class _StaffAppointmentsHomeState extends State<StaffAppointmentsHome> {
               Expanded(
                 child: ListView.separated(
                   padding: const EdgeInsets.fromLTRB(20, 8, 20, 100),
-                  itemCount: _filtered.length,
+                  itemCount: filtered.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, i) =>
-                      _AppointmentCard(appointment: _filtered[i]),
+                      _AppointmentCard(appointment: filtered[i]),
                 ),
               ),
             ],
