@@ -43,6 +43,7 @@ class _StaffAppointmentsHomeState extends State<StaffAppointmentsHome> {
                     IconButton(
                       icon: const Icon(Icons.calendar_month_rounded,
                           color: AppColors.primary),
+                      tooltip: 'View Calendar',
                       onPressed: () {},
                     ),
                   ],
