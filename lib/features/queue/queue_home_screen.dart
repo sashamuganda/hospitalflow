@@ -19,23 +19,31 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
     // ⚡ Bolt: Cache filtered results and counts in local variables to avoid O(N^2) complexity
     // when accessed multiple times during a single build cycle (especially inside builders).
     final filtered = mockQueue.where((q) {
-      final matchesLevel = _filterLevel == null || q.triageLevel == _filterLevel;
+      final matchesLevel =
+          _filterLevel == null || q.triageLevel == _filterLevel;
       bool matchesStatus = true;
       if (_filterStatus != 'All') {
         switch (_filterStatus) {
-          case 'Waiting': matchesStatus = q.status == QueueStatus.waiting; break;
-          case 'In Consult': matchesStatus = q.status == QueueStatus.inConsultation; break;
+          case 'Waiting':
+            matchesStatus = q.status == QueueStatus.waiting;
+            break;
+          case 'In Consult':
+            matchesStatus = q.status == QueueStatus.inConsultation;
+            break;
         }
       }
       return matchesLevel && matchesStatus;
     }).toList();
 
-    final waitingCount = mockQueue.where((q) => q.status == QueueStatus.waiting).length;
-    final immediateCount = mockQueue.where((q) => q.triageLevel == TriageLevel.immediate).length;
-    
+    final waitingCount =
+        mockQueue.where((q) => q.status == QueueStatus.waiting).length;
+    final immediateCount =
+        mockQueue.where((q) => q.triageLevel == TriageLevel.immediate).length;
+
     final triageCounts = <TriageLevel, int>{};
     for (final level in TriageLevel.values) {
-      triageCounts[level] = mockQueue.where((q) => q.triageLevel == level).length;
+      triageCounts[level] =
+          mockQueue.where((q) => q.triageLevel == level).length;
     }
 
     return Scaffold(
@@ -46,7 +54,7 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
         foregroundColor: AppColors.textOnPrimary,
         icon: const Icon(Icons.person_add_rounded),
         label: const Text('Check In Patient',
-          style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600)),
+            style: TextStyle(fontFamily: 'Inter', fontWeight: FontWeight.w600)),
       ),
       body: Container(
         decoration: const BoxDecoration(gradient: AppColors.backgroundGradient),
@@ -61,10 +69,18 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
                   children: [
                     Row(
                       children: [
-                        Expanded(child: Text('Patient Queue', style: Theme.of(context).textTheme.headlineMedium)),
+                        Expanded(
+                            child: Text('Patient Queue',
+                                style: Theme.of(context)
+                                    .textTheme
+                                    .headlineMedium)),
                         StatusBadge(
-                          label: immediateCount > 0 ? '$immediateCount IMMEDIATE' : '$waitingCount waiting',
-                          color: immediateCount > 0 ? AppColors.error : AppColors.primary),
+                            label: immediateCount > 0
+                                ? '$immediateCount IMMEDIATE'
+                                : '$waitingCount waiting',
+                            color: immediateCount > 0
+                                ? AppColors.error
+                                : AppColors.primary),
                       ],
                     ),
                     const SizedBox(height: 16),
@@ -92,7 +108,8 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
                           final patient = filtered[i];
                           return _QueueCard(
                             patient: patient,
-                            onTap: () => context.push('/queue/triage/${patient.id}'),
+                            onTap: () =>
+                                context.push('/queue/triage/${patient.id}'),
                           );
                         },
                       ),
@@ -110,26 +127,39 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
       children: TriageLevel.values.map((level) {
         final isActive = _filterLevel == level;
         return GestureDetector(
-          onTap: () => setState(() => _filterLevel = _filterLevel == level ? null : level),
+          onTap: () => setState(
+              () => _filterLevel = _filterLevel == level ? null : level),
           child: AnimatedContainer(
             duration: const Duration(milliseconds: 150),
             padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
             decoration: BoxDecoration(
-              color: isActive ? level.color.withOpacity(0.2) : AppColors.surfaceLight,
+              color: isActive
+                  ? level.color.withOpacity(0.2)
+                  : AppColors.surfaceLight,
               borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: isActive ? level.color : AppColors.divider),
+              border:
+                  Border.all(color: isActive ? level.color : AppColors.divider),
             ),
             child: Column(
               children: [
-                Container(width: 10, height: 10,
-                  decoration: BoxDecoration(color: level.color, shape: BoxShape.circle)),
+                Container(
+                    width: 10,
+                    height: 10,
+                    decoration: BoxDecoration(
+                        color: level.color, shape: BoxShape.circle)),
                 const SizedBox(height: 4),
                 Text(level.shortCode,
-                  style: TextStyle(fontSize: 9, fontWeight: FontWeight.w800,
-                    color: isActive ? level.color : AppColors.textMuted, fontFamily: 'Inter')),
+                    style: TextStyle(
+                        fontSize: 9,
+                        fontWeight: FontWeight.w800,
+                        color: isActive ? level.color : AppColors.textMuted,
+                        fontFamily: 'Inter')),
                 Text('${counts[level] ?? 0}',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700,
-                    color: isActive ? level.color : AppColors.textSecondary, fontFamily: 'Inter')),
+                    style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.w700,
+                        color: isActive ? level.color : AppColors.textSecondary,
+                        fontFamily: 'Inter')),
               ],
             ),
           ),
@@ -152,11 +182,17 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
               decoration: BoxDecoration(
                 color: isActive ? AppColors.primary : AppColors.surfaceLight,
                 borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: isActive ? AppColors.primary : AppColors.divider),
+                border: Border.all(
+                    color: isActive ? AppColors.primary : AppColors.divider),
               ),
               child: Text(s,
-                style: TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w600,
-                  color: isActive ? AppColors.textOnPrimary : AppColors.textSecondary)),
+                  style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 12,
+                      fontWeight: FontWeight.w600,
+                      color: isActive
+                          ? AppColors.textOnPrimary
+                          : AppColors.textSecondary)),
             ),
           ),
         );
@@ -183,19 +219,28 @@ class _QueueCard extends StatelessWidget {
             children: [
               // Queue number
               Container(
-                width: 48, height: 48,
+                width: 48,
+                height: 48,
                 decoration: BoxDecoration(
                   color: patient.triageLevel.color.withOpacity(0.15),
                   borderRadius: BorderRadius.circular(14),
-                  border: Border.all(color: patient.triageLevel.color.withOpacity(0.4)),
+                  border: Border.all(
+                      color: patient.triageLevel.color.withOpacity(0.4)),
                 ),
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text('Q', style: TextStyle(fontSize: 10, color: patient.triageLevel.color, fontFamily: 'Inter')),
+                    Text('Q',
+                        style: TextStyle(
+                            fontSize: 10,
+                            color: patient.triageLevel.color,
+                            fontFamily: 'Inter')),
                     Text('${patient.queueNumber}',
-                      style: TextStyle(fontSize: 18, fontWeight: FontWeight.w800,
-                        color: patient.triageLevel.color, fontFamily: 'Inter')),
+                        style: TextStyle(
+                            fontSize: 18,
+                            fontWeight: FontWeight.w800,
+                            color: patient.triageLevel.color,
+                            fontFamily: 'Inter')),
                   ],
                 ),
               ),
@@ -208,14 +253,15 @@ class _QueueCard extends StatelessWidget {
                       children: [
                         Expanded(
                           child: Text(patient.patientName,
-                            style: Theme.of(context).textTheme.titleMedium),
+                              style: Theme.of(context).textTheme.titleMedium),
                         ),
                         TriageChip(level: patient.triageLevel, compact: true),
                       ],
                     ),
                     const SizedBox(height: 4),
-                    Text('${patient.age}y · ${patient.gender} · ${patient.department}',
-                      style: Theme.of(context).textTheme.bodySmall),
+                    Text(
+                        '${patient.age}y · ${patient.gender} · ${patient.department}',
+                        style: Theme.of(context).textTheme.bodySmall),
                   ],
                 ),
               ),
@@ -230,12 +276,17 @@ class _QueueCard extends StatelessWidget {
             ),
             child: Row(
               children: [
-                const Icon(Icons.medical_information_outlined, size: 16, color: AppColors.textMuted),
+                const Icon(Icons.medical_information_outlined,
+                    size: 16, color: AppColors.textMuted),
                 const SizedBox(width: 8),
                 Expanded(
                   child: Text(patient.chiefComplaint,
-                    style: Theme.of(context).textTheme.bodySmall?.copyWith(color: AppColors.textSecondary),
-                    maxLines: 1, overflow: TextOverflow.ellipsis),
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall
+                          ?.copyWith(color: AppColors.textSecondary),
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis),
                 ),
               ],
             ),
@@ -243,18 +294,28 @@ class _QueueCard extends StatelessWidget {
           const SizedBox(height: 12),
           Row(
             children: [
-              const Icon(Icons.timer_outlined, size: 14, color: AppColors.textMuted),
+              const Icon(Icons.timer_outlined,
+                  size: 14, color: AppColors.textMuted),
               const SizedBox(width: 4),
               Text('${patient.waitMinutes} min wait',
-                style: const TextStyle(fontSize: 12, color: AppColors.textMuted, fontFamily: 'Inter')),
+                  style: const TextStyle(
+                      fontSize: 12,
+                      color: AppColors.textMuted,
+                      fontFamily: 'Inter')),
               const Spacer(),
               if (isInConsult) ...[
                 const Icon(Icons.circle, size: 8, color: AppColors.success),
                 const SizedBox(width: 4),
-                Text('In Consultation${patient.assignedDoctorName != null ? ' · ${patient.assignedDoctorName}' : ''}',
-                  style: const TextStyle(fontSize: 11, color: AppColors.success, fontWeight: FontWeight.w600, fontFamily: 'Inter')),
+                Text(
+                    'In Consultation${patient.assignedDoctorName != null ? ' · ${patient.assignedDoctorName}' : ''}',
+                    style: const TextStyle(
+                        fontSize: 11,
+                        color: AppColors.success,
+                        fontWeight: FontWeight.w600,
+                        fontFamily: 'Inter')),
               ] else
-                StatusBadge(label: 'Waiting', color: AppColors.warning, fontSize: 11),
+                StatusBadge(
+                    label: 'Waiting', color: AppColors.warning, fontSize: 11),
             ],
           ),
           if (patient.vitals != null) ...[
@@ -262,17 +323,28 @@ class _QueueCard extends StatelessWidget {
             const TealDivider(),
             const SizedBox(height: 10),
             Row(
-              children: patient.vitals!.entries.take(3).map((e) => Padding(
-                padding: const EdgeInsets.only(right: 16),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(e.key, style: const TextStyle(fontSize: 10, color: AppColors.textMuted, fontFamily: 'Inter')),
-                    Text(e.value, style: const TextStyle(fontSize: 13, fontWeight: FontWeight.w700,
-                      color: AppColors.textPrimary, fontFamily: 'Inter')),
-                  ],
-                ),
-              )).toList(),
+              children: patient.vitals!.entries
+                  .take(3)
+                  .map((e) => Padding(
+                        padding: const EdgeInsets.only(right: 16),
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(e.key,
+                                style: const TextStyle(
+                                    fontSize: 10,
+                                    color: AppColors.textMuted,
+                                    fontFamily: 'Inter')),
+                            Text(e.value,
+                                style: const TextStyle(
+                                    fontSize: 13,
+                                    fontWeight: FontWeight.w700,
+                                    color: AppColors.textPrimary,
+                                    fontFamily: 'Inter')),
+                          ],
+                        ),
+                      ))
+                  .toList(),
             ),
           ],
         ],

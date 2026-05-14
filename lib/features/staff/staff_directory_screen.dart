@@ -18,7 +18,8 @@ class _StaffDirectoryScreenState extends State<StaffDirectoryScreen> {
   Widget build(BuildContext context) {
     // ⚡ Bolt: Cache filtered staff list in local variable to avoid O(N^2) complexity in ListView.separated
     final filtered = mockStaffList.where((s) {
-      final matchesSearch = s.fullName.toLowerCase().contains(_searchQuery.toLowerCase());
+      final matchesSearch =
+          s.fullName.toLowerCase().contains(_searchQuery.toLowerCase());
       final matchesRole = _selectedRole == null || s.role == _selectedRole;
       return matchesSearch && matchesRole;
     }).toList();
@@ -33,7 +34,8 @@ class _StaffDirectoryScreenState extends State<StaffDirectoryScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                child: Text('Staff Directory', style: Theme.of(context).textTheme.headlineMedium),
+                child: Text('Staff Directory',
+                    style: Theme.of(context).textTheme.headlineMedium),
               ),
               const SizedBox(height: 16),
               Padding(
@@ -42,10 +44,13 @@ class _StaffDirectoryScreenState extends State<StaffDirectoryScreen> {
                   onChanged: (v) => setState(() => _searchQuery = v),
                   decoration: InputDecoration(
                     hintText: 'Search by name...',
-                    prefixIcon: const Icon(Icons.search_rounded, color: AppColors.textMuted),
+                    prefixIcon: const Icon(Icons.search_rounded,
+                        color: AppColors.textMuted),
                     filled: true,
                     fillColor: AppColors.surface,
-                    border: OutlineInputBorder(borderRadius: BorderRadius.circular(16), borderSide: BorderSide.none),
+                    border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(16),
+                        borderSide: BorderSide.none),
                   ),
                 ),
               ),
@@ -56,12 +61,15 @@ class _StaffDirectoryScreenState extends State<StaffDirectoryScreen> {
                   scrollDirection: Axis.horizontal,
                   padding: const EdgeInsets.symmetric(horizontal: 20),
                   children: [
-                    _FilterChip(label: 'All', isActive: _selectedRole == null, onTap: () => setState(() => _selectedRole = null)),
+                    _FilterChip(
+                        label: 'All',
+                        isActive: _selectedRole == null,
+                        onTap: () => setState(() => _selectedRole = null)),
                     ...StaffRole.values.map((r) => _FilterChip(
-                      label: r.displayName,
-                      isActive: _selectedRole == r,
-                      onTap: () => setState(() => _selectedRole = r),
-                    )),
+                          label: r.displayName,
+                          isActive: _selectedRole == r,
+                          onTap: () => setState(() => _selectedRole = r),
+                        )),
                   ],
                 ),
               ),
@@ -83,19 +91,30 @@ class _StaffDirectoryScreenState extends State<StaffDirectoryScreen> {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(s.displayName, style: Theme.of(context).textTheme.titleMedium),
+                                Text(s.displayName,
+                                    style: Theme.of(context)
+                                        .textTheme
+                                        .titleMedium),
                                 const SizedBox(height: 4),
                                 Row(
                                   children: [
-                                    Icon(s.role.icon, size: 12, color: AppColors.primary),
+                                    Icon(s.role.icon,
+                                        size: 12, color: AppColors.primary),
                                     const SizedBox(width: 4),
-                                    Text('${s.role.displayName} • ${s.department}', style: const TextStyle(fontSize: 11, color: AppColors.textSecondary)),
+                                    Text(
+                                        '${s.role.displayName} • ${s.department}',
+                                        style: const TextStyle(
+                                            fontSize: 11,
+                                            color: AppColors.textSecondary)),
                                   ],
                                 ),
                               ],
                             ),
                           ),
-                          IconButton(icon: const Icon(Icons.email_rounded, color: AppColors.primary), onPressed: () {}),
+                          IconButton(
+                              icon: const Icon(Icons.email_rounded,
+                                  color: AppColors.primary),
+                              onPressed: () {}),
                         ],
                       ),
                     );
@@ -115,7 +134,8 @@ class _FilterChip extends StatelessWidget {
   final bool isActive;
   final VoidCallback onTap;
 
-  const _FilterChip({required this.label, required this.isActive, required this.onTap});
+  const _FilterChip(
+      {required this.label, required this.isActive, required this.onTap});
 
   @override
   Widget build(BuildContext context) {
@@ -127,7 +147,8 @@ class _FilterChip extends StatelessWidget {
         decoration: BoxDecoration(
           color: isActive ? AppColors.primary : AppColors.surfaceLight,
           borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: isActive ? AppColors.primary : AppColors.divider),
+          border: Border.all(
+              color: isActive ? AppColors.primary : AppColors.divider),
         ),
         child: Text(
           label,

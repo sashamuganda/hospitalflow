@@ -21,7 +21,9 @@ class _LoginScreenState extends State<LoginScreen> {
 
   @override
   void dispose() {
-    _staffIdCtrl.dispose(); _passwordCtrl.dispose(); _facilityCtrl.dispose();
+    _staffIdCtrl.dispose();
+    _passwordCtrl.dispose();
+    _facilityCtrl.dispose();
     super.dispose();
   }
 
@@ -69,7 +71,8 @@ class _LoginScreenState extends State<LoginScreen> {
                         color: AppColors.surfaceLight,
                         borderRadius: BorderRadius.circular(12),
                       ),
-                      child: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: AppColors.textSecondary),
+                      child: const Icon(Icons.arrow_back_ios_new_rounded,
+                          size: 18, color: AppColors.textSecondary),
                     ),
                   ),
                 ),
@@ -78,10 +81,10 @@ class _LoginScreenState extends State<LoginScreen> {
                 RoleBadge(label: role.displayName),
                 const SizedBox(height: 16),
                 Text('Welcome Back',
-                  style: Theme.of(context).textTheme.displaySmall),
+                    style: Theme.of(context).textTheme.displaySmall),
                 const SizedBox(height: 8),
                 Text('Sign in to access the clinical dashboard.',
-                  style: Theme.of(context).textTheme.bodyMedium),
+                    style: Theme.of(context).textTheme.bodyMedium),
                 const SizedBox(height: 40),
                 // Staff ID
                 _buildLabel('Staff ID'),
@@ -94,7 +97,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   maxLength: 20,
                   decoration: const InputDecoration(
                     hintText: 'e.g. DOC-2024-001',
-                    prefixIcon: Icon(Icons.badge_outlined, color: AppColors.textMuted),
+                    prefixIcon:
+                        Icon(Icons.badge_outlined, color: AppColors.textMuted),
                     counterText: '',
                   ),
                 ),
@@ -112,10 +116,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: InputDecoration(
                     hintText: '••••••••',
                     counterText: '',
-                    prefixIcon: const Icon(Icons.lock_outline_rounded, color: AppColors.textMuted),
+                    prefixIcon: const Icon(Icons.lock_outline_rounded,
+                        color: AppColors.textMuted),
                     suffixIcon: IconButton(
-                      icon: Icon(_obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                        color: AppColors.textMuted, size: 20),
+                      icon: Icon(
+                          _obscure
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                          color: AppColors.textMuted,
+                          size: 20),
                       tooltip: _obscure ? 'Show password' : 'Hide password',
                       onPressed: () => setState(() => _obscure = !_obscure),
                     ),
@@ -127,7 +136,10 @@ class _LoginScreenState extends State<LoginScreen> {
                   child: TextButton(
                     onPressed: () => context.push('/forgot-password'),
                     child: const Text('Forgot Password?',
-                      style: TextStyle(color: AppColors.primary, fontWeight: FontWeight.w600, fontSize: 13)),
+                        style: TextStyle(
+                            color: AppColors.primary,
+                            fontWeight: FontWeight.w600,
+                            fontSize: 13)),
                   ),
                 ),
                 const SizedBox(height: 32),
@@ -148,10 +160,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   maxLength: 10,
                   decoration: const InputDecoration(
                     hintText: 'MFH-001',
-                    prefixIcon: Icon(Icons.business_rounded, color: AppColors.textMuted),
+                    prefixIcon: Icon(Icons.business_rounded,
+                        color: AppColors.textMuted),
                     counterText: '',
-                    helperText: 'Contact your administrator for your facility code.',
-                    helperStyle: TextStyle(color: AppColors.textMuted, fontSize: 12),
+                    helperText:
+                        'Contact your administrator for your facility code.',
+                    helperStyle:
+                        TextStyle(color: AppColors.textMuted, fontSize: 12),
                   ),
                 ),
                 const SizedBox(height: 40),
@@ -161,15 +176,21 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: BoxDecoration(
                     color: AppColors.primary.withOpacity(0.08),
                     borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: AppColors.primary.withOpacity(0.2)),
+                    border:
+                        Border.all(color: AppColors.primary.withOpacity(0.2)),
                   ),
                   child: Row(
                     children: [
-                      const Icon(Icons.info_outline_rounded, color: AppColors.primary, size: 18),
+                      const Icon(Icons.info_outline_rounded,
+                          color: AppColors.primary, size: 18),
                       const SizedBox(width: 10),
                       Expanded(
-                        child: Text('Demo: use any Staff ID and password to sign in.',
-                          style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontFamily: 'Inter')),
+                        child: Text(
+                            'Demo: use any Staff ID and password to sign in.',
+                            style: const TextStyle(
+                                color: AppColors.textSecondary,
+                                fontSize: 12,
+                                fontFamily: 'Inter')),
                       ),
                     ],
                   ),
@@ -184,7 +205,10 @@ class _LoginScreenState extends State<LoginScreen> {
 
   Widget _buildLabel(String text) {
     return Text(text,
-      style: const TextStyle(fontFamily: 'Inter', fontSize: 13, fontWeight: FontWeight.w600,
-        color: AppColors.textSecondary));
+        style: const TextStyle(
+            fontFamily: 'Inter',
+            fontSize: 13,
+            fontWeight: FontWeight.w600,
+            color: AppColors.textSecondary));
   }
 }

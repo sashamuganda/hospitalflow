@@ -16,7 +16,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
   bool _sent = false;
 
   @override
-  void dispose() { _staffIdCtrl.dispose(); _emailCtrl.dispose(); super.dispose(); }
+  void dispose() {
+    _staffIdCtrl.dispose();
+    _emailCtrl.dispose();
+    super.dispose();
+  }
 
   Future<void> _onSubmit() async {
     final email = _emailCtrl.text.trim();
@@ -39,7 +43,10 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
     setState(() => _isLoading = true);
     await Future.delayed(const Duration(milliseconds: 1200));
     if (!mounted) return;
-    setState(() { _isLoading = false; _sent = true; });
+    setState(() {
+      _isLoading = false;
+      _sent = true;
+    });
   }
 
   @override
@@ -60,25 +67,32 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     onTap: () => context.pop(),
                     child: Container(
                       padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(color: AppColors.surfaceLight, borderRadius: BorderRadius.circular(12)),
-                      child: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: AppColors.textSecondary),
+                      decoration: BoxDecoration(
+                          color: AppColors.surfaceLight,
+                          borderRadius: BorderRadius.circular(12)),
+                      child: const Icon(Icons.arrow_back_ios_new_rounded,
+                          size: 18, color: AppColors.textSecondary),
                     ),
                   ),
                 ),
                 const SizedBox(height: 36),
                 Container(
-                  width: 64, height: 64,
+                  width: 64,
+                  height: 64,
                   decoration: BoxDecoration(
                     color: AppColors.secondary.withOpacity(0.15),
                     borderRadius: BorderRadius.circular(20),
                   ),
-                  child: const Icon(Icons.lock_reset_rounded, color: AppColors.secondary, size: 36),
+                  child: const Icon(Icons.lock_reset_rounded,
+                      color: AppColors.secondary, size: 36),
                 ),
                 const SizedBox(height: 24),
-                Text('Reset Password', style: Theme.of(context).textTheme.displaySmall),
+                Text('Reset Password',
+                    style: Theme.of(context).textTheme.displaySmall),
                 const SizedBox(height: 8),
-                Text('Enter your Staff ID and registered email. We\'ll send a reset link.',
-                  style: Theme.of(context).textTheme.bodyMedium),
+                Text(
+                    'Enter your Staff ID and registered email. We\'ll send a reset link.',
+                    style: Theme.of(context).textTheme.bodyMedium),
                 const SizedBox(height: 40),
                 if (_sent) ...[
                   Container(
@@ -86,18 +100,24 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     decoration: BoxDecoration(
                       color: AppColors.success.withOpacity(0.1),
                       borderRadius: BorderRadius.circular(16),
-                      border: Border.all(color: AppColors.success.withOpacity(0.3)),
+                      border:
+                          Border.all(color: AppColors.success.withOpacity(0.3)),
                     ),
                     child: Column(
                       children: [
-                        const Icon(Icons.check_circle_rounded, color: AppColors.success, size: 48),
+                        const Icon(Icons.check_circle_rounded,
+                            color: AppColors.success, size: 48),
                         const SizedBox(height: 16),
                         Text('Reset Link Sent!',
-                          style: Theme.of(context).textTheme.titleLarge?.copyWith(color: AppColors.success)),
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleLarge
+                                ?.copyWith(color: AppColors.success)),
                         const SizedBox(height: 8),
-                        Text('Check your registered email for the password reset instructions.',
-                          style: Theme.of(context).textTheme.bodyMedium,
-                          textAlign: TextAlign.center),
+                        Text(
+                            'Check your registered email for the password reset instructions.',
+                            style: Theme.of(context).textTheme.bodyMedium,
+                            textAlign: TextAlign.center),
                         const SizedBox(height: 24),
                         GradientButton(
                           label: 'Back to Login',
@@ -112,10 +132,11 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   const SizedBox(height: 8),
                   TextField(
                     controller: _staffIdCtrl,
-                    maxLength: 32,
+                    maxLength: 20,
                     decoration: const InputDecoration(
                       hintText: 'e.g. DOC-2024-001',
-                      prefixIcon: Icon(Icons.badge_outlined, color: AppColors.textMuted),
+                      prefixIcon: Icon(Icons.badge_outlined,
+                          color: AppColors.textMuted),
                       counterText: '',
                     ),
                   ),
@@ -128,7 +149,8 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                     maxLength: 64,
                     decoration: const InputDecoration(
                       hintText: 'staff@medflow.hospital',
-                      prefixIcon: Icon(Icons.email_outlined, color: AppColors.textMuted),
+                      prefixIcon: Icon(Icons.email_outlined,
+                          color: AppColors.textMuted),
                       counterText: '',
                     ),
                   ),
@@ -154,6 +176,9 @@ class _FieldLabel extends StatelessWidget {
   const _FieldLabel({required this.text});
   @override
   Widget build(BuildContext context) => Text(text,
-    style: const TextStyle(fontFamily: 'Inter', fontSize: 13,
-      fontWeight: FontWeight.w600, color: AppColors.textSecondary));
+      style: const TextStyle(
+          fontFamily: 'Inter',
+          fontSize: 13,
+          fontWeight: FontWeight.w600,
+          color: AppColors.textSecondary));
 }
