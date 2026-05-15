@@ -13,20 +13,18 @@ class PharmacyHomeScreen extends StatefulWidget {
 class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
   String _activeTab = 'Pending';
 
-  List<PharmacyPrescription> get _filtered {
-    if (_activeTab == 'Pending') {
-      return mockPharmacyPrescriptions
-          .where((p) => p.status == PrescriptionStatus.pending)
-          .toList();
-    } else {
-      return mockPharmacyPrescriptions
-          .where((p) => p.status != PrescriptionStatus.pending)
-          .toList();
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
+    // ⚡ Bolt: Cache filtered results in a local variable to avoid O(N) filtering
+    // multiple times during a single build cycle (especially inside builders).
+    final filtered = _activeTab == 'Pending'
+        ? mockPharmacyPrescriptions
+            .where((p) => p.status == PrescriptionStatus.pending)
+            .toList()
+        : mockPharmacyPrescriptions
+            .where((p) => p.status != PrescriptionStatus.pending)
+            .toList();
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Container(
@@ -83,10 +81,10 @@ class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
               Expanded(
                 child: ListView.separated(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-                  itemCount: _filtered.length,
+                  itemCount: filtered.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, i) =>
-                      _PrescriptionCard(rx: _filtered[i]),
+                      _PrescriptionCard(rx: filtered[i]),
                 ),
               ),
             ],

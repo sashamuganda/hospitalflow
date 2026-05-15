@@ -11,10 +11,12 @@ class LabHomeScreen extends StatefulWidget {
 }
 
 class _LabHomeScreenState extends State<LabHomeScreen> {
-  // Simple order sorting by priority
-  List<LabOrder> get _sortedOrders {
-    final list = List<LabOrder>.from(mockLabOrders);
-    list.sort((a, b) {
+  @override
+  Widget build(BuildContext context) {
+    // ⚡ Bolt: Cache sorted results in a local variable to avoid O(N log N) sorting
+    // multiple times during a single build cycle (especially inside builders).
+    final sortedOrders = List<LabOrder>.from(mockLabOrders);
+    sortedOrders.sort((a, b) {
       final wA = a.priority.toLowerCase() == 'stat'
           ? 0
           : (a.priority.toLowerCase() == 'urgent' ? 1 : 2);
@@ -23,11 +25,7 @@ class _LabHomeScreenState extends State<LabHomeScreen> {
           : (b.priority.toLowerCase() == 'urgent' ? 1 : 2);
       return wA.compareTo(wB);
     });
-    return list;
-  }
 
-  @override
-  Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Container(
@@ -45,10 +43,10 @@ class _LabHomeScreenState extends State<LabHomeScreen> {
               Expanded(
                 child: ListView.separated(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-                  itemCount: _sortedOrders.length,
+                  itemCount: sortedOrders.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, i) =>
-                      _LabOrderCard(order: _sortedOrders[i]),
+                      _LabOrderCard(order: sortedOrders[i]),
                 ),
               ),
             ],

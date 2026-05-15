@@ -11,11 +11,13 @@ class TeleHomeStaffScreen extends StatefulWidget {
 }
 
 class _TeleHomeStaffScreenState extends State<TeleHomeStaffScreen> {
-  List<StaffAppointment> get _teleAppointments =>
-      mockStaffAppointments.where((a) => a.type == 'Telemedicine').toList();
-
   @override
   Widget build(BuildContext context) {
+    // ⚡ Bolt: Cache filtered results in a local variable to avoid O(N) filtering
+    // multiple times during a single build cycle (especially inside builders).
+    final teleAppointments =
+        mockStaffAppointments.where((a) => a.type == 'Telemedicine').toList();
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Container(
@@ -99,10 +101,10 @@ class _TeleHomeStaffScreenState extends State<TeleHomeStaffScreen> {
               Expanded(
                 child: ListView.separated(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-                  itemCount: _teleAppointments.length,
+                  itemCount: teleAppointments.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, i) {
-                    final apt = _teleAppointments[i];
+                    final apt = teleAppointments[i];
                     return GlassCard(
                       padding: const EdgeInsets.all(16),
                       child: Row(
