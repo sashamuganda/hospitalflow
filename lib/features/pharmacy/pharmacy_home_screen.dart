@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../core/colors.dart';
 import '../../data/mock_data.dart';
 import '../../widgets/shared_widgets.dart';
@@ -140,26 +141,38 @@ class _TabBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void handleTap() {
+      HapticFeedback.selectionClick();
+      onTap();
+    }
+
     return Expanded(
-      child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          decoration: BoxDecoration(
-            color: isActive ? AppColors.surfaceLight : Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-                color: isActive ? AppColors.primary : AppColors.divider),
+      child: Semantics(
+        button: true,
+        selected: isActive,
+        label: label,
+        excludeSemantics: true,
+        child: GestureDetector(
+          onTap: handleTap,
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            decoration: BoxDecoration(
+              color: isActive ? AppColors.surfaceLight : Colors.transparent,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                  color: isActive ? AppColors.primary : AppColors.divider),
+            ),
+            alignment: Alignment.center,
+            child: Text(label,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Inter',
+                  color: isActive
+                      ? AppColors.textPrimary
+                      : AppColors.textSecondary,
+                )),
           ),
-          alignment: Alignment.center,
-          child: Text(label,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                fontFamily: 'Inter',
-                color:
-                    isActive ? AppColors.textPrimary : AppColors.textSecondary,
-              )),
         ),
       ),
     );
