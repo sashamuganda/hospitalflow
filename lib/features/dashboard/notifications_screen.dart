@@ -13,15 +13,16 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   String _filter = 'All';
   final _filters = ['All', 'Critical', 'Lab', 'Appointment', 'System'];
 
-  List<StaffNotification> get _filtered {
-    if (_filter == 'All') return mockNotifications;
-    return mockNotifications
-        .where((n) => n.type.toLowerCase() == _filter.toLowerCase())
-        .toList();
-  }
-
   @override
   Widget build(BuildContext context) {
+    // ⚡ Bolt: Cache filtered results and hoist query transformation to avoid O(N^2) complexity in builders
+    final fLower = _filter.toLowerCase();
+    final filtered = _filter == 'All'
+        ? mockNotifications
+        : mockNotifications
+            .where((n) => n.type.toLowerCase() == fLower)
+            .toList();
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Container(
@@ -99,17 +100,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               ),
               // List
               Expanded(
-                child: _filtered.isEmpty
+                child: filtered.isEmpty
                     ? const EmptyState(
                         icon: Icons.notifications_off_outlined,
                         title: 'No Notifications',
                         message: 'You\'re all caught up.')
                     : ListView.separated(
                         padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
-                        itemCount: _filtered.length,
+                        itemCount: filtered.length,
                         separatorBuilder: (_, __) => const SizedBox(height: 10),
                         itemBuilder: (context, i) =>
-                            _NotificationCard(notif: _filtered[i]),
+                            _NotificationCard(notif: filtered[i]),
                       ),
               ),
             ],

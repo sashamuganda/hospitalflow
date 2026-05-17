@@ -16,9 +16,10 @@ class _StaffDirectoryScreenState extends State<StaffDirectoryScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // ⚡ Bolt: Cache filtered staff list in local variable to avoid O(N^2) complexity in ListView.separated
+    // ⚡ Bolt: Cache filtered staff list and hoist query transformation to avoid O(N^2) complexity in builders
+    final q = _searchQuery.toLowerCase();
     final filtered = mockStaffList.where((s) {
-      final matchesSearch = s.fullName.toLowerCase().contains(_searchQuery.toLowerCase());
+      final matchesSearch = s.fullName.toLowerCase().contains(q);
       final matchesRole = _selectedRole == null || s.role == _selectedRole;
       return matchesSearch && matchesRole;
     }).toList();
