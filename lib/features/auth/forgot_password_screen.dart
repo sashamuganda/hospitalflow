@@ -112,7 +112,7 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                   const SizedBox(height: 8),
                   TextField(
                     controller: _staffIdCtrl,
-                    maxLength: 32,
+                    maxLength: 20,
                     decoration: const InputDecoration(
                       hintText: 'e.g. DOC-2024-001',
                       prefixIcon: Icon(Icons.badge_outlined, color: AppColors.textMuted),
