@@ -119,33 +119,39 @@ class _ClinicalNoteEditorState extends State<ClinicalNoteEditor> {
                           'Subjective',
                           'Patient-reported symptoms, history, and concerns...',
                           _sCtrl,
-                          const Color(0xFF00D4FF)),
+                          const Color(0xFF00D4FF),
+                          5000),
                       _buildSoapSection(
                           'O',
                           'Objective',
                           'Examination findings, observations, measurements...',
                           _oCtrl,
-                          const Color(0xFF00E5A0)),
+                          const Color(0xFF00E5A0),
+                          5000),
                       _buildSoapSection(
                           'A',
                           'Assessment',
                           'Clinical impression, diagnoses, differential...',
                           _aCtrl,
-                          const Color(0xFFFFB830)),
+                          const Color(0xFFFFB830),
+                          5000),
                       _buildSoapSection(
                           'P',
                           'Plan',
                           'Treatment plan, medications, follow-up, referrals...',
                           _pCtrl,
-                          const Color(0xFF9D67F5)),
+                          const Color(0xFF9D67F5),
+                          5000),
                       const SizedBox(height: 20),
                       // Diagnoses
                       _sectionTitle('ICD-10 Diagnoses (optional)'),
                       const SizedBox(height: 8),
                       TextField(
                         controller: _diagCtrl,
+                        maxLength: 200,
                         decoration: const InputDecoration(
                             hintText: 'e.g. I10 - Essential Hypertension',
+                            counterText: '',
                             prefixIcon: Icon(Icons.local_hospital_outlined,
                                 color: AppColors.textMuted)),
                       ),
@@ -224,7 +230,7 @@ class _ClinicalNoteEditorState extends State<ClinicalNoteEditor> {
   }
 
   Widget _buildSoapSection(String letter, String title, String hint,
-      TextEditingController ctrl, Color color) {
+      TextEditingController ctrl, Color color, int maxLength) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 20),
       child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
@@ -256,8 +262,10 @@ class _ClinicalNoteEditorState extends State<ClinicalNoteEditor> {
         TextField(
           controller: ctrl,
           maxLines: 4,
+          maxLength: maxLength,
           decoration: InputDecoration(
             hintText: hint,
+            counterText: '',
             focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: color, width: 1.5)),
