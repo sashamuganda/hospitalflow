@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../core/colors.dart';
 import '../../data/mock_data.dart';
 import '../../widgets/shared_widgets.dart';
@@ -95,7 +96,11 @@ class _StaffDirectoryScreenState extends State<StaffDirectoryScreen> {
                               ],
                             ),
                           ),
-                          IconButton(icon: const Icon(Icons.email_rounded, color: AppColors.primary), onPressed: () {}),
+                          IconButton(
+                              icon: const Icon(Icons.email_rounded,
+                                  color: AppColors.primary),
+                              tooltip: 'Email Staff',
+                              onPressed: () {}),
                         ],
                       ),
                     );
@@ -119,23 +124,35 @@ class _FilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(right: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isActive ? AppColors.primary : AppColors.surfaceLight,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(color: isActive ? AppColors.primary : AppColors.divider),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            fontFamily: 'Inter',
-            color: isActive ? Colors.white : AppColors.textSecondary,
+    final handleTap = () {
+      HapticFeedback.selectionClick();
+      onTap();
+    };
+
+    return Semantics(
+      button: true,
+      selected: isActive,
+      label: label,
+      excludeSemantics: true,
+      child: GestureDetector(
+        onTap: handleTap,
+        child: Container(
+          margin: const EdgeInsets.only(right: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: isActive ? AppColors.primary : AppColors.surfaceLight,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+                color: isActive ? AppColors.primary : AppColors.divider),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              fontFamily: 'Inter',
+              color: isActive ? Colors.white : AppColors.textSecondary,
+            ),
           ),
         ),
       ),
