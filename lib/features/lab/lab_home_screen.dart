@@ -11,23 +11,17 @@ class LabHomeScreen extends StatefulWidget {
 }
 
 class _LabHomeScreenState extends State<LabHomeScreen> {
-  // Simple order sorting by priority
-  List<LabOrder> get _sortedOrders {
-    final list = List<LabOrder>.from(mockLabOrders);
-    list.sort((a, b) {
-      final wA = a.priority.toLowerCase() == 'stat'
-          ? 0
-          : (a.priority.toLowerCase() == 'urgent' ? 1 : 2);
-      final wB = b.priority.toLowerCase() == 'stat'
-          ? 0
-          : (b.priority.toLowerCase() == 'urgent' ? 1 : 2);
-      return wA.compareTo(wB);
-    });
-    return list;
-  }
-
   @override
   Widget build(BuildContext context) {
+    // ⚡ Bolt: Cache and sort list once per build to avoid O(N log N) during ListView.itemBuilder calls.
+    // Using a const weight map avoids repeated string transformations and complex conditionals.
+    final sortedOrders = List<LabOrder>.from(mockLabOrders)..sort((a, b) {
+      const priorityWeights = {'stat': 0, 'urgent': 1};
+      final wA = priorityWeights[a.priority.toLowerCase()] ?? 2;
+      final wB = priorityWeights[b.priority.toLowerCase()] ?? 2;
+      return wA.compareTo(wB);
+    });
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Container(
@@ -45,10 +39,10 @@ class _LabHomeScreenState extends State<LabHomeScreen> {
               Expanded(
                 child: ListView.separated(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-                  itemCount: _sortedOrders.length,
+                  itemCount: sortedOrders.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, i) =>
-                      _LabOrderCard(order: _sortedOrders[i]),
+                      _LabOrderCard(order: sortedOrders[i]),
                 ),
               ),
             ],
