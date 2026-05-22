@@ -11,19 +11,23 @@ class LabHomeScreen extends StatefulWidget {
 }
 
 class _LabHomeScreenState extends State<LabHomeScreen> {
-  // Simple order sorting by priority
-  List<LabOrder> get _sortedOrders {
-    final list = List<LabOrder>.from(mockLabOrders);
-    list.sort((a, b) {
-      final wA = a.priority.toLowerCase() == 'stat'
-          ? 0
-          : (a.priority.toLowerCase() == 'urgent' ? 1 : 2);
-      final wB = b.priority.toLowerCase() == 'stat'
-          ? 0
-          : (b.priority.toLowerCase() == 'urgent' ? 1 : 2);
+  late final List<LabOrder> _sortedOrders;
+
+  // ⚡ Bolt: Using a weight map avoids multiple string comparisons and branch logic per sort operation.
+  static const Map<String, int> _priorityWeights = {'stat': 0, 'urgent': 1};
+
+  @override
+  void initState() {
+    super.initState();
+    // ⚡ Bolt: Perform sorting in initState and store in a late variable.
+    // This reduces the build complexity from O(N log N) to O(1) for all rebuilds.
+    _sortedOrders = List<LabOrder>.from(mockLabOrders);
+
+    _sortedOrders.sort((a, b) {
+      final wA = _priorityWeights[a.priority.toLowerCase()] ?? 2;
+      final wB = _priorityWeights[b.priority.toLowerCase()] ?? 2;
       return wA.compareTo(wB);
     });
-    return list;
   }
 
   @override
