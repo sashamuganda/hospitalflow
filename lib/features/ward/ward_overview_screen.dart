@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../core/colors.dart';
 import '../../data/mock_data.dart';
 import '../../widgets/shared_widgets.dart';
@@ -67,18 +68,28 @@ class _WardOverviewScreenState extends State<WardOverviewScreen> {
                     itemBuilder: (context, i) {
                       final w = mockWards[i];
                       final isActive = w.id == _selectedWard.id;
-                      return GestureDetector(
-                        onTap: () => setState(() => _selectedWard = w),
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                          decoration: BoxDecoration(
-                            color: isActive ? AppColors.surfaceLight : Colors.transparent,
-                            borderRadius: BorderRadius.circular(20),
-                            border: Border.all(color: isActive ? AppColors.primary : AppColors.divider),
+                      final handleTap = () {
+                        HapticFeedback.selectionClick();
+                        setState(() => _selectedWard = w);
+                      };
+                      return Semantics(
+                        button: true,
+                        selected: isActive,
+                        label: 'Select ${w.name} Ward',
+                        excludeSemantics: true,
+                        child: GestureDetector(
+                          onTap: handleTap,
+                          child: Container(
+                            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                            decoration: BoxDecoration(
+                              color: isActive ? AppColors.surfaceLight : Colors.transparent,
+                              borderRadius: BorderRadius.circular(20),
+                              border: Border.all(color: isActive ? AppColors.primary : AppColors.divider),
+                            ),
+                            child: Text(w.name,
+                              style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, fontFamily: 'Inter',
+                                color: isActive ? AppColors.textPrimary : AppColors.textSecondary)),
                           ),
-                          child: Text(w.name,
-                            style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, fontFamily: 'Inter',
-                              color: isActive ? AppColors.textPrimary : AppColors.textSecondary)),
                         ),
                       );
                     },
@@ -148,7 +159,7 @@ class _KpiSummaryCard extends StatelessWidget {
             children: [
               Icon(icon, size: 16, color: color),
               const SizedBox(width: 6),
-              Text(title, style: const TextStyle(fontSize: 11, color: AppColors.textMuted, fontFamily: 'Inter')),
+              Expanded(child: Text(title, style: const TextStyle(fontSize: 11, color: AppColors.textMuted, fontFamily: 'Inter'), overflow: TextOverflow.ellipsis)),
             ],
           ),
           const Spacer(),
@@ -185,12 +196,18 @@ class _BedCard extends StatelessWidget {
     final isOccupied = bed.status == BedStatus.occupied;
     final isCleaning = bed.status == BedStatus.cleaning;
     
-    return GestureDetector(
-      onTap: () {
-        if (!isOccupied) return;
-        _showBedOptions(context);
-      },
-      child: AnimatedContainer(
+    final handleTap = isOccupied ? () {
+      HapticFeedback.lightImpact();
+      _showBedOptions(context);
+    } : null;
+
+    return Semantics(
+      button: isOccupied,
+      label: 'Bed ${bed.bedNumber}${isOccupied ? ', occupied by ${bed.patientName}' : ', ${bed.status.label}'}',
+      excludeSemantics: true,
+      child: GestureDetector(
+        onTap: handleTap,
+        child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         decoration: BoxDecoration(
           color: isOccupied ? bed.status.color.withOpacity(0.15) : AppColors.surfaceLight,
@@ -230,7 +247,7 @@ class _BedCard extends StatelessWidget {
           ],
         ),
       ),
-    );
+    ),);
   }
 
   void _showBedOptions(BuildContext context) {
