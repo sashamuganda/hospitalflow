@@ -137,7 +137,9 @@ class _PatientCheckInScreenState extends State<PatientCheckInScreen> {
           const SizedBox(height: 8),
           TextField(
               controller: _nameCtrl,
+              maxLength: 100,
               decoration: const InputDecoration(
+                  counterText: '',
                   hintText: 'Patient full name',
                   prefixIcon: Icon(Icons.person_outline_rounded,
                       color: AppColors.textMuted))),
@@ -146,7 +148,9 @@ class _PatientCheckInScreenState extends State<PatientCheckInScreen> {
           const SizedBox(height: 8),
           TextField(
               controller: _idCtrl,
+              maxLength: 20,
               decoration: const InputDecoration(
+                  counterText: '',
                   hintText: 'ID number (optional)',
                   prefixIcon:
                       Icon(Icons.badge_outlined, color: AppColors.textMuted))),
@@ -161,7 +165,9 @@ class _PatientCheckInScreenState extends State<PatientCheckInScreen> {
                   TextField(
                       controller: _ageCtrl,
                       keyboardType: TextInputType.number,
+                      maxLength: 3,
                       decoration: const InputDecoration(
+                          counterText: '',
                           hintText: '0',
                           prefixIcon: Icon(Icons.cake_outlined,
                               color: AppColors.textMuted))),
@@ -204,7 +210,9 @@ class _PatientCheckInScreenState extends State<PatientCheckInScreen> {
           TextField(
               controller: _phoneCtrl,
               keyboardType: TextInputType.phone,
+              maxLength: 20,
               decoration: const InputDecoration(
+                  counterText: '',
                   hintText: '+254 7XX XXX XXX',
                   prefixIcon:
                       Icon(Icons.phone_outlined, color: AppColors.textMuted))),

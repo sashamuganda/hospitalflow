@@ -94,7 +94,8 @@ class _LoginScreenState extends State<LoginScreen> {
                   maxLength: 20,
                   decoration: const InputDecoration(
                     hintText: 'e.g. DOC-2024-001',
-                    prefixIcon: Icon(Icons.badge_outlined, color: AppColors.textMuted),
+                    prefixIcon:
+                        Icon(Icons.badge_outlined, color: AppColors.textMuted),
                     counterText: '',
                   ),
                 ),
@@ -112,10 +113,15 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: InputDecoration(
                     hintText: '••••••••',
                     counterText: '',
-                    prefixIcon: const Icon(Icons.lock_outline_rounded, color: AppColors.textMuted),
+                    prefixIcon: const Icon(Icons.lock_outline_rounded,
+                        color: AppColors.textMuted),
                     suffixIcon: IconButton(
-                      icon: Icon(_obscure ? Icons.visibility_outlined : Icons.visibility_off_outlined,
-                        color: AppColors.textMuted, size: 20),
+                      icon: Icon(
+                          _obscure
+                              ? Icons.visibility_outlined
+                              : Icons.visibility_off_outlined,
+                          color: AppColors.textMuted,
+                          size: 20),
                       tooltip: _obscure ? 'Show password' : 'Hide password',
                       onPressed: () => setState(() => _obscure = !_obscure),
                     ),
@@ -148,10 +154,13 @@ class _LoginScreenState extends State<LoginScreen> {
                   maxLength: 10,
                   decoration: const InputDecoration(
                     hintText: 'MFH-001',
-                    prefixIcon: Icon(Icons.business_rounded, color: AppColors.textMuted),
+                    prefixIcon:
+                        Icon(Icons.business_rounded, color: AppColors.textMuted),
                     counterText: '',
-                    helperText: 'Contact your administrator for your facility code.',
-                    helperStyle: TextStyle(color: AppColors.textMuted, fontSize: 12),
+                    helperText:
+                        'Contact your administrator for your facility code.',
+                    helperStyle:
+                        TextStyle(color: AppColors.textMuted, fontSize: 12),
                   ),
                 ),
                 const SizedBox(height: 40),

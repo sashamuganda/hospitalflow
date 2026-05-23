@@ -71,7 +71,9 @@ class _EmrHomeScreenState extends State<EmrHomeScreen> {
                     TextField(
                       controller: _searchCtrl,
                       onChanged: (v) => setState(() => _query = v),
+                      maxLength: 100,
                       decoration: InputDecoration(
+                        counterText: '',
                         hintText: 'Search by name, ID, or phone...',
                         prefixIcon: const Icon(Icons.search_rounded,
                             color: AppColors.textMuted),
