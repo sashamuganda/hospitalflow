@@ -15,13 +15,18 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   List<StaffNotification> get _filtered {
     if (_filter == 'All') return mockNotifications;
+    final filterLower = _filter.toLowerCase();
     return mockNotifications
-        .where((n) => n.type.toLowerCase() == _filter.toLowerCase())
+        .where((n) => n.type.toLowerCase() == filterLower)
         .toList();
   }
 
   @override
   Widget build(BuildContext context) {
+    // ⚡ Bolt: Hoist filtered list and counts to avoid redundant O(N) traversals in child widgets and itemBuilder
+    final filtered = _filtered;
+    final unreadCount = mockNotifications.where((n) => !n.isRead).length;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Container(
@@ -50,9 +55,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                         child: Text('Notifications',
                             style: Theme.of(context).textTheme.headlineSmall)),
                     StatusBadge(
-                        label:
-                            '${mockNotifications.where((n) => !n.isRead).length} new',
-                        color: AppColors.error),
+                        label: '$unreadCount new', color: AppColors.error),
                   ],
                 ),
               ),
@@ -99,17 +102,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               ),
               // List
               Expanded(
-                child: _filtered.isEmpty
+                child: filtered.isEmpty
                     ? const EmptyState(
                         icon: Icons.notifications_off_outlined,
                         title: 'No Notifications',
                         message: 'You\'re all caught up.')
                     : ListView.separated(
                         padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
-                        itemCount: _filtered.length,
+                        itemCount: filtered.length,
                         separatorBuilder: (_, __) => const SizedBox(height: 10),
                         itemBuilder: (context, i) =>
-                            _NotificationCard(notif: _filtered[i]),
+                            _NotificationCard(notif: filtered[i]),
                       ),
               ),
             ],
