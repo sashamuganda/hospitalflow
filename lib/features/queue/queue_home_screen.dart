@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/colors.dart';
 import '../../data/mock_data.dart';
@@ -109,28 +110,52 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
       mainAxisAlignment: MainAxisAlignment.spaceBetween,
       children: TriageLevel.values.map((level) {
         final isActive = _filterLevel == level;
-        return GestureDetector(
-          onTap: () => setState(() => _filterLevel = _filterLevel == level ? null : level),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
-            padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-            decoration: BoxDecoration(
-              color: isActive ? level.color.withOpacity(0.2) : AppColors.surfaceLight,
-              borderRadius: BorderRadius.circular(10),
-              border: Border.all(color: isActive ? level.color : AppColors.divider),
-            ),
-            child: Column(
-              children: [
-                Container(width: 10, height: 10,
-                  decoration: BoxDecoration(color: level.color, shape: BoxShape.circle)),
-                const SizedBox(height: 4),
-                Text(level.shortCode,
-                  style: TextStyle(fontSize: 9, fontWeight: FontWeight.w800,
-                    color: isActive ? level.color : AppColors.textMuted, fontFamily: 'Inter')),
-                Text('${counts[level] ?? 0}',
-                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700,
-                    color: isActive ? level.color : AppColors.textSecondary, fontFamily: 'Inter')),
-              ],
+        final handleTap = () {
+          HapticFeedback.selectionClick();
+          setState(() => _filterLevel = _filterLevel == level ? null : level);
+        };
+
+        return Semantics(
+          button: true,
+          selected: isActive,
+          label: 'Filter by ${level.label}',
+          excludeSemantics: true,
+          child: GestureDetector(
+            onTap: handleTap,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
+              decoration: BoxDecoration(
+                color: isActive
+                    ? level.color.withOpacity(0.2)
+                    : AppColors.surfaceLight,
+                borderRadius: BorderRadius.circular(10),
+                border: Border.all(
+                    color: isActive ? level.color : AppColors.divider),
+              ),
+              child: Column(
+                children: [
+                  Container(
+                      width: 10,
+                      height: 10,
+                      decoration: BoxDecoration(
+                          color: level.color, shape: BoxShape.circle)),
+                  const SizedBox(height: 4),
+                  Text(level.shortCode,
+                      style: TextStyle(
+                          fontSize: 9,
+                          fontWeight: FontWeight.w800,
+                          color: isActive ? level.color : AppColors.textMuted,
+                          fontFamily: 'Inter')),
+                  Text('${counts[level] ?? 0}',
+                      style: TextStyle(
+                          fontSize: 12,
+                          fontWeight: FontWeight.w700,
+                          color:
+                              isActive ? level.color : AppColors.textSecondary,
+                          fontFamily: 'Inter')),
+                ],
+              ),
             ),
           ),
         );
@@ -143,20 +168,38 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
     return Row(
       children: statuses.map((s) {
         final isActive = _filterStatus == s;
+        final handleTap = () {
+          HapticFeedback.selectionClick();
+          setState(() => _filterStatus = s);
+        };
+
         return Padding(
           padding: const EdgeInsets.only(right: 8),
-          child: GestureDetector(
-            onTap: () => setState(() => _filterStatus = s),
-            child: Container(
-              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
-              decoration: BoxDecoration(
-                color: isActive ? AppColors.primary : AppColors.surfaceLight,
-                borderRadius: BorderRadius.circular(20),
-                border: Border.all(color: isActive ? AppColors.primary : AppColors.divider),
+          child: Semantics(
+            button: true,
+            selected: isActive,
+            label: 'Filter by $s',
+            excludeSemantics: true,
+            child: GestureDetector(
+              onTap: handleTap,
+              child: Container(
+                padding:
+                    const EdgeInsets.symmetric(horizontal: 14, vertical: 6),
+                decoration: BoxDecoration(
+                  color: isActive ? AppColors.primary : AppColors.surfaceLight,
+                  borderRadius: BorderRadius.circular(20),
+                  border: Border.all(
+                      color: isActive ? AppColors.primary : AppColors.divider),
+                ),
+                child: Text(s,
+                    style: TextStyle(
+                        fontFamily: 'Inter',
+                        fontSize: 12,
+                        fontWeight: FontWeight.w600,
+                        color: isActive
+                            ? AppColors.textOnPrimary
+                            : AppColors.textSecondary)),
               ),
-              child: Text(s,
-                style: TextStyle(fontFamily: 'Inter', fontSize: 12, fontWeight: FontWeight.w600,
-                  color: isActive ? AppColors.textOnPrimary : AppColors.textSecondary)),
             ),
           ),
         );
