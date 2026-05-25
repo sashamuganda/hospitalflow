@@ -34,6 +34,7 @@ class _TeleHomeStaffScreenState extends State<TeleHomeStaffScreen> {
                     IconButton(
                         icon: const Icon(Icons.settings_rounded,
                             color: AppColors.primary),
+                        tooltip: 'Settings',
                         onPressed: () {}),
                   ],
                 ),

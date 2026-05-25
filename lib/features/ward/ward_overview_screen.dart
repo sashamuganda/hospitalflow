@@ -33,6 +33,7 @@ class _WardOverviewScreenState extends State<WardOverviewScreen> {
                     Expanded(child: Text('Ward Management', style: Theme.of(context).textTheme.headlineMedium)),
                     IconButton(
                       icon: const Icon(Icons.person_add_rounded, color: AppColors.primary),
+                      tooltip: 'Admit Patient',
                       onPressed: () {},
                     ),
                   ],

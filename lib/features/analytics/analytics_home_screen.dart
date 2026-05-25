@@ -26,6 +26,7 @@ class AnalyticsHomeScreen extends StatelessWidget {
                     IconButton(
                         icon: const Icon(Icons.download_rounded,
                             color: AppColors.primary),
+                        tooltip: 'Download Report',
                         onPressed: () {}),
                   ],
                 ),

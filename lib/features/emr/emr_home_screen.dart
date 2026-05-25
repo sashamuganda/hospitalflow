@@ -63,6 +63,7 @@ class _EmrHomeScreenState extends State<EmrHomeScreen> {
                           onPressed: () {},
                           icon: const Icon(Icons.filter_list_rounded,
                               color: AppColors.textSecondary),
+                          tooltip: 'Filter Records',
                         ),
                       ],
                     ),
