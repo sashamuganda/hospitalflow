@@ -11,19 +11,22 @@ class LabHomeScreen extends StatefulWidget {
 }
 
 class _LabHomeScreenState extends State<LabHomeScreen> {
-  // Simple order sorting by priority
-  List<LabOrder> get _sortedOrders {
-    final list = List<LabOrder>.from(mockLabOrders);
-    list.sort((a, b) {
-      final wA = a.priority.toLowerCase() == 'stat'
-          ? 0
-          : (a.priority.toLowerCase() == 'urgent' ? 1 : 2);
-      final wB = b.priority.toLowerCase() == 'stat'
-          ? 0
-          : (b.priority.toLowerCase() == 'urgent' ? 1 : 2);
-      return wA.compareTo(wB);
-    });
-    return list;
+  // ⚡ Bolt: Cache sorting weights to avoid redundant string comparisons
+  static const _priorityWeights = {'stat': 0, 'urgent': 1, 'routine': 2};
+
+  late List<LabOrder> _orders;
+
+  @override
+  void initState() {
+    super.initState();
+    // ⚡ Bolt: Perform heavy sorting in initState rather than build() to reduce
+    // complexity from O(M * N log N) to O(1) during re-renders.
+    _orders = List<LabOrder>.from(mockLabOrders)
+      ..sort((a, b) {
+        final wA = _priorityWeights[a.priority.toLowerCase()] ?? 2;
+        final wB = _priorityWeights[b.priority.toLowerCase()] ?? 2;
+        return wA.compareTo(wB);
+      });
   }
 
   @override
@@ -45,10 +48,9 @@ class _LabHomeScreenState extends State<LabHomeScreen> {
               Expanded(
                 child: ListView.separated(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-                  itemCount: _sortedOrders.length,
+                  itemCount: _orders.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
-                  itemBuilder: (context, i) =>
-                      _LabOrderCard(order: _sortedOrders[i]),
+                  itemBuilder: (context, i) => _LabOrderCard(order: _orders[i]),
                 ),
               ),
             ],
