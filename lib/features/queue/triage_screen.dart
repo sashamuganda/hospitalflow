@@ -114,9 +114,11 @@ class _TriageScreenState extends State<TriageScreen> {
                       TextField(
                         controller: _complaintCtrl,
                         maxLines: 2,
+                        maxLength: 500,
                         decoration: const InputDecoration(
                             hintText:
-                                'Describe the patient\'s main complaint...'),
+                                'Describe the patient\'s main complaint...',
+                            counterText: ''),
                       ),
                       const SizedBox(height: 12),
                       Wrap(
