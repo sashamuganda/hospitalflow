@@ -27,6 +27,9 @@ class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // ⚡ Bolt: Cache filtered list to avoid O(N) traversal multiple times in the same build cycle.
+    final filteredItems = _filtered;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Container(
@@ -42,8 +45,8 @@ class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
               ),
               const SizedBox(height: 16),
               // KPI row
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 20),
+              const Padding(
+                padding: EdgeInsets.symmetric(horizontal: 20),
                 child: Row(
                   children: [
                     Expanded(
@@ -51,7 +54,7 @@ class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
                             title: 'Pending',
                             count: '12',
                             color: AppColors.warning)),
-                    const SizedBox(width: 12),
+                    SizedBox(width: 12),
                     Expanded(
                         child: _KpiCard(
                             title: 'Ready',
@@ -83,10 +86,10 @@ class _PharmacyHomeScreenState extends State<PharmacyHomeScreen> {
               Expanded(
                 child: ListView.separated(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-                  itemCount: _filtered.length,
+                  itemCount: filteredItems.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, i) =>
-                      _PrescriptionCard(rx: _filtered[i]),
+                      _PrescriptionCard(rx: filteredItems[i]),
                 ),
               ),
             ],
