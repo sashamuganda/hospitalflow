@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import 'app_state.dart';
+import '../data/mock_data.dart';
 import '../features/auth/splash_screen.dart';
 import '../features/auth/role_select_screen.dart';
 import '../features/auth/login_screen.dart';
@@ -37,21 +37,35 @@ GoRouter createRouter(AppState appState) {
     initialLocation: '/splash',
     refreshListenable: appState,
     redirect: (context, state) {
-    final isAuthenticated = context.read<AppState>().isAuthenticated;
-    final isAuthRoute = state.matchedLocation == '/login' ||
-        state.matchedLocation == '/role-select' ||
-        state.matchedLocation == '/splash' ||
-        state.matchedLocation == '/forgot-password';
+      final isAuthenticated = appState.isAuthenticated;
+      final loc = state.matchedLocation;
+      final isAuthRoute = loc == '/login' ||
+          loc == '/role-select' ||
+          loc == '/splash' ||
+          loc == '/forgot-password';
 
-    if (!isAuthenticated) {
-      // Allow access to auth routes, redirect others to role selection
-      return isAuthRoute ? null : '/role-select';
-    }
+      if (!isAuthenticated) return isAuthRoute ? null : '/role-select';
+      if (isAuthRoute && loc != '/splash') return '/home';
 
-    // If authenticated, don't allow access to auth routes (except splash if needed)
-    if (isAuthRoute && state.matchedLocation != '/splash') {
-      return '/home';
-    }
+      // Role-Based Access Control (RBAC)
+      final role = appState.selectedRole;
+      if (loc.startsWith('/emr') || loc.startsWith('/telemedicine')) {
+        if (role != StaffRole.doctor) return '/home';
+      } else if (loc.startsWith('/ward')) {
+        if (role != StaffRole.nurse) return '/home';
+      } else if (loc.startsWith('/lab')) {
+        if (role != StaffRole.nurse && role != StaffRole.labTech) return '/home';
+      } else if (loc.startsWith('/analytics') || loc.startsWith('/staff')) {
+        if (role != StaffRole.admin) return '/home';
+      } else if (loc.startsWith('/appointments')) {
+        if (role != StaffRole.admin && role != StaffRole.receptionist) return '/home';
+      } else if (loc.startsWith('/pharmacy') || loc.startsWith('/inventory')) {
+        if (role != StaffRole.pharmacist) return '/home';
+      } else if (loc.startsWith('/queue')) {
+        if (role != StaffRole.doctor &&
+            role != StaffRole.nurse &&
+            role != StaffRole.receptionist) return '/home';
+      }
 
       return null;
     },
