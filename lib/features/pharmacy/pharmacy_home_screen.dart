@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../core/colors.dart';
 import '../../data/mock_data.dart';
 import '../../widgets/shared_widgets.dart';
@@ -140,26 +141,38 @@ class _TabBtn extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final handleTap = () {
+      HapticFeedback.selectionClick();
+      onTap();
+    };
+
     return Expanded(
       child: GestureDetector(
-        onTap: onTap,
-        child: Container(
-          padding: const EdgeInsets.symmetric(vertical: 12),
-          decoration: BoxDecoration(
-            color: isActive ? AppColors.surfaceLight : Colors.transparent,
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-                color: isActive ? AppColors.primary : AppColors.divider),
+        onTap: handleTap,
+        child: Semantics(
+          button: true,
+          selected: isActive,
+          label: label,
+          excludeSemantics: true,
+          child: Container(
+            padding: const EdgeInsets.symmetric(vertical: 12),
+            decoration: BoxDecoration(
+              color: isActive ? AppColors.surfaceLight : Colors.transparent,
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(
+                  color: isActive ? AppColors.primary : AppColors.divider),
+            ),
+            alignment: Alignment.center,
+            child: Text(label,
+                style: TextStyle(
+                  fontSize: 13,
+                  fontWeight: FontWeight.w600,
+                  fontFamily: 'Inter',
+                  color: isActive
+                      ? AppColors.textPrimary
+                      : AppColors.textSecondary,
+                )),
           ),
-          alignment: Alignment.center,
-          child: Text(label,
-              style: TextStyle(
-                fontSize: 13,
-                fontWeight: FontWeight.w600,
-                fontFamily: 'Inter',
-                color:
-                    isActive ? AppColors.textPrimary : AppColors.textSecondary,
-              )),
         ),
       ),
     );
@@ -235,7 +248,9 @@ class _PrescriptionCard extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  HapticFeedback.lightImpact();
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.primary,
                   foregroundColor: Colors.white,
@@ -250,7 +265,9 @@ class _PrescriptionCard extends StatelessWidget {
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(
-                onPressed: () {},
+                onPressed: () {
+                  HapticFeedback.lightImpact();
+                },
                 style: ElevatedButton.styleFrom(
                   backgroundColor: AppColors.success,
                   foregroundColor: Colors.white,
