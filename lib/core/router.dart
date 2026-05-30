@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import 'app_state.dart';
+import '../data/mock_data.dart';
 import '../features/auth/splash_screen.dart';
 import '../features/auth/role_select_screen.dart';
 import '../features/auth/login_screen.dart';
@@ -37,21 +37,50 @@ GoRouter createRouter(AppState appState) {
     initialLocation: '/splash',
     refreshListenable: appState,
     redirect: (context, state) {
-    final isAuthenticated = context.read<AppState>().isAuthenticated;
-    final isAuthRoute = state.matchedLocation == '/login' ||
-        state.matchedLocation == '/role-select' ||
-        state.matchedLocation == '/splash' ||
-        state.matchedLocation == '/forgot-password';
+      final isAuthenticated = appState.isAuthenticated;
+      final isAuthRoute = state.matchedLocation == '/login' ||
+          state.matchedLocation == '/role-select' ||
+          state.matchedLocation == '/splash' ||
+          state.matchedLocation == '/forgot-password';
 
-    if (!isAuthenticated) {
-      // Allow access to auth routes, redirect others to role selection
-      return isAuthRoute ? null : '/role-select';
-    }
+      if (!isAuthenticated) {
+        return isAuthRoute ? null : '/role-select';
+      }
 
-    // If authenticated, don't allow access to auth routes (except splash if needed)
-    if (isAuthRoute && state.matchedLocation != '/splash') {
-      return '/home';
-    }
+      if (isAuthRoute && state.matchedLocation != '/splash') {
+        return '/home';
+      }
+
+      final role = appState.selectedRole;
+      final path = state.matchedLocation;
+
+      if (path.startsWith('/emr') && role != StaffRole.doctor) return '/home';
+      if (path.startsWith('/telemedicine') && role != StaffRole.doctor) {
+        return '/home';
+      }
+      if (path.startsWith('/ward') && role != StaffRole.nurse) return '/home';
+      if (path.startsWith('/lab') &&
+          !(role == StaffRole.nurse || role == StaffRole.labTech)) {
+        return '/home';
+      }
+      if (path.startsWith('/analytics') && role != StaffRole.admin) {
+        return '/home';
+      }
+      if (path.startsWith('/staff') && role != StaffRole.admin) return '/home';
+      if (path.startsWith('/appointments') &&
+          !(role == StaffRole.admin || role == StaffRole.receptionist)) {
+        return '/home';
+      }
+      if ((path.startsWith('/pharmacy') || path.startsWith('/inventory')) &&
+          role != StaffRole.pharmacist) {
+        return '/home';
+      }
+      if (path.startsWith('/queue') &&
+          !(role == StaffRole.doctor ||
+              role == StaffRole.nurse ||
+              role == StaffRole.receptionist)) {
+        return '/home';
+      }
 
       return null;
     },
