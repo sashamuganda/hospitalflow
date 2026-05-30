@@ -11,19 +11,20 @@ class LabHomeScreen extends StatefulWidget {
 }
 
 class _LabHomeScreenState extends State<LabHomeScreen> {
-  // Simple order sorting by priority
-  List<LabOrder> get _sortedOrders {
-    final list = List<LabOrder>.from(mockLabOrders);
-    list.sort((a, b) {
-      final wA = a.priority.toLowerCase() == 'stat'
-          ? 0
-          : (a.priority.toLowerCase() == 'urgent' ? 1 : 2);
-      final wB = b.priority.toLowerCase() == 'stat'
-          ? 0
-          : (b.priority.toLowerCase() == 'urgent' ? 1 : 2);
+  static const _priorityWeights = {'stat': 0, 'urgent': 1, 'routine': 2};
+
+  // ⚡ Bolt: Cache sorted orders in initState to avoid redundant O(N log N) sorting in build()
+  late final List<LabOrder> _sortedOrders;
+
+  @override
+  void initState() {
+    super.initState();
+    _sortedOrders = List<LabOrder>.from(mockLabOrders)..sort((a, b) {
+      // ⚡ Bolt: Use weight map to avoid repeated string comparisons
+      final wA = _priorityWeights[a.priority.toLowerCase()] ?? 2;
+      final wB = _priorityWeights[b.priority.toLowerCase()] ?? 2;
       return wA.compareTo(wB);
     });
-    return list;
   }
 
   @override
