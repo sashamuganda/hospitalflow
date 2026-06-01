@@ -14,17 +14,6 @@ class _EmrHomeScreenState extends State<EmrHomeScreen> {
   final _searchCtrl = TextEditingController();
   String _query = '';
 
-  List<PatientRecord> get _results {
-    if (_query.isEmpty) return mockPatientRecords;
-    final q = _query.toLowerCase();
-    return mockPatientRecords
-        .where((p) =>
-            p.fullName.toLowerCase().contains(q) ||
-            p.nationalId.contains(q) ||
-            p.phone.contains(q))
-        .toList();
-  }
-
   @override
   void dispose() {
     _searchCtrl.dispose();
@@ -33,6 +22,18 @@ class _EmrHomeScreenState extends State<EmrHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // ⚡ Bolt: Cache filtered results in local variable and hoist toLowerCase() transformation
+    // to avoid O(N * M) complexity during list rendering and redundant string operations.
+    final q = _query.toLowerCase();
+    final results = q.isEmpty
+        ? mockPatientRecords
+        : mockPatientRecords
+            .where((p) =>
+                p.fullName.toLowerCase().contains(q) ||
+                p.nationalId.contains(q) ||
+                p.phone.contains(q))
+            .toList();
+
     return Scaffold(
       backgroundColor: AppColors.background,
       floatingActionButton: FloatingActionButton.extended(
@@ -104,13 +105,13 @@ class _EmrHomeScreenState extends State<EmrHomeScreen> {
               ] else ...[
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 20),
-                  child: Text('${_results.length} results for "$_query"',
+                  child: Text('${results.length} results for "$_query"',
                       style: Theme.of(context).textTheme.bodySmall),
                 ),
                 const SizedBox(height: 8),
               ],
               Expanded(
-                child: _results.isEmpty
+                child: results.isEmpty
                     ? const EmptyState(
                         icon: Icons.person_search_rounded,
                         title: 'No patients found',
@@ -118,12 +119,12 @@ class _EmrHomeScreenState extends State<EmrHomeScreen> {
                             'Try searching by full name, national ID, or phone number.')
                     : ListView.separated(
                         padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-                        itemCount: _results.length,
+                        itemCount: results.length,
                         separatorBuilder: (_, __) => const SizedBox(height: 10),
                         itemBuilder: (context, i) => _PatientRecordCard(
-                          patient: _results[i],
+                          patient: results[i],
                           onTap: () =>
-                              context.push('/emr/patient/${_results[i].id}'),
+                              context.push('/emr/patient/${results[i].id}'),
                         ),
                       ),
               ),
