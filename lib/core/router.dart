@@ -37,7 +37,7 @@ GoRouter createRouter(AppState appState) {
     initialLocation: '/splash',
     refreshListenable: appState,
     redirect: (context, state) {
-    final isAuthenticated = context.read<AppState>().isAuthenticated;
+    final isAuthenticated = appState.isAuthenticated;
     final isAuthRoute = state.matchedLocation == '/login' ||
         state.matchedLocation == '/role-select' ||
         state.matchedLocation == '/splash' ||
