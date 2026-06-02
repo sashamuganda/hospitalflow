@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../core/colors.dart';
 import '../../data/mock_data.dart';
 import '../../widgets/shared_widgets.dart';
@@ -38,8 +39,11 @@ class _LabHomeScreenState extends State<LabHomeScreen> {
             children: [
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
-                child: Text('Laboratory Processing',
-                    style: Theme.of(context).textTheme.headlineMedium),
+                child: Semantics(
+                  header: true,
+                  child: Text('Laboratory Processing',
+                      style: Theme.of(context).textTheme.headlineMedium),
+                ),
               ),
               const SizedBox(height: 20),
               Expanded(
@@ -74,16 +78,19 @@ class _LabOrderCard extends StatelessWidget {
         children: [
           Row(
             children: [
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
-                decoration: BoxDecoration(
-                    color: order.priorityColor.withOpacity(0.2),
-                    borderRadius: BorderRadius.circular(6)),
-                child: Text(order.priority.toUpperCase(),
-                    style: TextStyle(
-                        fontSize: 10,
-                        fontWeight: FontWeight.bold,
-                        color: order.priorityColor)),
+              Semantics(
+                label: 'Priority: ${order.priority.toUpperCase()}',
+                child: Container(
+                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  decoration: BoxDecoration(
+                      color: order.priorityColor.withOpacity(0.2),
+                      borderRadius: BorderRadius.circular(6)),
+                  child: Text(order.priority.toUpperCase(),
+                      style: TextStyle(
+                          fontSize: 10,
+                          fontWeight: FontWeight.bold,
+                          color: order.priorityColor)),
+                ),
               ),
               const Spacer(),
               Text(order.id,
@@ -118,29 +125,39 @@ class _LabOrderCard extends StatelessWidget {
           Row(
             children: [
               Expanded(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.surfaceLight,
-                    foregroundColor: AppColors.primary,
-                    elevation: 0,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
+                child: Tooltip(
+                  message: 'Start processing lab order ${order.id}',
+                  child: ElevatedButton(
+                    onPressed: () {
+                      HapticFeedback.selectionClick();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.surfaceLight,
+                      foregroundColor: AppColors.primary,
+                      elevation: 0,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                    ),
+                    child: const Text('Process'),
                   ),
-                  child: const Text('Process'),
                 ),
               ),
               const SizedBox(width: 8),
               Expanded(
-                child: ElevatedButton(
-                  onPressed: () {},
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: AppColors.primary,
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8)),
+                child: Tooltip(
+                  message: 'Enter results for lab order ${order.id}',
+                  child: ElevatedButton(
+                    onPressed: () {
+                      HapticFeedback.selectionClick();
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: AppColors.primary,
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8)),
+                    ),
+                    child: const Text('Enter Results'),
                   ),
-                  child: const Text('Enter Results'),
                 ),
               ),
             ],
