@@ -111,12 +111,15 @@ class _TriageScreenState extends State<TriageScreen> {
                       // Chief complaint
                       _buildSectionTitle('Chief Complaint'),
                       const SizedBox(height: 10),
+                      // Security: Limit input length to prevent DoS
                       TextField(
                         controller: _complaintCtrl,
                         maxLines: 2,
+                        maxLength: 500,
                         decoration: const InputDecoration(
                             hintText:
-                                'Describe the patient\'s main complaint...'),
+                                'Describe the patient\'s main complaint...',
+                            counterText: ''),
                       ),
                       const SizedBox(height: 12),
                       Wrap(
@@ -352,11 +355,14 @@ class _VitalField extends StatelessWidget {
                 fontFamily: 'Inter',
                 fontWeight: FontWeight.w600)),
         const SizedBox(height: 6),
+        // Security: Limit input length to prevent DoS
         TextField(
           controller: controller,
           keyboardType: TextInputType.number,
+          maxLength: 10,
           decoration: InputDecoration(
               hintText: hint,
+              counterText: '',
               suffix: Text(unit,
                   style: const TextStyle(
                       fontSize: 11, color: AppColors.textMuted))),

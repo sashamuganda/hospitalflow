@@ -142,10 +142,13 @@ class _ClinicalNoteEditorState extends State<ClinicalNoteEditor> {
                       // Diagnoses
                       _sectionTitle('ICD-10 Diagnoses (optional)'),
                       const SizedBox(height: 8),
+                      // Security: Limit input length to prevent DoS
                       TextField(
                         controller: _diagCtrl,
+                        maxLength: 150,
                         decoration: const InputDecoration(
                             hintText: 'e.g. I10 - Essential Hypertension',
+                            counterText: '',
                             prefixIcon: Icon(Icons.local_hospital_outlined,
                                 color: AppColors.textMuted)),
                       ),
@@ -253,11 +256,14 @@ class _ClinicalNoteEditorState extends State<ClinicalNoteEditor> {
                   color: AppColors.textPrimary)),
         ]),
         const SizedBox(height: 8),
+        // Security: Limit input length to prevent DoS
         TextField(
           controller: ctrl,
           maxLines: 4,
+          maxLength: 2000,
           decoration: InputDecoration(
             hintText: hint,
+            counterText: '',
             focusedBorder: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide(color: color, width: 1.5)),

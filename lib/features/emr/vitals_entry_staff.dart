@@ -233,12 +233,15 @@ class _VitalsEntryStaffState extends State<VitalsEntryStaff> {
                         fontFamily: 'Inter'))),
           ),
           const SizedBox(height: 8),
+          // Security: Limit input length to prevent DoS
           TextField(
             controller: ctrl,
             keyboardType: const TextInputType.numberWithOptions(decimal: true),
             textAlign: TextAlign.center,
+            maxLength: 10,
             decoration: const InputDecoration(
               hintText: '—',
+              counterText: '',
               border: InputBorder.none,
               enabledBorder: InputBorder.none,
               focusedBorder: InputBorder.none,
