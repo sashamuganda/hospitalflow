@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../core/colors.dart';
 import '../../data/mock_data.dart';
 import '../../widgets/shared_widgets.dart';
@@ -34,15 +35,22 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                 child: Row(
                   children: [
-                    GestureDetector(
-                      onTap: () => Navigator.pop(context),
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                            color: AppColors.surfaceLight,
-                            borderRadius: BorderRadius.circular(10)),
-                        child: const Icon(Icons.arrow_back_ios_new_rounded,
-                            size: 18, color: AppColors.textSecondary),
+                    Semantics(
+                      label: 'Back',
+                      button: true,
+                      child: GestureDetector(
+                        onTap: () {
+                          HapticFeedback.mediumImpact();
+                          Navigator.pop(context);
+                        },
+                        child: Container(
+                          padding: const EdgeInsets.all(8),
+                          decoration: BoxDecoration(
+                              color: AppColors.surfaceLight,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: const Icon(Icons.arrow_back_ios_new_rounded,
+                              size: 18, color: AppColors.textSecondary),
+                        ),
                       ),
                     ),
                     const SizedBox(width: 16),
@@ -68,30 +76,39 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                   itemBuilder: (context, i) {
                     final f = _filters[i];
                     final isActive = _filter == f;
-                    return GestureDetector(
-                      onTap: () => setState(() => _filter = f),
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 150),
-                        padding: const EdgeInsets.symmetric(
-                            horizontal: 14, vertical: 6),
-                        decoration: BoxDecoration(
-                          color: isActive
-                              ? AppColors.primary
-                              : AppColors.surfaceLight,
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(
-                              color: isActive
-                                  ? AppColors.primary
-                                  : AppColors.divider),
-                        ),
-                        child: Text(f,
-                            style: TextStyle(
-                                fontFamily: 'Inter',
-                                fontSize: 13,
-                                fontWeight: FontWeight.w600,
+                    return Semantics(
+                      label: f,
+                      button: true,
+                      selected: isActive,
+                      excludeSemantics: true,
+                      child: GestureDetector(
+                        onTap: () {
+                          HapticFeedback.selectionClick();
+                          setState(() => _filter = f);
+                        },
+                        child: AnimatedContainer(
+                          duration: const Duration(milliseconds: 150),
+                          padding: const EdgeInsets.symmetric(
+                              horizontal: 14, vertical: 6),
+                          decoration: BoxDecoration(
+                            color: isActive
+                                ? AppColors.primary
+                                : AppColors.surfaceLight,
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
                                 color: isActive
-                                    ? AppColors.textOnPrimary
-                                    : AppColors.textSecondary)),
+                                    ? AppColors.primary
+                                    : AppColors.divider),
+                          ),
+                          child: Text(f,
+                              style: TextStyle(
+                                  fontFamily: 'Inter',
+                                  fontSize: 13,
+                                  fontWeight: FontWeight.w600,
+                                  color: isActive
+                                      ? AppColors.textOnPrimary
+                                      : AppColors.textSecondary)),
+                        ),
                       ),
                     );
                   },
@@ -126,64 +143,67 @@ class _NotificationCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GlassCard(
-      borderColor: notif.isRead ? null : notif.typeColor.withOpacity(0.4),
-      padding: const EdgeInsets.all(16),
-      child: Row(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Container(
-            width: 44,
-            height: 44,
-            decoration: BoxDecoration(
-              color: notif.typeColor.withOpacity(0.15),
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(color: notif.typeColor.withOpacity(0.3)),
+    return Semantics(
+      label: '${notif.isRead ? 'Read' : 'Unread'} notification: ${notif.title}',
+      child: GlassCard(
+        borderColor: notif.isRead ? null : notif.typeColor.withOpacity(0.4),
+        padding: const EdgeInsets.all(16),
+        child: Row(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Container(
+              width: 44,
+              height: 44,
+              decoration: BoxDecoration(
+                color: notif.typeColor.withOpacity(0.15),
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(color: notif.typeColor.withOpacity(0.3)),
+              ),
+              child: Icon(notif.typeIcon, color: notif.typeColor, size: 22),
             ),
-            child: Icon(notif.typeIcon, color: notif.typeColor, size: 22),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Row(
-                  children: [
-                    Expanded(
-                      child: Text(notif.title,
-                          style: Theme.of(context)
-                              .textTheme
-                              .titleSmall
-                              ?.copyWith(
-                                  color: notif.isRead
-                                      ? AppColors.textSecondary
-                                      : AppColors.textPrimary)),
-                    ),
-                    if (!notif.isRead)
-                      Container(
-                          width: 8,
-                          height: 8,
-                          decoration: const BoxDecoration(
-                              color: AppColors.primary,
-                              shape: BoxShape.circle)),
-                  ],
-                ),
-                const SizedBox(height: 6),
-                Text(notif.message,
-                    style: Theme.of(context)
-                        .textTheme
-                        .bodySmall
-                        ?.copyWith(height: 1.4)),
-                const SizedBox(height: 8),
-                Text(_formatTime(notif.time),
-                    style: const TextStyle(
-                        fontSize: 11,
-                        color: AppColors.textMuted,
-                        fontFamily: 'Inter')),
-              ],
+            const SizedBox(width: 14),
+            Expanded(
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Expanded(
+                        child: Text(notif.title,
+                            style: Theme.of(context)
+                                .textTheme
+                                .titleSmall
+                                ?.copyWith(
+                                    color: notif.isRead
+                                        ? AppColors.textSecondary
+                                        : AppColors.textPrimary)),
+                      ),
+                      if (!notif.isRead)
+                        Container(
+                            width: 8,
+                            height: 8,
+                            decoration: const BoxDecoration(
+                                color: AppColors.primary,
+                                shape: BoxShape.circle)),
+                    ],
+                  ),
+                  const SizedBox(height: 6),
+                  Text(notif.message,
+                      style: Theme.of(context)
+                          .textTheme
+                          .bodySmall
+                          ?.copyWith(height: 1.4)),
+                  const SizedBox(height: 8),
+                  Text(_formatTime(notif.time),
+                      style: const TextStyle(
+                          fontSize: 11,
+                          color: AppColors.textMuted,
+                          fontFamily: 'Inter')),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }
