@@ -145,7 +145,7 @@ class _ClinicalNoteEditorState extends State<ClinicalNoteEditor> {
                       // Security: Limit input length to prevent DoS
                       TextField(
                         controller: _diagCtrl,
-                        maxLength: 150,
+                        maxLength: 100,
                         decoration: const InputDecoration(
                             hintText: 'e.g. I10 - Essential Hypertension',
                             counterText: '',
