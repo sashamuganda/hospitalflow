@@ -146,12 +146,15 @@ class _PrescriptionWriterScreenState extends State<PrescriptionWriterScreen> {
                               fontWeight: FontWeight.w700,
                               color: AppColors.textPrimary)),
                       const SizedBox(height: 8),
+                      // Security: Limit input length to prevent DoS
                       TextField(
                         controller: _notesCtrl,
                         maxLines: 3,
+                        maxLength: 500,
                         decoration: const InputDecoration(
                             hintText:
-                                'e.g. Take with food. Avoid alcohol. Return if symptoms worsen...'),
+                                'e.g. Take with food. Avoid alcohol. Return if symptoms worsen...',
+                            counterText: ''),
                       ),
                       const SizedBox(height: 32),
                       // Interaction warning UI
@@ -237,19 +240,26 @@ class _RxItemCard extends StatelessWidget {
                       color: AppColors.error, size: 20)),
           ]),
           const SizedBox(height: 10),
+          // Security: Limit input length to prevent DoS
           TextField(
             controller: item.nameCtrl,
+            maxLength: 100,
             decoration: const InputDecoration(
                 hintText: 'Drug name',
+                counterText: '',
                 prefixIcon: Icon(Icons.medication_outlined,
                     color: AppColors.textMuted)),
           ),
           const SizedBox(height: 10),
           Row(children: [
             Expanded(
-                child: TextField(
+                child:
+                // Security: Limit input length to prevent DoS
+                TextField(
               controller: item.doseCtrl,
-              decoration: const InputDecoration(hintText: 'Dose (e.g. 500mg)'),
+              maxLength: 50,
+              decoration: const InputDecoration(
+                  hintText: 'Dose (e.g. 500mg)', counterText: ''),
             )),
             const SizedBox(width: 10),
             Expanded(

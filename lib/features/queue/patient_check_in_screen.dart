@@ -135,19 +135,25 @@ class _PatientCheckInScreenState extends State<PatientCheckInScreen> {
           const SizedBox(height: 28),
           _fieldLabel('Full Name'),
           const SizedBox(height: 8),
+          // Security: Limit input length to prevent DoS
           TextField(
               controller: _nameCtrl,
+              maxLength: 100,
               decoration: const InputDecoration(
                   hintText: 'Patient full name',
+                  counterText: '',
                   prefixIcon: Icon(Icons.person_outline_rounded,
                       color: AppColors.textMuted))),
           const SizedBox(height: 16),
           _fieldLabel('National ID / Passport'),
           const SizedBox(height: 8),
+          // Security: Limit input length to prevent DoS
           TextField(
               controller: _idCtrl,
+              maxLength: 50,
               decoration: const InputDecoration(
                   hintText: 'ID number (optional)',
+                  counterText: '',
                   prefixIcon:
                       Icon(Icons.badge_outlined, color: AppColors.textMuted))),
           const SizedBox(height: 16),
@@ -158,11 +164,14 @@ class _PatientCheckInScreenState extends State<PatientCheckInScreen> {
                     children: [
                   _fieldLabel('Age'),
                   const SizedBox(height: 8),
+                  // Security: Limit input length to prevent DoS
                   TextField(
                       controller: _ageCtrl,
                       keyboardType: TextInputType.number,
+                      maxLength: 3,
                       decoration: const InputDecoration(
                           hintText: '0',
+                          counterText: '',
                           prefixIcon: Icon(Icons.cake_outlined,
                               color: AppColors.textMuted))),
                 ])),
@@ -201,11 +210,14 @@ class _PatientCheckInScreenState extends State<PatientCheckInScreen> {
           const SizedBox(height: 16),
           _fieldLabel('Phone Number'),
           const SizedBox(height: 8),
+          // Security: Limit input length to prevent DoS
           TextField(
               controller: _phoneCtrl,
               keyboardType: TextInputType.phone,
+              maxLength: 20,
               decoration: const InputDecoration(
                   hintText: '+254 7XX XXX XXX',
+                  counterText: '',
                   prefixIcon:
                       Icon(Icons.phone_outlined, color: AppColors.textMuted))),
           const SizedBox(height: 16),
