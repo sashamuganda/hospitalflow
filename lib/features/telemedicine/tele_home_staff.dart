@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../core/colors.dart';
 import '../../data/mock_data.dart';
 import '../../widgets/shared_widgets.dart';
@@ -34,7 +35,10 @@ class _TeleHomeStaffScreenState extends State<TeleHomeStaffScreen> {
                     IconButton(
                         icon: const Icon(Icons.settings_rounded,
                             color: AppColors.primary),
-                        onPressed: () {}),
+                        tooltip: 'Settings',
+                        onPressed: () {
+                          HapticFeedback.selectionClick();
+                        }),
                   ],
                 ),
               ),
@@ -75,7 +79,9 @@ class _TeleHomeStaffScreenState extends State<TeleHomeStaffScreen> {
                         ),
                       ),
                       ElevatedButton(
-                        onPressed: () {},
+                        onPressed: () {
+                          HapticFeedback.lightImpact();
+                        },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: AppColors.primary,
                           foregroundColor: Colors.white,
