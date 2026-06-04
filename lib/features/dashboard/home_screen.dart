@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../core/colors.dart';
@@ -321,23 +322,31 @@ class HomeScreen extends StatelessWidget {
         Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: actions.map((a) => GestureDetector(
-            onTap: () => context.push(a['route'] as String),
-            child: Column(
-              children: [
-                Container(
-                  width: 64, height: 64,
-                  decoration: BoxDecoration(
-                    color: AppColors.surfaceLight,
-                    borderRadius: BorderRadius.circular(18),
-                    border: Border.all(color: AppColors.divider),
+            onTap: () {
+              HapticFeedback.selectionClick();
+              context.push(a['route'] as String);
+            },
+            child: Semantics(
+              button: true,
+              label: a['label'] as String,
+              excludeSemantics: true,
+              child: Column(
+                children: [
+                  Container(
+                    width: 64, height: 64,
+                    decoration: BoxDecoration(
+                      color: AppColors.surfaceLight,
+                      borderRadius: BorderRadius.circular(18),
+                      border: Border.all(color: AppColors.divider),
+                    ),
+                    child: Icon(a['icon'] as IconData, color: AppColors.primary, size: 28),
                   ),
-                  child: Icon(a['icon'] as IconData, color: AppColors.primary, size: 28),
-                ),
-                const SizedBox(height: 8),
-                Text(a['label'] as String,
-                  style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600,
-                    color: AppColors.textSecondary, fontFamily: 'Inter')),
-              ],
+                  const SizedBox(height: 8),
+                  Text(a['label'] as String,
+                    style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600,
+                      color: AppColors.textSecondary, fontFamily: 'Inter')),
+                ],
+              ),
             ),
           )).toList(),
         ),

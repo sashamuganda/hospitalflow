@@ -25,15 +25,23 @@ class GlassCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: padding ?? const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          gradient: gradient ?? AppColors.cardGradient,
-          borderRadius: BorderRadius.circular(borderRadius),
-          border: Border.all(color: borderColor ?? AppColors.divider, width: 1),
+      onTap: onTap != null
+          ? () {
+              HapticFeedback.lightImpact();
+              onTap!();
+            }
+          : null,
+      child: Semantics(
+        button: onTap != null,
+        child: Container(
+          padding: padding ?? const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: gradient ?? AppColors.cardGradient,
+            borderRadius: BorderRadius.circular(borderRadius),
+            border: Border.all(color: borderColor ?? AppColors.divider, width: 1),
+          ),
+          child: child,
         ),
-        child: child,
       ),
     );
   }
@@ -271,39 +279,49 @@ class KpiCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          gradient: AppColors.cardGradient,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.25)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(10),
+      onTap: onTap != null
+          ? () {
+              HapticFeedback.lightImpact();
+              onTap!();
+            }
+          : null,
+      child: Semantics(
+        button: onTap != null,
+        label: 'KPI: $label, $value${subtitle != null ? ', $subtitle' : ''}',
+        excludeSemantics: true,
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: AppColors.cardGradient,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: color.withOpacity(0.25)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(
+                  color: color.withOpacity(0.15),
+                  borderRadius: BorderRadius.circular(10),
+                ),
+                child: Icon(icon, color: color, size: 20),
               ),
-              child: Icon(icon, color: color, size: 20),
-            ),
-            const SizedBox(height: 12),
-            Text(value,
-              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary, fontFamily: 'Inter')),
-            if (subtitle != null) ...[
-              const SizedBox(height: 2),
-              Text(subtitle!,
-                style: const TextStyle(color: AppColors.success, fontSize: 11,
-                  fontFamily: 'Inter', fontWeight: FontWeight.w600)),
+              const SizedBox(height: 12),
+              Text(value,
+                style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary, fontFamily: 'Inter')),
+              if (subtitle != null) ...[
+                const SizedBox(height: 2),
+                Text(subtitle!,
+                  style: const TextStyle(color: AppColors.success, fontSize: 11,
+                    fontFamily: 'Inter', fontWeight: FontWeight.w600)),
+              ],
+              const SizedBox(height: 4),
+              Text(label,
+                style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontFamily: 'Inter')),
             ],
-            const SizedBox(height: 4),
-            Text(label,
-              style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontFamily: 'Inter')),
-          ],
+          ),
         ),
       ),
     );
@@ -325,30 +343,40 @@ class MetricCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          gradient: AppColors.cardGradient,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.2)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: color.withOpacity(0.15), borderRadius: BorderRadius.circular(10)),
-              child: Icon(icon, color: color, size: 20),
-            ),
-            const SizedBox(height: 12),
-            Text(value,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary, fontFamily: 'Inter')),
-            Text(unit, style: const TextStyle(color: AppColors.textMuted, fontSize: 12, fontFamily: 'Inter')),
-            const SizedBox(height: 4),
-            Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13, fontFamily: 'Inter')),
-          ],
+      onTap: onTap != null
+          ? () {
+              HapticFeedback.lightImpact();
+              onTap!();
+            }
+          : null,
+      child: Semantics(
+        button: onTap != null,
+        label: 'Metric: $label, $value $unit',
+        excludeSemantics: true,
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            gradient: AppColors.cardGradient,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: color.withOpacity(0.2)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                padding: const EdgeInsets.all(8),
+                decoration: BoxDecoration(color: color.withOpacity(0.15), borderRadius: BorderRadius.circular(10)),
+                child: Icon(icon, color: color, size: 20),
+              ),
+              const SizedBox(height: 12),
+              Text(value,
+                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700,
+                  color: AppColors.textPrimary, fontFamily: 'Inter')),
+              Text(unit, style: const TextStyle(color: AppColors.textMuted, fontSize: 12, fontFamily: 'Inter')),
+              const SizedBox(height: 4),
+              Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13, fontFamily: 'Inter')),
+            ],
+          ),
         ),
       ),
     );
