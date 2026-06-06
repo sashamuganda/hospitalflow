@@ -12,19 +12,25 @@ class LabHomeScreen extends StatefulWidget {
 }
 
 class _LabHomeScreenState extends State<LabHomeScreen> {
-  // Simple order sorting by priority
-  List<LabOrder> get _sortedOrders {
-    final list = List<LabOrder>.from(mockLabOrders);
-    list.sort((a, b) {
-      final wA = a.priority.toLowerCase() == 'stat'
-          ? 0
-          : (a.priority.toLowerCase() == 'urgent' ? 1 : 2);
-      final wB = b.priority.toLowerCase() == 'stat'
-          ? 0
-          : (b.priority.toLowerCase() == 'urgent' ? 1 : 2);
-      return wA.compareTo(wB);
-    });
-    return list;
+  static const _priorityWeights = {
+    'stat': 0,
+    'urgent': 1,
+    'routine': 2,
+  };
+
+  late final List<LabOrder> _sortedOrders;
+
+  @override
+  void initState() {
+    super.initState();
+    // ⚡ Bolt: Sort once in initState and cache the result to avoid O(N log N)
+    // sorting on every build and O(N*M log N) inside the ListView.
+    _sortedOrders = List<LabOrder>.from(mockLabOrders)
+      ..sort((a, b) {
+        final wA = _priorityWeights[a.priority.toLowerCase()] ?? 2;
+        final wB = _priorityWeights[b.priority.toLowerCase()] ?? 2;
+        return wA.compareTo(wB);
+      });
   }
 
   @override
@@ -81,7 +87,8 @@ class _LabOrderCard extends StatelessWidget {
               Semantics(
                 label: 'Priority: ${order.priority.toUpperCase()}',
                 child: Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
                   decoration: BoxDecoration(
                       color: order.priorityColor.withOpacity(0.2),
                       borderRadius: BorderRadius.circular(6)),
