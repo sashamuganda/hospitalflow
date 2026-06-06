@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
+import '../data/mock_data.dart';
 import 'app_state.dart';
 import '../features/auth/splash_screen.dart';
 import '../features/auth/role_select_screen.dart';
@@ -37,21 +38,29 @@ GoRouter createRouter(AppState appState) {
     initialLocation: '/splash',
     refreshListenable: appState,
     redirect: (context, state) {
-    final isAuthenticated = context.read<AppState>().isAuthenticated;
-    final isAuthRoute = state.matchedLocation == '/login' ||
-        state.matchedLocation == '/role-select' ||
-        state.matchedLocation == '/splash' ||
-        state.matchedLocation == '/forgot-password';
+      final isAuthenticated = appState.isAuthenticated;
+      final isAuthRoute = state.matchedLocation == '/login' ||
+          state.matchedLocation == '/role-select' ||
+          state.matchedLocation == '/splash' ||
+          state.matchedLocation == '/forgot-password';
 
-    if (!isAuthenticated) {
-      // Allow access to auth routes, redirect others to role selection
-      return isAuthRoute ? null : '/role-select';
-    }
+      if (!isAuthenticated) {
+        // Allow access to auth routes, redirect others to role selection
+        return isAuthRoute ? null : '/role-select';
+      }
 
-    // If authenticated, don't allow access to auth routes (except splash if needed)
-    if (isAuthRoute && state.matchedLocation != '/splash') {
-      return '/home';
-    }
+      // If authenticated, don't allow access to auth routes (except splash if needed)
+      if (isAuthRoute && state.matchedLocation != '/splash') {
+        return '/home';
+      }
+
+      // Role-Based Access Control (RBAC)
+      final restrictedRoutes = ['/analytics', '/staff'];
+      final isAdmin = appState.selectedRole == StaffRole.admin;
+
+      if (restrictedRoutes.contains(state.matchedLocation) && !isAdmin) {
+        return '/home';
+      }
 
       return null;
     },
