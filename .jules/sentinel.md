@@ -7,3 +7,8 @@
 **Vulnerability:** Missing `maxLength` constraints on critical clinical input fields (SOAP notes, chief complaints, vitals).
 **Learning:** In a clinical environment, excessively large inputs in text fields can lead to application instability, memory exhaustion, or database performance degradation (Denial of Service). This app frequently suppresses the visual character counter using `counterText: ''` for aesthetic reasons, which can obscure the absence of underlying security constraints.
 **Prevention:** Explicitly define `maxLength` for all `TextField` widgets accepting clinical data and include a `// Security: Limit input length to prevent DoS` comment to ensure the requirement is visible to future maintainers.
+
+## 2024-11-21 - Implementing Role-Based Access Control (RBAC) in GoRouter
+**Vulnerability:** Authorized users (e.g., Doctors, Nurses) accessing sensitive administrative routes (Analytics, Staff Directory) without proper permissions.
+**Learning:** Authentication checks alone are insufficient for protecting high-privilege features in a multi-role clinical application. RBAC must be enforced at the routing level by inspecting the `StaffRole` within the `GoRouter` redirect callback.
+**Prevention:** Maintain a registry of restricted routes and verify the user's role against required permissions before allowing navigation, ensuring "Least Privilege" is enforced across the UI.
