@@ -16,19 +16,25 @@ class _LabHomeScreenState extends State<LabHomeScreen> {
   List<LabOrder> get _sortedOrders {
     final list = List<LabOrder>.from(mockLabOrders);
     list.sort((a, b) {
-      final wA = a.priority.toLowerCase() == 'stat'
-          ? 0
-          : (a.priority.toLowerCase() == 'urgent' ? 1 : 2);
-      final wB = b.priority.toLowerCase() == 'stat'
-          ? 0
-          : (b.priority.toLowerCase() == 'urgent' ? 1 : 2);
-      return wA.compareTo(wB);
+      // ⚡ Bolt: Use more efficient priority mapping
+      int getWeight(String p) {
+        final lower = p.toLowerCase();
+        if (lower == 'stat') return 0;
+        if (lower == 'urgent') return 1;
+        return 2;
+      }
+
+      return getWeight(a.priority).compareTo(getWeight(b.priority));
     });
     return list;
   }
 
   @override
   Widget build(BuildContext context) {
+    // ⚡ Bolt: Cache sorted results in a local variable to avoid O(M * N log N) complexity
+    // where N is total items and M is visible items, as the sorting logic runs on every getter access.
+    final sortedOrders = _sortedOrders;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Container(
@@ -49,10 +55,10 @@ class _LabHomeScreenState extends State<LabHomeScreen> {
               Expanded(
                 child: ListView.separated(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-                  itemCount: _sortedOrders.length,
+                  itemCount: sortedOrders.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, i) =>
-                      _LabOrderCard(order: _sortedOrders[i]),
+                      _LabOrderCard(order: sortedOrders[i]),
                 ),
               ),
             ],
