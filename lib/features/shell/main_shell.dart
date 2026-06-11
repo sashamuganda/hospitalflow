@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import '../../core/colors.dart';
@@ -139,29 +140,35 @@ class _Sidebar extends StatelessWidget {
             padding: const EdgeInsets.fromLTRB(8, 8, 8, 16),
             child: GestureDetector(
               onTap: () {
+                HapticFeedback.mediumImpact();
                 context.read<AppState>().logout();
                 context.go('/role-select');
               },
-              child: Container(
-                padding:
-                    const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
-                decoration: BoxDecoration(
-                  color: AppColors.error.withOpacity(0.08),
-                  borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: AppColors.error.withOpacity(0.15)),
-                ),
-                child: const Row(
-                  children: [
-                    Icon(Icons.logout_rounded,
-                        color: AppColors.error, size: 20),
-                    SizedBox(width: 12),
-                    Text('Sign Out',
-                        style: TextStyle(
-                            fontFamily: 'Inter',
-                            fontSize: 14,
-                            color: AppColors.error,
-                            fontWeight: FontWeight.w600)),
-                  ],
+              child: Semantics(
+                button: true,
+                label: 'Sign Out',
+                excludeSemantics: true,
+                child: Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 12, vertical: 12),
+                  decoration: BoxDecoration(
+                    color: AppColors.error.withOpacity(0.08),
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: AppColors.error.withOpacity(0.15)),
+                  ),
+                  child: const Row(
+                    children: [
+                      Icon(Icons.logout_rounded,
+                          color: AppColors.error, size: 20),
+                      SizedBox(width: 12),
+                      Text('Sign Out',
+                          style: TextStyle(
+                              fontFamily: 'Inter',
+                              fontSize: 14,
+                              color: AppColors.error,
+                              fontWeight: FontWeight.w600)),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -180,37 +187,46 @@ class _SideNavItem extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: () => context.go(item.route),
-      child: AnimatedContainer(
-        duration: const Duration(milliseconds: 150),
-        margin: const EdgeInsets.only(bottom: 4),
-        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
-        decoration: BoxDecoration(
-          color: isActive
-              ? AppColors.primary.withOpacity(0.12)
-              : Colors.transparent,
-          borderRadius: BorderRadius.circular(10),
-          border: Border.all(
+      onTap: () {
+        HapticFeedback.selectionClick();
+        context.go(item.route);
+      },
+      child: Semantics(
+        button: true,
+        selected: isActive,
+        label: item.label,
+        excludeSemantics: true,
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 150),
+          margin: const EdgeInsets.only(bottom: 4),
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 11),
+          decoration: BoxDecoration(
             color: isActive
-                ? AppColors.primary.withOpacity(0.25)
+                ? AppColors.primary.withOpacity(0.12)
                 : Colors.transparent,
+            borderRadius: BorderRadius.circular(10),
+            border: Border.all(
+              color: isActive
+                  ? AppColors.primary.withOpacity(0.25)
+                  : Colors.transparent,
+            ),
           ),
-        ),
-        child: Row(
-          children: [
-            Icon(item.icon,
-                color: isActive ? AppColors.primary : AppColors.textMuted,
-                size: 20),
-            const SizedBox(width: 12),
-            Text(item.label,
-                style: TextStyle(
-                    fontFamily: 'Inter',
-                    fontSize: 14,
-                    fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
-                    color: isActive
-                        ? AppColors.textPrimary
-                        : AppColors.textSecondary)),
-          ],
+          child: Row(
+            children: [
+              Icon(item.icon,
+                  color: isActive ? AppColors.primary : AppColors.textMuted,
+                  size: 20),
+              const SizedBox(width: 12),
+              Text(item.label,
+                  style: TextStyle(
+                      fontFamily: 'Inter',
+                      fontSize: 14,
+                      fontWeight: isActive ? FontWeight.w600 : FontWeight.w400,
+                      color: isActive
+                          ? AppColors.textPrimary
+                          : AppColors.textSecondary)),
+            ],
+          ),
         ),
       ),
     );
@@ -243,7 +259,10 @@ class _MobileLayout extends StatelessWidget {
         ),
         child: BottomNavigationBar(
           currentIndex: selectedIndex,
-          onTap: (i) => context.go(items[i].route),
+          onTap: (i) {
+            HapticFeedback.selectionClick();
+            context.go(items[i].route);
+          },
           backgroundColor: Colors.transparent,
           elevation: 0,
           selectedItemColor: AppColors.primary,
