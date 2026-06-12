@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'app_state.dart';
+import '../data/mock_data.dart';
 import '../features/auth/splash_screen.dart';
 import '../features/auth/role_select_screen.dart';
 import '../features/auth/login_screen.dart';
@@ -37,86 +38,130 @@ GoRouter createRouter(AppState appState) {
     initialLocation: '/splash',
     refreshListenable: appState,
     redirect: (context, state) {
-    final isAuthenticated = context.read<AppState>().isAuthenticated;
-    final isAuthRoute = state.matchedLocation == '/login' ||
-        state.matchedLocation == '/role-select' ||
-        state.matchedLocation == '/splash' ||
-        state.matchedLocation == '/forgot-password';
+      final appState = context.read<AppState>();
+      final isAuthenticated = appState.isAuthenticated;
+      final isAuthRoute = state.matchedLocation == '/login' ||
+          state.matchedLocation == '/role-select' ||
+          state.matchedLocation == '/splash' ||
+          state.matchedLocation == '/forgot-password';
 
-    if (!isAuthenticated) {
-      // Allow access to auth routes, redirect others to role selection
-      return isAuthRoute ? null : '/role-select';
-    }
+      if (!isAuthenticated) {
+        // Allow access to auth routes, redirect others to role selection
+        return isAuthRoute ? null : '/role-select';
+      }
 
-    // If authenticated, don't allow access to auth routes (except splash if needed)
-    if (isAuthRoute && state.matchedLocation != '/splash') {
-      return '/home';
-    }
+      // If authenticated, don't allow access to auth routes (except splash if needed)
+      if (isAuthRoute && state.matchedLocation != '/splash') {
+        return '/home';
+      }
+
+      // 🛡️ Sentinel: Role-Based Access Control (RBAC)
+      // Restricted routes requiring Admin role
+      final isAdminRoute = state.matchedLocation == '/analytics' ||
+          state.matchedLocation == '/staff';
+
+      if (isAdminRoute && appState.currentUser?.role != StaffRole.admin) {
+        // Security: Prevent authorization bypass. Non-admins are redirected to home.
+        return '/home';
+      }
 
       return null;
     },
     routes: [
-    // ─── Auth ──────────────────────────────────────────────────────────────────
-    GoRoute(path: '/splash',       builder: (_, __) => const SplashScreen()),
-    GoRoute(path: '/role-select',  builder: (_, __) => const RoleSelectScreen()),
-    GoRoute(path: '/login',        builder: (_, __) => const LoginScreen()),
-    GoRoute(path: '/forgot-password', builder: (_, __) => const ForgotPasswordScreen()),
+      // ─── Auth ──────────────────────────────────────────────────────────────────
+      GoRoute(path: '/splash', builder: (_, __) => const SplashScreen()),
+      GoRoute(
+          path: '/role-select', builder: (_, __) => const RoleSelectScreen()),
+      GoRoute(path: '/login', builder: (_, __) => const LoginScreen()),
+      GoRoute(
+          path: '/forgot-password',
+          builder: (_, __) => const ForgotPasswordScreen()),
 
-    // ─── Main Shell (Bottom Nav / Sidebar) ─────────────────────────────────────
-    ShellRoute(
-      navigatorKey: _shellNavKey,
-      builder: (context, state, child) => MainShell(child: child),
-      routes: [
-        GoRoute(path: '/home',         builder: (_, __) => const HomeScreen()),
-        GoRoute(path: '/queue',        builder: (_, __) => const QueueHomeScreen()),
-        GoRoute(path: '/emr',          builder: (_, __) => const EmrHomeScreen()),
-        GoRoute(path: '/appointments', builder: (_, __) => const StaffAppointmentsHome()),
-        GoRoute(path: '/ward',         builder: (_, __) => const WardOverviewScreen()),
-        GoRoute(path: '/telemedicine', builder: (_, __) => const TeleHomeStaffScreen()),
-        GoRoute(path: '/pharmacy',     builder: (_, __) => const PharmacyHomeScreen()),
-        GoRoute(path: '/inventory',    builder: (_, __) => const PharmacyHomeScreen()),
-        GoRoute(path: '/lab',          builder: (_, __) => const LabHomeScreen()),
-        GoRoute(path: '/analytics',    builder: (_, __) => const AnalyticsHomeScreen()),
-        GoRoute(path: '/staff',        builder: (_, __) => const StaffDirectoryScreen()),
-        GoRoute(path: '/settings',     builder: (_, __) => const SettingsHomeScreen()),
-      ],
-    ),
+      // ─── Main Shell (Bottom Nav / Sidebar) ─────────────────────────────────────
+      ShellRoute(
+        navigatorKey: _shellNavKey,
+        builder: (context, state, child) => MainShell(child: child),
+        routes: [
+          GoRoute(path: '/home', builder: (_, __) => const HomeScreen()),
+          GoRoute(path: '/queue', builder: (_, __) => const QueueHomeScreen()),
+          GoRoute(path: '/emr', builder: (_, __) => const EmrHomeScreen()),
+          GoRoute(
+              path: '/appointments',
+              builder: (_, __) => const StaffAppointmentsHome()),
+          GoRoute(
+              path: '/ward', builder: (_, __) => const WardOverviewScreen()),
+          GoRoute(
+              path: '/telemedicine',
+              builder: (_, __) => const TeleHomeStaffScreen()),
+          GoRoute(
+              path: '/pharmacy',
+              builder: (_, __) => const PharmacyHomeScreen()),
+          GoRoute(
+              path: '/inventory',
+              builder: (_, __) => const PharmacyHomeScreen()),
+          GoRoute(path: '/lab', builder: (_, __) => const LabHomeScreen()),
+          GoRoute(
+              path: '/analytics',
+              builder: (_, __) => const AnalyticsHomeScreen()),
+          GoRoute(
+              path: '/staff', builder: (_, __) => const StaffDirectoryScreen()),
+          GoRoute(
+              path: '/settings',
+              builder: (_, __) => const SettingsHomeScreen()),
+        ],
+      ),
 
-    // ─── Notifications ─────────────────────────────────────────────────────────
-    GoRoute(path: '/notifications', builder: (_, __) => const NotificationsScreen()),
+      // ─── Notifications ─────────────────────────────────────────────────────────
+      GoRoute(
+          path: '/notifications',
+          builder: (_, __) => const NotificationsScreen()),
 
-    // ─── Queue ─────────────────────────────────────────────────────────────────
-    GoRoute(path: '/queue/check-in', builder: (_, __) => const PatientCheckInScreen()),
-    GoRoute(path: '/queue/wait-times', builder: (_, __) => const WaitingTimesScreen()),
-    GoRoute(
-      path: '/queue/triage/:id',
-      builder: (_, state) => TriageScreen(patientId: state.pathParameters['id'] ?? ''),
-    ),
+      // ─── Queue ─────────────────────────────────────────────────────────────────
+      GoRoute(
+          path: '/queue/check-in',
+          builder: (_, __) => const PatientCheckInScreen()),
+      GoRoute(
+          path: '/queue/wait-times',
+          builder: (_, __) => const WaitingTimesScreen()),
+      GoRoute(
+        path: '/queue/triage/:id',
+        builder: (_, state) =>
+            TriageScreen(patientId: state.pathParameters['id'] ?? ''),
+      ),
 
-    // ─── EMR ───────────────────────────────────────────────────────────────────
-    GoRoute(
-      path: '/emr/patient/:id',
-      builder: (_, state) => PatientSummaryScreen(patientId: state.pathParameters['id'] ?? ''),
-    ),
-    GoRoute(
-      path: '/emr/note-editor/:patientId',
-      builder: (_, state) => ClinicalNoteEditor(patientId: state.pathParameters['patientId'] ?? ''),
-    ),
-    GoRoute(
-      path: '/emr/prescription/:patientId',
-      builder: (_, state) => PrescriptionWriterScreen(patientId: state.pathParameters['patientId'] ?? ''),
-    ),
-    GoRoute(
-      path: '/emr/vitals/:patientId',
-      builder: (_, state) => VitalsEntryStaff(patientId: state.pathParameters['patientId'] ?? ''),
-    ),
-    GoRoute(
-      path: '/emr/lab-order/:patientId',
-      builder: (_, state) => LabOrderScreen(patientId: state.pathParameters['patientId'] ?? ''),
-    ),
-    // Convenience route without patient ID (for Quick Actions)
-    GoRoute(path: '/emr/vitals',    builder: (_, __) => const VitalsEntryStaff(patientId: '')),
-      GoRoute(path: '/emr/lab-order', builder: (_, __) => const LabOrderScreen(patientId: '')),
+      // ─── EMR ───────────────────────────────────────────────────────────────────
+      GoRoute(
+        path: '/emr/patient/:id',
+        builder: (_, state) =>
+            PatientSummaryScreen(patientId: state.pathParameters['id'] ?? ''),
+      ),
+      GoRoute(
+        path: '/emr/note-editor/:patientId',
+        builder: (_, state) => ClinicalNoteEditor(
+            patientId: state.pathParameters['patientId'] ?? ''),
+      ),
+      GoRoute(
+        path: '/emr/prescription/:patientId',
+        builder: (_, state) => PrescriptionWriterScreen(
+            patientId: state.pathParameters['patientId'] ?? ''),
+      ),
+      GoRoute(
+        path: '/emr/vitals/:patientId',
+        builder: (_, state) => VitalsEntryStaff(
+            patientId: state.pathParameters['patientId'] ?? ''),
+      ),
+      GoRoute(
+        path: '/emr/lab-order/:patientId',
+        builder: (_, state) =>
+            LabOrderScreen(patientId: state.pathParameters['patientId'] ?? ''),
+      ),
+      // Convenience route without patient ID (for Quick Actions)
+      GoRoute(
+          path: '/emr/vitals',
+          builder: (_, __) => const VitalsEntryStaff(patientId: '')),
+      GoRoute(
+          path: '/emr/lab-order',
+          builder: (_, __) => const LabOrderScreen(patientId: '')),
     ],
   );
 }
