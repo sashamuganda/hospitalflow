@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:provider/provider.dart';
 import 'app_state.dart';
+import '../data/mock_data.dart';
 import '../features/auth/splash_screen.dart';
 import '../features/auth/role_select_screen.dart';
 import '../features/auth/login_screen.dart';
@@ -48,12 +49,22 @@ GoRouter createRouter(AppState appState) {
       return isAuthRoute ? null : '/role-select';
     }
 
+    // Authorization: Role-Based Access Control (RBAC)
+    // Only Admin can access analytics and staff directory
+    final isAdminRoute = state.matchedLocation == '/analytics' ||
+        state.matchedLocation == '/staff';
+    final userRole = appState.selectedRole;
+
+    if (isAdminRoute && userRole != StaffRole.admin) {
+      return '/home';
+    }
+
     // If authenticated, don't allow access to auth routes (except splash if needed)
     if (isAuthRoute && state.matchedLocation != '/splash') {
       return '/home';
     }
 
-      return null;
+    return null;
     },
     routes: [
     // ─── Auth ──────────────────────────────────────────────────────────────────
