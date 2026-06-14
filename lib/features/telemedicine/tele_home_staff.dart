@@ -16,6 +16,10 @@ class _TeleHomeStaffScreenState extends State<TeleHomeStaffScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // ⚡ Bolt: Cache filtered appointments in a local variable to avoid O(N*M) complexity
+    // where N is total items and M is visible items, as the getter is called multiple times.
+    final teleAppointments = _teleAppointments;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Container(
@@ -29,12 +33,18 @@ class _TeleHomeStaffScreenState extends State<TeleHomeStaffScreen> {
                 child: Row(
                   children: [
                     Expanded(
-                        child: Text('Telemedicine Console',
-                            style: Theme.of(context).textTheme.headlineMedium)),
+                      child: Text(
+                        'Telemedicine Console',
+                        style: Theme.of(context).textTheme.headlineMedium,
+                      ),
+                    ),
                     IconButton(
-                        icon: const Icon(Icons.settings_rounded,
-                            color: AppColors.primary),
-                        onPressed: () {}),
+                      icon: const Icon(
+                        Icons.settings_rounded,
+                        color: AppColors.primary,
+                      ),
+                      onPressed: () {},
+                    ),
                   ],
                 ),
               ),
@@ -52,25 +62,31 @@ class _TeleHomeStaffScreenState extends State<TeleHomeStaffScreen> {
                           color: AppColors.primary.withOpacity(0.15),
                           shape: BoxShape.circle,
                         ),
-                        child: const Icon(Icons.video_camera_front_rounded,
-                            color: AppColors.primary, size: 32),
+                        child: const Icon(
+                          Icons.video_camera_front_rounded,
+                          color: AppColors.primary,
+                          size: 32,
+                        ),
                       ),
                       const SizedBox(width: 16),
                       Expanded(
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Text('Next Consultation',
-                                style: TextStyle(
-                                    fontSize: 12,
-                                    color: AppColors.textSecondary,
-                                    fontFamily: 'Inter')),
+                            const Text(
+                              'Next Consultation',
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: AppColors.textSecondary,
+                                fontFamily: 'Inter',
+                              ),
+                            ),
                             const SizedBox(height: 4),
-                            Text('Sarah Ochieng',
-                                style: Theme.of(context)
-                                    .textTheme
-                                    .titleMedium!
-                                    .copyWith(color: AppColors.primary)),
+                            Text(
+                              'Sarah Ochieng',
+                              style: Theme.of(context).textTheme.titleMedium!
+                                  .copyWith(color: AppColors.primary),
+                            ),
                           ],
                         ),
                       ),
@@ -80,7 +96,8 @@ class _TeleHomeStaffScreenState extends State<TeleHomeStaffScreen> {
                           backgroundColor: AppColors.primary,
                           foregroundColor: Colors.white,
                           shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(12)),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
                         ),
                         child: const Text('Join Call'),
                       ),
@@ -92,39 +109,44 @@ class _TeleHomeStaffScreenState extends State<TeleHomeStaffScreen> {
               // Waiting Room
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 20),
-                child: Text('Virtual Waiting Room',
-                    style: Theme.of(context).textTheme.titleMedium),
+                child: Text(
+                  'Virtual Waiting Room',
+                  style: Theme.of(context).textTheme.titleMedium,
+                ),
               ),
               const SizedBox(height: 12),
               Expanded(
                 child: ListView.separated(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-                  itemCount: _teleAppointments.length,
+                  itemCount: teleAppointments.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, i) {
-                    final apt = _teleAppointments[i];
+                    final apt = teleAppointments[i];
                     return GlassCard(
                       padding: const EdgeInsets.all(16),
                       child: Row(
                         children: [
                           AvatarCircle(
-                              initials: apt.patientName.isNotEmpty
-                                  ? apt.patientName[0]
-                                  : '?',
-                              size: 48),
+                            initials: apt.patientName.isNotEmpty
+                                ? apt.patientName[0]
+                                : '?',
+                            size: 48,
+                          ),
                           const SizedBox(width: 16),
                           Expanded(
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                Text(apt.patientName,
-                                    style:
-                                        Theme.of(context).textTheme.titleSmall),
+                                Text(
+                                  apt.patientName,
+                                  style: Theme.of(context).textTheme.titleSmall,
+                                ),
                                 const SizedBox(height: 4),
                                 StatusBadge(
-                                    label: apt.status.label,
-                                    color: apt.status.color,
-                                    fontSize: 10),
+                                  label: apt.status.label,
+                                  color: apt.status.color,
+                                  fontSize: 10,
+                                ),
                               ],
                             ),
                           ),
@@ -132,12 +154,17 @@ class _TeleHomeStaffScreenState extends State<TeleHomeStaffScreen> {
                             crossAxisAlignment: CrossAxisAlignment.end,
                             children: [
                               Text(
-                                  '${apt.dateTime.hour}:${apt.dateTime.minute.toString().padLeft(2, '0')}',
-                                  style: const TextStyle(
-                                      fontWeight: FontWeight.bold)),
+                                '${apt.dateTime.hour}:${apt.dateTime.minute.toString().padLeft(2, '0')}',
+                                style: const TextStyle(
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
                               const SizedBox(height: 8),
-                              const Icon(Icons.videocam_rounded,
-                                  color: AppColors.primary, size: 20),
+                              const Icon(
+                                Icons.videocam_rounded,
+                                color: AppColors.primary,
+                                size: 20,
+                              ),
                             ],
                           ),
                         ],
