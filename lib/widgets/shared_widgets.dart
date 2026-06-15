@@ -25,8 +25,10 @@ class GlassCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
+      onTap: onTap == null ? null : () { HapticFeedback.lightImpact(); onTap!(); },
+      child: Semantics(
+        button: onTap != null, enabled: onTap != null, container: true,
+        child: Container(
         padding: padding ?? const EdgeInsets.all(16),
         decoration: BoxDecoration(
           gradient: gradient ?? AppColors.cardGradient,
@@ -34,7 +36,7 @@ class GlassCard extends StatelessWidget {
           border: Border.all(color: borderColor ?? AppColors.divider, width: 1),
         ),
         child: child,
-      ),
+      ),),
     );
   }
 }
@@ -270,9 +272,13 @@ class KpiCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
+    final sLabel = '$value $label${subtitle != null ? ", $subtitle" : ""}';
+    return Semantics(
+      label: sLabel, button: onTap != null, enabled: onTap != null,
+      container: true, excludeSemantics: true,
+      child: GestureDetector(
+        onTap: onTap == null ? null : () { HapticFeedback.lightImpact(); onTap!(); },
+        child: Container(
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           gradient: AppColors.cardGradient,
@@ -305,7 +311,7 @@ class KpiCard extends StatelessWidget {
               style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontFamily: 'Inter')),
           ],
         ),
-      ),
+      ),),
     );
   }
 }
@@ -324,9 +330,13 @@ class MetricCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
+    final sLabel = '$value $unit $label';
+    return Semantics(
+      label: sLabel, button: onTap != null, enabled: onTap != null,
+      container: true, excludeSemantics: true,
+      child: GestureDetector(
+        onTap: onTap == null ? null : () { HapticFeedback.lightImpact(); onTap!(); },
+        child: Container(
         padding: const EdgeInsets.all(14),
         decoration: BoxDecoration(
           gradient: AppColors.cardGradient,
@@ -350,7 +360,7 @@ class MetricCard extends StatelessWidget {
             Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13, fontFamily: 'Inter')),
           ],
         ),
-      ),
+      ),),
     );
   }
 }
