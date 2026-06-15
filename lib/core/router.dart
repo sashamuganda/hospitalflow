@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart';
 import 'app_state.dart';
+import '../data/mock_data.dart';
 import '../features/auth/splash_screen.dart';
 import '../features/auth/role_select_screen.dart';
 import '../features/auth/login_screen.dart';
@@ -31,27 +31,34 @@ import '../features/settings/settings_home_screen.dart';
 final _rootNavKey = GlobalKey<NavigatorState>();
 final _shellNavKey = GlobalKey<NavigatorState>();
 
-GoRouter createRouter(AppState appState) {
+GoRouter createRouter(AppState appState, {String initialLocation = '/splash'}) {
   return GoRouter(
     navigatorKey: _rootNavKey,
-    initialLocation: '/splash',
+    initialLocation: initialLocation,
     refreshListenable: appState,
     redirect: (context, state) {
-    final isAuthenticated = context.read<AppState>().isAuthenticated;
-    final isAuthRoute = state.matchedLocation == '/login' ||
-        state.matchedLocation == '/role-select' ||
-        state.matchedLocation == '/splash' ||
-        state.matchedLocation == '/forgot-password';
+      final isAuthenticated = appState.isAuthenticated;
+      final isAuthRoute = state.matchedLocation == '/login' ||
+          state.matchedLocation == '/role-select' ||
+          state.matchedLocation == '/splash' ||
+          state.matchedLocation == '/forgot-password';
 
-    if (!isAuthenticated) {
-      // Allow access to auth routes, redirect others to role selection
-      return isAuthRoute ? null : '/role-select';
-    }
+      if (!isAuthenticated) {
+        // Allow access to auth routes, redirect others to role selection
+        return isAuthRoute ? null : '/role-select';
+      }
 
-    // If authenticated, don't allow access to auth routes (except splash if needed)
-    if (isAuthRoute && state.matchedLocation != '/splash') {
-      return '/home';
-    }
+      // If authenticated, don't allow access to auth routes (except splash if needed)
+      if (isAuthRoute && state.matchedLocation != '/splash') {
+        return '/home';
+      }
+
+      // Security: Role-Based Access Control for sensitive routes
+      final isAdminRoute =
+          state.matchedLocation == '/analytics' || state.matchedLocation == '/staff';
+      if (isAdminRoute && appState.selectedRole != StaffRole.admin) {
+        return '/home';
+      }
 
       return null;
     },
