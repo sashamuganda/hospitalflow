@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../core/colors.dart';
 import '../../data/mock_data.dart';
 import '../../widgets/shared_widgets.dart';
@@ -27,9 +28,12 @@ class _StaffAppointmentsHomeState extends State<StaffAppointmentsHome> {
     return Scaffold(
       backgroundColor: AppColors.background,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          HapticFeedback.lightImpact();
+        },
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
+        tooltip: 'Add Appointment',
         child: const Icon(Icons.add_rounded),
       ),
       body: Container(
@@ -47,7 +51,10 @@ class _StaffAppointmentsHomeState extends State<StaffAppointmentsHome> {
                     IconButton(
                       icon: const Icon(Icons.calendar_month_rounded,
                           color: AppColors.primary),
-                      onPressed: () {},
+                      tooltip: 'View Calendar',
+                      onPressed: () {
+                        HapticFeedback.mediumImpact();
+                      },
                     ),
                   ],
                 ),
@@ -96,24 +103,32 @@ class _FilterChip extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        margin: const EdgeInsets.only(right: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: isActive ? AppColors.primary : AppColors.surfaceLight,
-          borderRadius: BorderRadius.circular(20),
-          border: Border.all(
-              color: isActive ? AppColors.primary : AppColors.divider),
-        ),
-        child: Text(
-          label,
-          style: TextStyle(
-            fontSize: 13,
-            fontWeight: FontWeight.w600,
-            fontFamily: 'Inter',
-            color: isActive ? Colors.white : AppColors.textSecondary,
+    return Semantics(
+      label: label,
+      button: true,
+      selected: isActive,
+      child: GestureDetector(
+        onTap: () {
+          HapticFeedback.selectionClick();
+          onTap();
+        },
+        child: Container(
+          margin: const EdgeInsets.only(right: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: isActive ? AppColors.primary : AppColors.surfaceLight,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(
+                color: isActive ? AppColors.primary : AppColors.divider),
+          ),
+          child: Text(
+            label,
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              fontFamily: 'Inter',
+              color: isActive ? Colors.white : AppColors.textSecondary,
+            ),
           ),
         ),
       ),
@@ -128,12 +143,17 @@ class _AppointmentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GlassCard(
-      borderColor: appointment.status.color.withOpacity(0.3),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
+    final time = _formatTime(appointment.dateTime);
+    return Semantics(
+      container: true,
+      child: GlassCard(
+        borderColor: appointment.status.color.withOpacity(0.3),
+        padding: const EdgeInsets.all(16),
+        child: Semantics(
+          label: '$time: ${appointment.patientName}, ${appointment.status.label}',
+          child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
           Row(
             children: [
               Text(_formatTime(appointment.dateTime),
@@ -209,7 +229,9 @@ class _AppointmentCard extends StatelessWidget {
                 SizedBox(
                   height: 28,
                   child: ElevatedButton(
-                    onPressed: () {},
+                    onPressed: () {
+                      HapticFeedback.lightImpact();
+                    },
                     style: ElevatedButton.styleFrom(
                       backgroundColor: AppColors.primary.withOpacity(0.15),
                       foregroundColor: AppColors.primary,
@@ -225,7 +247,9 @@ class _AppointmentCard extends StatelessWidget {
                 ),
             ],
           ),
-        ],
+          ],
+        ),
+      ),
       ),
     );
   }
