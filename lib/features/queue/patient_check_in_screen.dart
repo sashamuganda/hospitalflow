@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/colors.dart';
 import '../../widgets/shared_widgets.dart';
@@ -51,17 +52,7 @@ class _PatientCheckInScreenState extends State<PatientCheckInScreen> {
               Padding(
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                 child: Row(children: [
-                  GestureDetector(
-                    onTap: () => context.pop(),
-                    child: Container(
-                      padding: const EdgeInsets.all(8),
-                      decoration: BoxDecoration(
-                          color: AppColors.surfaceLight,
-                          borderRadius: BorderRadius.circular(10)),
-                      child: const Icon(Icons.arrow_back_ios_new_rounded,
-                          size: 18, color: AppColors.textSecondary),
-                    ),
-                  ),
+                  _buildBackButton(context),
                   const SizedBox(width: 16),
                   Text('Patient Check-In',
                       style: Theme.of(context).textTheme.headlineSmall),
@@ -75,6 +66,31 @@ class _PatientCheckInScreenState extends State<PatientCheckInScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBackButton(BuildContext context) {
+    void handleBack() {
+      HapticFeedback.lightImpact();
+      context.pop();
+    }
+
+    return Semantics(
+      button: true,
+      label: 'Back',
+      excludeSemantics: true,
+      onTap: handleBack,
+      child: GestureDetector(
+        onTap: handleBack,
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+              color: AppColors.surfaceLight,
+              borderRadius: BorderRadius.circular(10)),
+          child: const Icon(Icons.arrow_back_ios_new_rounded,
+              size: 18, color: AppColors.textSecondary),
         ),
       ),
     );

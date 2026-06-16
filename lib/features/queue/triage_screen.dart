@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/colors.dart';
 import '../../data/mock_data.dart';
@@ -79,17 +80,7 @@ class _TriageScreenState extends State<TriageScreen> {
                 padding: const EdgeInsets.fromLTRB(20, 20, 20, 0),
                 child: Row(
                   children: [
-                    GestureDetector(
-                      onTap: () => context.pop(),
-                      child: Container(
-                        padding: const EdgeInsets.all(8),
-                        decoration: BoxDecoration(
-                            color: AppColors.surfaceLight,
-                            borderRadius: BorderRadius.circular(10)),
-                        child: const Icon(Icons.arrow_back_ios_new_rounded,
-                            size: 18, color: AppColors.textSecondary),
-                      ),
-                    ),
+                    _buildBackButton(context),
                     const SizedBox(width: 16),
                     Expanded(
                         child: Text('Triage Assessment',
@@ -126,29 +117,7 @@ class _TriageScreenState extends State<TriageScreen> {
                         spacing: 8,
                         runSpacing: 8,
                         children: _quickComplaints
-                            .map((c) => GestureDetector(
-                                  onTap: () {
-                                    setState(() => _complaintCtrl.text =
-                                        _complaintCtrl.text.isEmpty
-                                            ? c
-                                            : '${_complaintCtrl.text}, $c');
-                                  },
-                                  child: Container(
-                                    padding: const EdgeInsets.symmetric(
-                                        horizontal: 12, vertical: 6),
-                                    decoration: BoxDecoration(
-                                      color: AppColors.surfaceLight,
-                                      borderRadius: BorderRadius.circular(20),
-                                      border:
-                                          Border.all(color: AppColors.divider),
-                                    ),
-                                    child: Text(c,
-                                        style: const TextStyle(
-                                            fontSize: 12,
-                                            color: AppColors.textSecondary,
-                                            fontFamily: 'Inter')),
-                                  ),
-                                ))
+                            .map((c) => _buildComplaintChip(c))
                             .toList(),
                       ),
                       const SizedBox(height: 24),
@@ -213,6 +182,62 @@ class _TriageScreenState extends State<TriageScreen> {
               ),
             ],
           ),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildBackButton(BuildContext context) {
+    void handleBack() {
+      HapticFeedback.lightImpact();
+      context.pop();
+    }
+
+    return Semantics(
+      button: true,
+      label: 'Back',
+      excludeSemantics: true,
+      onTap: handleBack,
+      child: GestureDetector(
+        onTap: handleBack,
+        child: Container(
+          padding: const EdgeInsets.all(8),
+          decoration: BoxDecoration(
+              color: AppColors.surfaceLight,
+              borderRadius: BorderRadius.circular(10)),
+          child: const Icon(Icons.arrow_back_ios_new_rounded,
+              size: 18, color: AppColors.textSecondary),
+        ),
+      ),
+    );
+  }
+
+  Widget _buildComplaintChip(String c) {
+    void handleTap() {
+      HapticFeedback.selectionClick();
+      setState(() => _complaintCtrl.text = _complaintCtrl.text.isEmpty
+          ? c
+          : '${_complaintCtrl.text}, $c');
+    }
+
+    return Semantics(
+      button: true,
+      label: 'Add $c to assessment',
+      onTap: handleTap,
+      child: GestureDetector(
+        onTap: handleTap,
+        child: Container(
+          padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+          decoration: BoxDecoration(
+            color: AppColors.surfaceLight,
+            borderRadius: BorderRadius.circular(20),
+            border: Border.all(color: AppColors.divider),
+          ),
+          child: Text(c,
+              style: const TextStyle(
+                  fontSize: 12,
+                  color: AppColors.textSecondary,
+                  fontFamily: 'Inter')),
         ),
       ),
     );
@@ -287,37 +312,49 @@ class _TriageScreenState extends State<TriageScreen> {
       childAspectRatio: 2.8,
       children: TriageLevel.values.map((level) {
         final isSelected = _selectedTriage == level;
-        return GestureDetector(
-          onTap: () => setState(() => _selectedTriage = level),
-          child: AnimatedContainer(
-            duration: const Duration(milliseconds: 150),
-            padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-            decoration: BoxDecoration(
-              color: isSelected
-                  ? level.color.withOpacity(0.2)
-                  : AppColors.surfaceLight,
-              borderRadius: BorderRadius.circular(12),
-              border: Border.all(
-                  color: isSelected ? level.color : AppColors.divider,
-                  width: isSelected ? 1.5 : 1),
-            ),
-            child: Row(
-              children: [
-                Container(
-                    width: 12,
-                    height: 12,
-                    decoration: BoxDecoration(
-                        color: level.color, shape: BoxShape.circle)),
-                const SizedBox(width: 8),
-                Text(level.label,
-                    style: TextStyle(
-                        fontFamily: 'Inter',
-                        fontSize: 13,
-                        fontWeight: FontWeight.w600,
-                        color: isSelected
-                            ? level.color
-                            : AppColors.textSecondary)),
-              ],
+
+        void handleSelect() {
+          HapticFeedback.selectionClick();
+          setState(() => _selectedTriage = level);
+        }
+
+        return Semantics(
+          button: true,
+          label: 'Select ${level.label} triage',
+          selected: isSelected,
+          onTap: handleSelect,
+          child: GestureDetector(
+            onTap: handleSelect,
+            child: AnimatedContainer(
+              duration: const Duration(milliseconds: 150),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? level.color.withOpacity(0.2)
+                    : AppColors.surfaceLight,
+                borderRadius: BorderRadius.circular(12),
+                border: Border.all(
+                    color: isSelected ? level.color : AppColors.divider,
+                    width: isSelected ? 1.5 : 1),
+              ),
+              child: Row(
+                children: [
+                  Container(
+                      width: 12,
+                      height: 12,
+                      decoration: BoxDecoration(
+                          color: level.color, shape: BoxShape.circle)),
+                  const SizedBox(width: 8),
+                  Text(level.label,
+                      style: TextStyle(
+                          fontFamily: 'Inter',
+                          fontSize: 13,
+                          fontWeight: FontWeight.w600,
+                          color: isSelected
+                              ? level.color
+                              : AppColors.textSecondary)),
+                ],
+              ),
             ),
           ),
         );
