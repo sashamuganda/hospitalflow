@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 import '../../core/colors.dart';
 import '../../widgets/shared_widgets.dart';
@@ -57,11 +58,19 @@ class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
                 Tooltip(
                   message: 'Back to login',
                   child: GestureDetector(
-                    onTap: () => context.pop(),
-                    child: Container(
-                      padding: const EdgeInsets.all(10),
-                      decoration: BoxDecoration(color: AppColors.surfaceLight, borderRadius: BorderRadius.circular(12)),
-                      child: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: AppColors.textSecondary),
+                    onTap: () {
+                      HapticFeedback.lightImpact();
+                      context.pop();
+                    },
+                    child: Semantics(
+                      button: true,
+                      label: 'Back to login',
+                      excludeSemantics: true,
+                      child: Container(
+                        padding: const EdgeInsets.all(10),
+                        decoration: BoxDecoration(color: AppColors.surfaceLight, borderRadius: BorderRadius.circular(12)),
+                        child: const Icon(Icons.arrow_back_ios_new_rounded, size: 18, color: AppColors.textSecondary),
+                      ),
                     ),
                   ),
                 ),
