@@ -5,3 +5,7 @@
 ## 2024-11-21 - Semantic Summaries for List Items
 **Learning:** For information-dense list items (like notification cards), wrapping the entire item in a `Semantics` widget with a summary `label` (e.g., "Unread notification: [Title]") provides a much better screen reader experience than forcing the user to navigate through multiple internal text widgets to infer the item's status.
 **Action:** Use `Semantics` labels on complex cards to provide an "at-a-glance" summary for accessibility tools.
+
+## 2024-11-22 - Semantic Card Summaries and Haptics
+**Learning:** When providing a descriptive `label` for a `Semantics` widget on a complex card (like `KpiCard`), setting `excludeSemantics: true` is crucial to prevent screen readers from reading the individual text children after the summary, which creates redundancy. Adding `HapticFeedback.lightImpact()` to these cards on tap provides a premium tactile feel that matches the visual "glass" aesthetic.
+**Action:** Always pair semantic summary labels with `excludeSemantics: true` on informational cards, and ensure haptic feedback is triggered on interaction.
