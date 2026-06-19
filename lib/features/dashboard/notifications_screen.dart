@@ -23,6 +23,9 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // ⚡ Bolt: Cache filtered notifications to avoid O(N) filtering on every item build
+    final items = _filtered;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Container(
@@ -116,17 +119,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               ),
               // List
               Expanded(
-                child: _filtered.isEmpty
+                child: items.isEmpty
                     ? const EmptyState(
                         icon: Icons.notifications_off_outlined,
                         title: 'No Notifications',
                         message: 'You\'re all caught up.')
                     : ListView.separated(
                         padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
-                        itemCount: _filtered.length,
+                        itemCount: items.length,
                         separatorBuilder: (_, __) => const SizedBox(height: 10),
                         itemBuilder: (context, i) =>
-                            _NotificationCard(notif: _filtered[i]),
+                            _NotificationCard(notif: items[i]),
                       ),
               ),
             ],
