@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:medflow_staff/features/emr/clinical_note_editor.dart';
+import 'package:medflow_staff/features/emr/lab_order_screen.dart';
+import 'package:medflow_staff/features/emr/emr_home_screen.dart';
+import 'package:medflow_staff/features/staff/staff_directory_screen.dart';
 import 'package:medflow_staff/core/app_state.dart';
 import 'package:provider/provider.dart';
 
@@ -43,5 +46,41 @@ void main() {
     final TextField diagField = tester.widget(diagFinder);
     expect(diagField.maxLength, 100, reason: 'Diagnosis field should have maxLength 100');
     expect(diagField.decoration?.counterText, '', reason: 'Diagnosis field should suppress counterText');
+  });
+
+  testWidgets('LabOrderScreen has security hardening for input lengths', (WidgetTester tester) async {
+    await tester.pumpWidget(createTestWidget(const LabOrderScreen(patientId: 'p005')));
+
+    final textFieldFinder = find.byWidgetPredicate(
+      (widget) => widget is TextField && widget.decoration?.hintText == 'Relevant clinical information for lab...'
+    );
+    expect(textFieldFinder, findsOneWidget);
+    final TextField textField = tester.widget(textFieldFinder);
+    expect(textField.maxLength, 500, reason: 'Lab clinical notes should have maxLength 500');
+    expect(textField.decoration?.counterText, '', reason: 'Lab clinical notes should suppress counterText');
+  });
+
+  testWidgets('EmrHomeScreen has security hardening for search input length', (WidgetTester tester) async {
+    await tester.pumpWidget(createTestWidget(const EmrHomeScreen()));
+
+    final searchFieldFinder = find.byWidgetPredicate(
+      (widget) => widget is TextField && widget.decoration?.hintText == 'Search by name, ID, or phone...'
+    );
+    expect(searchFieldFinder, findsOneWidget);
+    final TextField searchField = tester.widget(searchFieldFinder);
+    expect(searchField.maxLength, 100, reason: 'EMR search field should have maxLength 100');
+    expect(searchField.decoration?.counterText, '', reason: 'EMR search field should suppress counterText');
+  });
+
+  testWidgets('StaffDirectoryScreen has security hardening for search input length', (WidgetTester tester) async {
+    await tester.pumpWidget(createTestWidget(const StaffDirectoryScreen()));
+
+    final searchFieldFinder = find.byWidgetPredicate(
+      (widget) => widget is TextField && widget.decoration?.hintText == 'Search by name...'
+    );
+    expect(searchFieldFinder, findsOneWidget);
+    final TextField searchField = tester.widget(searchFieldFinder);
+    expect(searchField.maxLength, 100, reason: 'Staff search field should have maxLength 100');
+    expect(searchField.decoration?.counterText, '', reason: 'Staff search field should suppress counterText');
   });
 }
