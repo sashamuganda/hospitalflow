@@ -68,10 +68,13 @@ class _EmrHomeScreenState extends State<EmrHomeScreen> {
                     ),
                     const SizedBox(height: 16),
                     // Search bar
+                    // Security: Limit input length to prevent DoS
                     TextField(
                       controller: _searchCtrl,
                       onChanged: (v) => setState(() => _query = v),
+                      maxLength: 100,
                       decoration: InputDecoration(
+                        counterText: '',
                         hintText: 'Search by name, ID, or phone...',
                         prefixIcon: const Icon(Icons.search_rounded,
                             color: AppColors.textMuted),

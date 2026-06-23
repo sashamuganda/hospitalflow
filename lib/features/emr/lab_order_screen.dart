@@ -215,10 +215,13 @@ class _LabOrderScreenState extends State<LabOrderScreen> {
                               fontWeight: FontWeight.w700,
                               color: AppColors.textPrimary)),
                       const SizedBox(height: 8),
+                      // Security: Limit input length to prevent DoS
                       TextField(
                           controller: _notesCtrl,
                           maxLines: 2,
+                          maxLength: 500,
                           decoration: const InputDecoration(
+                              counterText: '',
                               hintText:
                                   'Relevant clinical information for lab...')),
                       const SizedBox(height: 32),
