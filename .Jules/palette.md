@@ -5,3 +5,7 @@
 ## 2024-11-21 - Semantic Summaries for List Items
 **Learning:** For information-dense list items (like notification cards), wrapping the entire item in a `Semantics` widget with a summary `label` (e.g., "Unread notification: [Title]") provides a much better screen reader experience than forcing the user to navigate through multiple internal text widgets to infer the item's status.
 **Action:** Use `Semantics` labels on complex cards to provide an "at-a-glance" summary for accessibility tools.
+
+## 2024-11-22 - Keyboard Accessibility for Custom Decorated Cards
+**Learning:** In Flutter, using `GestureDetector` on custom decorated containers (like glassmorphic cards) provides touch interaction but fails to provide keyboard focus or visual feedback (ripples). Wrapping the card content in a transparent `Material` widget and using `InkWell` as the interaction layer ensures the component is focusable via Tab navigation and provides a native-feeling ripple effect.
+**Action:** Prefer `InkWell` within a `Material` wrapper over `GestureDetector` for interactive cards to ensure full platform accessibility.
