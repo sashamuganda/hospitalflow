@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:medflow_staff/features/emr/clinical_note_editor.dart';
+import 'package:medflow_staff/features/emr/lab_order_screen.dart';
 import 'package:medflow_staff/core/app_state.dart';
 import 'package:provider/provider.dart';
 
@@ -43,5 +44,17 @@ void main() {
     final TextField diagField = tester.widget(diagFinder);
     expect(diagField.maxLength, 100, reason: 'Diagnosis field should have maxLength 100');
     expect(diagField.decoration?.counterText, '', reason: 'Diagnosis field should suppress counterText');
+  });
+
+  testWidgets('LabOrderScreen has security hardening for input lengths', (WidgetTester tester) async {
+    await tester.pumpWidget(createTestWidget(const LabOrderScreen(patientId: 'p001')));
+
+    final notesFinder = find.byWidgetPredicate(
+      (widget) => widget is TextField && widget.decoration?.hintText == 'Relevant clinical information for lab...'
+    );
+    expect(notesFinder, findsOneWidget);
+    final TextField notesField = tester.widget(notesFinder);
+    expect(notesField.maxLength, 500, reason: 'Lab notes field should have maxLength 500');
+    expect(notesField.decoration?.counterText, '', reason: 'Lab notes field should suppress counterText');
   });
 }
