@@ -7,3 +7,8 @@
 **Vulnerability:** Missing `maxLength` constraints on critical clinical input fields (SOAP notes, chief complaints, vitals).
 **Learning:** In a clinical environment, excessively large inputs in text fields can lead to application instability, memory exhaustion, or database performance degradation (Denial of Service). This app frequently suppresses the visual character counter using `counterText: ''` for aesthetic reasons, which can obscure the absence of underlying security constraints.
 **Prevention:** Explicitly define `maxLength` for all `TextField` widgets accepting clinical data and include a `// Security: Limit input length to prevent DoS` comment to ensure the requirement is visible to future maintainers.
+
+## 2024-10-24 - Identifying Regressions in DoS Hardening
+**Vulnerability:** Recurring omission of `maxLength` constraints in search and secondary clinical note fields.
+**Learning:** While primary EMR fields are often hardened, search fields and optional "notes" fields (e.g., in Lab Orders) frequently suffer from regressions where security constraints are stripped during UI refactors. Relying solely on inline comments is insufficient when the entire widget is replaced.
+**Prevention:** Implement comprehensive security-specific widget tests in `test/security_hardening_test.dart` that target all `TextField` widgets by their `hintText` or `controller` to ensure constraints persist across refactors.
