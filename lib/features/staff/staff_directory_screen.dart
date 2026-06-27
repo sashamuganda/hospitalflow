@@ -40,8 +40,11 @@ class _StaffDirectoryScreenState extends State<StaffDirectoryScreen> {
                 padding: const EdgeInsets.symmetric(horizontal: 20),
                 child: TextField(
                   onChanged: (v) => setState(() => _searchQuery = v),
+                  // Security: Limit input length to prevent DoS
+                  maxLength: 100,
                   decoration: InputDecoration(
                     hintText: 'Search by name...',
+                    counterText: '',
                     prefixIcon: const Icon(Icons.search_rounded, color: AppColors.textMuted),
                     filled: true,
                     fillColor: AppColors.surface,
