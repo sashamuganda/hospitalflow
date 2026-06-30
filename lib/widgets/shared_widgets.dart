@@ -25,7 +25,10 @@ class GlassCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: onTap == null ? null : () {
+        HapticFeedback.lightImpact();
+        onTap!();
+      },
       child: Container(
         padding: padding ?? const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -271,39 +274,49 @@ class KpiCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          gradient: AppColors.cardGradient,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.25)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(icon, color: color, size: 20),
+      onTap: onTap == null ? null : () {
+        HapticFeedback.lightImpact();
+        onTap!();
+      },
+      child: Semantics(
+        label: '$value $label${subtitle != null ? ', $subtitle' : ''}',
+        button: onTap != null,
+        container: true,
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: AppColors.cardGradient,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: color.withOpacity(0.25)),
+          ),
+          child: ExcludeSemantics(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(icon, color: color, size: 20),
+                ),
+                const SizedBox(height: 12),
+                Text(value,
+                  style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary, fontFamily: 'Inter')),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 2),
+                  Text(subtitle!,
+                    style: const TextStyle(color: AppColors.success, fontSize: 11,
+                      fontFamily: 'Inter', fontWeight: FontWeight.w600)),
+                ],
+                const SizedBox(height: 4),
+                Text(label,
+                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontFamily: 'Inter')),
+              ],
             ),
-            const SizedBox(height: 12),
-            Text(value,
-              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary, fontFamily: 'Inter')),
-            if (subtitle != null) ...[
-              const SizedBox(height: 2),
-              Text(subtitle!,
-                style: const TextStyle(color: AppColors.success, fontSize: 11,
-                  fontFamily: 'Inter', fontWeight: FontWeight.w600)),
-            ],
-            const SizedBox(height: 4),
-            Text(label,
-              style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontFamily: 'Inter')),
-          ],
+          ),
         ),
       ),
     );
@@ -325,30 +338,40 @@ class MetricCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(14),
-        decoration: BoxDecoration(
-          gradient: AppColors.cardGradient,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.2)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(color: color.withOpacity(0.15), borderRadius: BorderRadius.circular(10)),
-              child: Icon(icon, color: color, size: 20),
+      onTap: onTap == null ? null : () {
+        HapticFeedback.lightImpact();
+        onTap!();
+      },
+      child: Semantics(
+        label: '$value $unit, $label',
+        button: onTap != null,
+        container: true,
+        child: Container(
+          padding: const EdgeInsets.all(14),
+          decoration: BoxDecoration(
+            gradient: AppColors.cardGradient,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: color.withOpacity(0.2)),
+          ),
+          child: ExcludeSemantics(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(color: color.withOpacity(0.15), borderRadius: BorderRadius.circular(10)),
+                  child: Icon(icon, color: color, size: 20),
+                ),
+                const SizedBox(height: 12),
+                Text(value,
+                  style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary, fontFamily: 'Inter')),
+                Text(unit, style: const TextStyle(color: AppColors.textMuted, fontSize: 12, fontFamily: 'Inter')),
+                const SizedBox(height: 4),
+                Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13, fontFamily: 'Inter')),
+              ],
             ),
-            const SizedBox(height: 12),
-            Text(value,
-              style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary, fontFamily: 'Inter')),
-            Text(unit, style: const TextStyle(color: AppColors.textMuted, fontSize: 12, fontFamily: 'Inter')),
-            const SizedBox(height: 4),
-            Text(label, style: const TextStyle(color: AppColors.textSecondary, fontSize: 13, fontFamily: 'Inter')),
-          ],
+          ),
         ),
       ),
     );
@@ -436,23 +459,28 @@ class TriageChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final color = level.color;
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: compact ? 6 : 10, vertical: compact ? 2 : 4),
-      decoration: BoxDecoration(
-        color: color.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: color.withOpacity(0.4)),
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Container(width: compact ? 6 : 8, height: compact ? 6 : 8,
-            decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
-          SizedBox(width: compact ? 4 : 5),
-          Text(compact ? level.shortCode : level.label,
-            style: TextStyle(color: color, fontSize: compact ? 10 : 12,
-              fontWeight: FontWeight.w700, fontFamily: 'Inter')),
-        ],
+    return Semantics(
+      label: 'Triage level: ${level.label}',
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: compact ? 6 : 10, vertical: compact ? 2 : 4),
+        decoration: BoxDecoration(
+          color: color.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: color.withOpacity(0.4)),
+        ),
+        child: ExcludeSemantics(
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Container(width: compact ? 6 : 8, height: compact ? 6 : 8,
+                decoration: BoxDecoration(color: color, shape: BoxShape.circle)),
+              SizedBox(width: compact ? 4 : 5),
+              Text(compact ? level.shortCode : level.label,
+                style: TextStyle(color: color, fontSize: compact ? 10 : 12,
+                  fontWeight: FontWeight.w700, fontFamily: 'Inter')),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -468,15 +496,20 @@ class RoleBadge extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final c = color ?? AppColors.primary;
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-      decoration: BoxDecoration(
-        color: c.withOpacity(0.15),
-        borderRadius: BorderRadius.circular(20),
-        border: Border.all(color: c.withOpacity(0.3)),
+    return Semantics(
+      label: 'Role: $label',
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+        decoration: BoxDecoration(
+          color: c.withOpacity(0.15),
+          borderRadius: BorderRadius.circular(20),
+          border: Border.all(color: c.withOpacity(0.3)),
+        ),
+        child: ExcludeSemantics(
+          child: Text(label,
+            style: TextStyle(color: c, fontSize: 12, fontWeight: FontWeight.w700, fontFamily: 'Inter')),
+        ),
       ),
-      child: Text(label,
-        style: TextStyle(color: c, fontSize: 12, fontWeight: FontWeight.w700, fontFamily: 'Inter')),
     );
   }
 }
