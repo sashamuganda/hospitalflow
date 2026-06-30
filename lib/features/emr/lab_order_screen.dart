@@ -215,12 +215,14 @@ class _LabOrderScreenState extends State<LabOrderScreen> {
                               fontWeight: FontWeight.w700,
                               color: AppColors.textPrimary)),
                       const SizedBox(height: 8),
+                      // Security: Limit input length to prevent DoS
                       TextField(
                           controller: _notesCtrl,
                           maxLines: 2,
+                          maxLength: 500,
                           decoration: const InputDecoration(
-                              hintText:
-                                  'Relevant clinical information for lab...')),
+                              hintText: 'Relevant clinical information for lab...',
+                              counterText: '')),
                       const SizedBox(height: 32),
                       GradientButton(
                         label: 'Send Lab Order',
