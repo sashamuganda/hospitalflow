@@ -1,8 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:medflow_staff/features/lab/lab_home_screen.dart';
-import 'package:medflow_staff/core/colors.dart';
-import 'package:medflow_staff/widgets/shared_widgets.dart';
 import 'package:medflow_staff/data/mock_data.dart';
 
 void main() {
