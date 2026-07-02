@@ -16,26 +16,37 @@ class _QueueHomeScreenState extends State<QueueHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    // ⚡ Bolt: Cache filtered results and counts in local variables to avoid O(N^2) complexity
-    // when accessed multiple times during a single build cycle (especially inside builders).
-    final filtered = mockQueue.where((q) {
+    // ⚡ Bolt: Consolidate multiple O(N) traversals (filtering, counts, triage aggregation)
+    // into a single O(N) pass to minimize allocations and redundant iterations.
+    // This reduces complexity from O(K*N) to O(N).
+    final filtered = <PatientInQueue>[];
+    int waitingCount = 0;
+    int immediateCount = 0;
+    final triageCounts = {for (var l in TriageLevel.values) l: 0};
+
+    for (final q in mockQueue) {
+      // Aggregate counts
+      if (q.status == QueueStatus.waiting) waitingCount++;
+      if (q.triageLevel == TriageLevel.immediate) immediateCount++;
+      triageCounts[q.triageLevel] = triageCounts[q.triageLevel]! + 1;
+
+      // Filter logic
       final matchesLevel = _filterLevel == null || q.triageLevel == _filterLevel;
       bool matchesStatus = true;
       if (_filterStatus != 'All') {
         switch (_filterStatus) {
-          case 'Waiting': matchesStatus = q.status == QueueStatus.waiting; break;
-          case 'In Consult': matchesStatus = q.status == QueueStatus.inConsultation; break;
+          case 'Waiting':
+            matchesStatus = q.status == QueueStatus.waiting;
+            break;
+          case 'In Consult':
+            matchesStatus = q.status == QueueStatus.inConsultation;
+            break;
         }
       }
-      return matchesLevel && matchesStatus;
-    }).toList();
 
-    final waitingCount = mockQueue.where((q) => q.status == QueueStatus.waiting).length;
-    final immediateCount = mockQueue.where((q) => q.triageLevel == TriageLevel.immediate).length;
-    
-    final triageCounts = <TriageLevel, int>{};
-    for (final level in TriageLevel.values) {
-      triageCounts[level] = mockQueue.where((q) => q.triageLevel == level).length;
+      if (matchesLevel && matchesStatus) {
+        filtered.add(q);
+      }
     }
 
     return Scaffold(
