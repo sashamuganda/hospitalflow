@@ -29,6 +29,10 @@ class _LabHomeScreenState extends State<LabHomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    // ⚡ Bolt: Cache the O(N log N) sorted list in a local variable to prevent
+    // redundant sorting operations for each item in the ListView (O(M * N log N)).
+    final sortedOrders = _sortedOrders;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Container(
@@ -49,10 +53,10 @@ class _LabHomeScreenState extends State<LabHomeScreen> {
               Expanded(
                 child: ListView.separated(
                   padding: const EdgeInsets.fromLTRB(20, 0, 20, 100),
-                  itemCount: _sortedOrders.length,
+                  itemCount: sortedOrders.length,
                   separatorBuilder: (_, __) => const SizedBox(height: 12),
                   itemBuilder: (context, i) =>
-                      _LabOrderCard(order: _sortedOrders[i]),
+                      _LabOrderCard(order: sortedOrders[i]),
                 ),
               ),
             ],
