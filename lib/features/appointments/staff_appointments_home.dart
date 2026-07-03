@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../../core/colors.dart';
 import '../../data/mock_data.dart';
 import '../../widgets/shared_widgets.dart';
@@ -27,9 +28,12 @@ class _StaffAppointmentsHomeState extends State<StaffAppointmentsHome> {
     return Scaffold(
       backgroundColor: AppColors.background,
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          HapticFeedback.lightImpact();
+        },
         backgroundColor: AppColors.primary,
         foregroundColor: Colors.white,
+        tooltip: 'Book Appointment',
         child: const Icon(Icons.add_rounded),
       ),
       body: Container(
@@ -47,7 +51,10 @@ class _StaffAppointmentsHomeState extends State<StaffAppointmentsHome> {
                     IconButton(
                       icon: const Icon(Icons.calendar_month_rounded,
                           color: AppColors.primary),
-                      onPressed: () {},
+                      tooltip: 'View Calendar',
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                      },
                     ),
                   ],
                 ),
@@ -97,7 +104,10 @@ class _FilterChip extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return GestureDetector(
-      onTap: onTap,
+      onTap: () {
+        HapticFeedback.selectionClick();
+        onTap();
+      },
       child: Container(
         margin: const EdgeInsets.only(right: 8),
         padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
@@ -128,104 +138,112 @@ class _AppointmentCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GlassCard(
-      borderColor: appointment.status.color.withOpacity(0.3),
-      padding: const EdgeInsets.all(16),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Text(_formatTime(appointment.dateTime),
-                  style: const TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w800,
-                      color: AppColors.textPrimary,
-                      fontFamily: 'Inter')),
-              const SizedBox(width: 10),
-              StatusBadge(
-                  label: appointment.status.label,
-                  color: appointment.status.color,
-                  fontSize: 10),
-              const Spacer(),
-              Container(
-                padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
-                decoration: BoxDecoration(
-                  color: AppColors.surfaceLight,
-                  borderRadius: BorderRadius.circular(6),
-                ),
-                child: Text(appointment.type,
+    final timeStr = _formatTime(appointment.dateTime);
+    return Semantics(
+      label: 'Appointment: ${appointment.patientName} at $timeStr. Status: ${appointment.status.label}. Type: ${appointment.type}.',
+      container: true,
+      child: GlassCard(
+        borderColor: appointment.status.color.withOpacity(0.3),
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Row(
+              children: [
+                Text(_formatTime(appointment.dateTime),
                     style: const TextStyle(
-                        fontSize: 10,
-                        color: AppColors.textSecondary,
+                        fontSize: 16,
+                        fontWeight: FontWeight.w800,
+                        color: AppColors.textPrimary,
                         fontFamily: 'Inter')),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              AvatarCircle(
-                  initials: _getInitials(appointment.patientName), size: 40),
-              const SizedBox(width: 12),
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(appointment.patientName,
-                        style: Theme.of(context).textTheme.titleSmall),
-                    const SizedBox(height: 2),
-                    Text('With: ${appointment.doctorName}',
-                        style: Theme.of(context).textTheme.bodySmall),
-                  ],
+                const SizedBox(width: 10),
+                StatusBadge(
+                    label: appointment.status.label,
+                    color: appointment.status.color,
+                    fontSize: 10),
+                const Spacer(),
+                Container(
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                  decoration: BoxDecoration(
+                    color: AppColors.surfaceLight,
+                    borderRadius: BorderRadius.circular(6),
+                  ),
+                  child: Text(appointment.type,
+                      style: const TextStyle(
+                          fontSize: 10,
+                          color: AppColors.textSecondary,
+                          fontFamily: 'Inter')),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 12),
-          Row(
-            children: [
-              if (appointment.room != null) ...[
-                const Icon(Icons.room_rounded,
-                    size: 14, color: AppColors.textMuted),
-                const SizedBox(width: 4),
-                Text(appointment.room!,
-                    style: const TextStyle(
-                        fontSize: 11,
-                        color: AppColors.textMuted,
-                        fontFamily: 'Inter')),
-              ] else ...[
-                const Icon(Icons.video_camera_front_rounded,
-                    size: 14, color: AppColors.primary),
-                const SizedBox(width: 4),
-                const Text('Online',
-                    style: TextStyle(
-                        fontSize: 11,
-                        color: AppColors.primary,
-                        fontFamily: 'Inter')),
               ],
-              const Spacer(),
-              if (appointment.status == AppointmentStatus.pending)
-                SizedBox(
-                  height: 28,
-                  child: ElevatedButton(
-                    onPressed: () {},
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: AppColors.primary.withOpacity(0.15),
-                      foregroundColor: AppColors.primary,
-                      elevation: 0,
-                      padding: const EdgeInsets.symmetric(horizontal: 12),
-                      shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(6)),
-                    ),
-                    child: const Text('Confirm',
-                        style: TextStyle(
-                            fontSize: 11, fontWeight: FontWeight.w700)),
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                AvatarCircle(
+                    initials: _getInitials(appointment.patientName), size: 40),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(appointment.patientName,
+                          style: Theme.of(context).textTheme.titleSmall),
+                      const SizedBox(height: 2),
+                      Text('With: ${appointment.doctorName}',
+                          style: Theme.of(context).textTheme.bodySmall),
+                    ],
                   ),
                 ),
-            ],
-          ),
-        ],
+              ],
+            ),
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                if (appointment.room != null) ...[
+                  const Icon(Icons.room_rounded,
+                      size: 14, color: AppColors.textMuted),
+                  const SizedBox(width: 4),
+                  Text(appointment.room!,
+                      style: const TextStyle(
+                          fontSize: 11,
+                          color: AppColors.textMuted,
+                          fontFamily: 'Inter')),
+                ] else ...[
+                  const Icon(Icons.video_camera_front_rounded,
+                      size: 14, color: AppColors.primary),
+                  const SizedBox(width: 4),
+                  const Text('Online',
+                      style: TextStyle(
+                          fontSize: 11,
+                          color: AppColors.primary,
+                          fontFamily: 'Inter')),
+                ],
+                const Spacer(),
+                if (appointment.status == AppointmentStatus.pending)
+                  SizedBox(
+                    height: 28,
+                    child: ElevatedButton(
+                      onPressed: () {
+                        HapticFeedback.lightImpact();
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: AppColors.primary.withOpacity(0.15),
+                        foregroundColor: AppColors.primary,
+                        elevation: 0,
+                        padding: const EdgeInsets.symmetric(horizontal: 12),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(6)),
+                      ),
+                      child: const Text('Confirm',
+                          style: TextStyle(
+                              fontSize: 11, fontWeight: FontWeight.w700)),
+                    ),
+                  ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
