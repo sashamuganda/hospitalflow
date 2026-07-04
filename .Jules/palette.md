@@ -5,3 +5,7 @@
 ## 2024-11-21 - Semantic Summaries for List Items
 **Learning:** For information-dense list items (like notification cards), wrapping the entire item in a `Semantics` widget with a summary `label` (e.g., "Unread notification: [Title]") provides a much better screen reader experience than forcing the user to navigate through multiple internal text widgets to infer the item's status.
 **Action:** Use `Semantics` labels on complex cards to provide an "at-a-glance" summary for accessibility tools.
+
+## 2026-07-04 - Surgical Semantic Summaries with ExcludeSemantics
+**Learning:** When using a parent `Semantics` widget to provide a summary label for a card, the internal child widgets may still be read by screen readers, leading to redundant or confusing announcements. Wrapping the internal content in `ExcludeSemantics` ensures only the summary label is read.
+**Action:** Use `ExcludeSemantics` on the child of a card that already has a comprehensive parent `Semantics` summary, but only if the card does not contain interactive elements (like buttons) that the user needs to reach.

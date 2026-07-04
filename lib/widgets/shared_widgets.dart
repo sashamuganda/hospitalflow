@@ -270,40 +270,47 @@ class KpiCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          gradient: AppColors.cardGradient,
-          borderRadius: BorderRadius.circular(16),
-          border: Border.all(color: color.withOpacity(0.25)),
-        ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: color.withOpacity(0.15),
-                borderRadius: BorderRadius.circular(10),
-              ),
-              child: Icon(icon, color: color, size: 20),
+    return Semantics(
+      container: true,
+      button: true,
+      label: '$label: $value${subtitle != null ? ', $subtitle' : ''}',
+      child: GestureDetector(
+        onTap: onTap,
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            gradient: AppColors.cardGradient,
+            borderRadius: BorderRadius.circular(16),
+            border: Border.all(color: color.withOpacity(0.25)),
+          ),
+          child: ExcludeSemantics(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Container(
+                  padding: const EdgeInsets.all(8),
+                  decoration: BoxDecoration(
+                    color: color.withOpacity(0.15),
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                  child: Icon(icon, color: color, size: 20),
+                ),
+                const SizedBox(height: 12),
+                Text(value,
+                  style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700,
+                    color: AppColors.textPrimary, fontFamily: 'Inter')),
+                if (subtitle != null) ...[
+                  const SizedBox(height: 2),
+                  Text(subtitle!,
+                    style: const TextStyle(color: AppColors.success, fontSize: 11,
+                      fontFamily: 'Inter', fontWeight: FontWeight.w600)),
+                ],
+                const SizedBox(height: 4),
+                Text(label,
+                  style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontFamily: 'Inter')),
+              ],
             ),
-            const SizedBox(height: 12),
-            Text(value,
-              style: const TextStyle(fontSize: 28, fontWeight: FontWeight.w700,
-                color: AppColors.textPrimary, fontFamily: 'Inter')),
-            if (subtitle != null) ...[
-              const SizedBox(height: 2),
-              Text(subtitle!,
-                style: const TextStyle(color: AppColors.success, fontSize: 11,
-                  fontFamily: 'Inter', fontWeight: FontWeight.w600)),
-            ],
-            const SizedBox(height: 4),
-            Text(label,
-              style: const TextStyle(color: AppColors.textSecondary, fontSize: 12, fontFamily: 'Inter')),
-          ],
+          ),
         ),
       ),
     );
