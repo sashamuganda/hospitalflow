@@ -14,15 +14,22 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
   String _filter = 'All';
   final _filters = ['All', 'Critical', 'Lab', 'Appointment', 'System'];
 
-  List<StaffNotification> get _filtered {
-    if (_filter == 'All') return mockNotifications;
-    return mockNotifications
-        .where((n) => n.type.toLowerCase() == _filter.toLowerCase())
-        .toList();
-  }
-
   @override
   Widget build(BuildContext context) {
+    // ⚡ Bolt: Consolidate unread count and filtering into a single O(N) pass to minimize
+    // traversals and prevent O(N*M) complexity from redundant getter calls in the build tree.
+    int unreadCount = 0;
+    final List<StaffNotification> filtered = [];
+    final filterLower = _filter.toLowerCase();
+    final isFilterAll = filterLower == 'all';
+
+    for (final n in mockNotifications) {
+      if (!n.isRead) unreadCount++;
+      if (isFilterAll || n.type.toLowerCase() == filterLower) {
+        filtered.add(n);
+      }
+    }
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Container(
@@ -57,10 +64,7 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
                     Expanded(
                         child: Text('Notifications',
                             style: Theme.of(context).textTheme.headlineSmall)),
-                    StatusBadge(
-                        label:
-                            '${mockNotifications.where((n) => !n.isRead).length} new',
-                        color: AppColors.error),
+                    StatusBadge(label: '$unreadCount new', color: AppColors.error),
                   ],
                 ),
               ),
@@ -116,17 +120,17 @@ class _NotificationsScreenState extends State<NotificationsScreen> {
               ),
               // List
               Expanded(
-                child: _filtered.isEmpty
+                child: filtered.isEmpty
                     ? const EmptyState(
                         icon: Icons.notifications_off_outlined,
                         title: 'No Notifications',
                         message: 'You\'re all caught up.')
                     : ListView.separated(
                         padding: const EdgeInsets.fromLTRB(20, 8, 20, 20),
-                        itemCount: _filtered.length,
+                        itemCount: filtered.length,
                         separatorBuilder: (_, __) => const SizedBox(height: 10),
                         itemBuilder: (context, i) =>
-                            _NotificationCard(notif: _filtered[i]),
+                            _NotificationCard(notif: filtered[i]),
                       ),
               ),
             ],
