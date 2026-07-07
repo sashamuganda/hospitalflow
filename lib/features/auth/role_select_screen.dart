@@ -143,14 +143,12 @@ class _RoleCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: () {
-        HapticFeedback.selectionClick();
-        onTap();
-      },
+    return Semantics(
+      label: '${role.displayName}: ${role.description}',
+      selected: isSelected,
+      button: true,
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
-        padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
           gradient: isSelected
               ? LinearGradient(
@@ -163,32 +161,53 @@ class _RoleCard extends StatelessWidget {
             width: isSelected ? 1.5 : 1,
           ),
         ),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: 44, height: 44,
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppColors.primary.withOpacity(0.2)
-                      : AppColors.surfaceLight,
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Icon(role.icon,
-                  color: isSelected ? AppColors.primary : AppColors.textMuted, size: 24),
+        child: Material(
+          color: Colors.transparent,
+          borderRadius: BorderRadius.circular(16),
+          clipBehavior: Clip.antiAlias,
+          child: InkWell(
+            onTap: () {
+              HapticFeedback.selectionClick();
+              onTap();
+            },
+            child: Padding(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Container(
+                    width: 44, height: 44,
+                    decoration: BoxDecoration(
+                      color: isSelected
+                          ? AppColors.primary.withOpacity(0.2)
+                          : AppColors.surfaceLight,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Icon(role.icon,
+                        color: isSelected ? AppColors.primary : AppColors.textMuted, size: 24),
+                  ),
+                  const Spacer(),
+                  ExcludeSemantics(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(role.displayName,
+                            style: TextStyle(fontFamily: 'Inter', fontSize: 15, fontWeight: FontWeight.w700,
+                                color: isSelected ? AppColors.textPrimary : AppColors.textSecondary)),
+                        const SizedBox(height: 4),
+                        Text(role.description,
+                            style: TextStyle(fontFamily: 'Inter', fontSize: 11,
+                                color: isSelected ? AppColors.textSecondary : AppColors.textMuted),
+                            maxLines: 2, overflow: TextOverflow.ellipsis),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-              const Spacer(),
-              Text(role.displayName,
-                style: TextStyle(fontFamily: 'Inter', fontSize: 15, fontWeight: FontWeight.w700,
-                  color: isSelected ? AppColors.textPrimary : AppColors.textSecondary)),
-              const SizedBox(height: 4),
-              Text(role.description,
-                style: TextStyle(fontFamily: 'Inter', fontSize: 11,
-                  color: isSelected ? AppColors.textSecondary : AppColors.textMuted),
-                maxLines: 2, overflow: TextOverflow.ellipsis),
-            ],
+            ),
           ),
         ),
+      ),
     );
   }
 }
