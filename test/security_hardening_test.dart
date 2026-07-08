@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:medflow_staff/features/emr/clinical_note_editor.dart';
+import 'package:medflow_staff/features/emr/emr_home_screen.dart';
+import 'package:medflow_staff/features/staff/staff_directory_screen.dart';
+import 'package:medflow_staff/features/emr/lab_order_screen.dart';
 import 'package:medflow_staff/core/app_state.dart';
 import 'package:provider/provider.dart';
 
@@ -43,5 +46,40 @@ void main() {
     final TextField diagField = tester.widget(diagFinder);
     expect(diagField.maxLength, 100, reason: 'Diagnosis field should have maxLength 100');
     expect(diagField.decoration?.counterText, '', reason: 'Diagnosis field should suppress counterText');
+  });
+
+  testWidgets('EmrHomeScreen has security hardening for search input', (WidgetTester tester) async {
+    await tester.pumpWidget(createTestWidget(const EmrHomeScreen()));
+
+    final searchFinder = find.byType(TextField);
+    expect(searchFinder, findsOneWidget);
+
+    final TextField textField = tester.widget(searchFinder);
+    expect(textField.maxLength, 100);
+    expect(textField.decoration?.counterText, '');
+  });
+
+  testWidgets('StaffDirectoryScreen has security hardening for search input', (WidgetTester tester) async {
+    await tester.pumpWidget(createTestWidget(const StaffDirectoryScreen()));
+
+    final searchFinder = find.byType(TextField);
+    expect(searchFinder, findsOneWidget);
+
+    final TextField textField = tester.widget(searchFinder);
+    expect(textField.maxLength, 100);
+    expect(textField.decoration?.counterText, '');
+  });
+
+  testWidgets('LabOrderScreen has security hardening for notes input', (WidgetTester tester) async {
+    await tester.pumpWidget(createTestWidget(const LabOrderScreen(patientId: 'p001')));
+
+    final notesFinder = find.byWidgetPredicate(
+      (widget) => widget is TextField && widget.decoration?.hintText == 'Relevant clinical information for lab...'
+    );
+    expect(notesFinder, findsOneWidget);
+
+    final TextField textField = tester.widget(notesFinder);
+    expect(textField.maxLength, 500);
+    expect(textField.decoration?.counterText, '');
   });
 }
