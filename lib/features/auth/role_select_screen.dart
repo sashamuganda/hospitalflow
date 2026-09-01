@@ -96,8 +96,17 @@ class _RoleSelectScreenState extends State<RoleSelectScreen> {
                       opacity: _selected != null ? 1.0 : 0.4,
                       duration: const Duration(milliseconds: 250),
                       child: GestureDetector(
-                        onTap: _selected != null ? _onContinue : null,
-                        child: Container(
+                        onTap: () {
+                          if (_selected != null) {
+                            HapticFeedback.lightImpact();
+                            _onContinue();
+                          }
+                        },
+                        child: Semantics(
+                          button: true,
+                          enabled: _selected != null,
+                          label: 'Continue as ${_selected?.displayName ?? 'Staff'}',
+                          child: Container(
                           height: 54,
                           decoration: BoxDecoration(
                             gradient: _selected != null ? AppColors.tealGradient : null,
@@ -119,6 +128,7 @@ class _RoleSelectScreenState extends State<RoleSelectScreen> {
                                 const Icon(Icons.arrow_forward_rounded, color: AppColors.textOnPrimary, size: 20),
                               ],
                             ),
+                          ),
                           ),
                         ),
                       ),
@@ -148,7 +158,11 @@ class _RoleCard extends StatelessWidget {
         HapticFeedback.selectionClick();
         onTap();
       },
-      child: AnimatedContainer(
+      child: Semantics(
+        button: true,
+        selected: isSelected,
+        label: '${role.displayName}: ${role.description}',
+        child: AnimatedContainer(
         duration: const Duration(milliseconds: 200),
         padding: const EdgeInsets.all(16),
         decoration: BoxDecoration(
@@ -189,6 +203,7 @@ class _RoleCard extends StatelessWidget {
             ],
           ),
         ),
+      ),
     );
   }
 }
